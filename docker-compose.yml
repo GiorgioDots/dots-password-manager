@@ -1,0 +1,21 @@
+services:
+  dotspasswordmanager.web.api:
+    image: ${DOCKER_REGISTRY-}dotspasswordmanagerwebapi
+    build:
+      context: .
+      dockerfile: DotsPasswordManager.Web.Api/Dockerfile
+    ports:
+        - "8080:8080"
+        - "8081:8081"
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ~/apps/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=S3cret
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=dots_password_manager
