@@ -1,4 +1,4 @@
-﻿namespace User.SavedPasswords.GetPasswords;
+﻿namespace User.SavedPassword.GetPasswords;
 
 internal sealed class Response
 {

@@ -1,8 +1,8 @@
-﻿namespace User.SavedPasswords.GetPasswords;
+﻿namespace User.SavedPassword.GetPasswords;
 
-internal sealed class Mapper : ResponseMapper<Response, IEnumerable<SavedPassword>>
+internal sealed class Mapper : ResponseMapper<Response, IEnumerable<DB.SavedPassword>>
 {
-    public override Response FromEntity(IEnumerable<SavedPassword> e)
+    public override Response FromEntity(IEnumerable<DB.SavedPassword> e)
     {
         // todo, passwordHash => password
         var pwds = e.Select(k => new Response.Password

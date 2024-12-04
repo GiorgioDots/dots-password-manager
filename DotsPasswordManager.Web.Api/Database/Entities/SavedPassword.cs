@@ -1,4 +1,4 @@
-﻿namespace DotsPasswordManager.Web.Api.Database.Entities;
+﻿namespace DB;
 
 public class SavedPassword
 {

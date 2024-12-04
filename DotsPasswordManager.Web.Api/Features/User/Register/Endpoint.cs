@@ -1,5 +1,4 @@
-﻿
-namespace User.Register;
+﻿namespace User.Register;
 
 internal sealed class Endpoint : Endpoint<Request, Response, Mapper>
 {

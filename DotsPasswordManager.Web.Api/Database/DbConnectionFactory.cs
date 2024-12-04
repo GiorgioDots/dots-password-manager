@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Npgsql;
 
-namespace DotsPasswordManager.Web.Api.Database;
+namespace DB;
 
 public class NpgsqlDbConnectionFactory : IdbConnectionFactory
 {

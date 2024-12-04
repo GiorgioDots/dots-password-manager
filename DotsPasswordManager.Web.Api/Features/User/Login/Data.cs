@@ -4,10 +4,10 @@ namespace User.Login;
 
 internal sealed class Data
 {
-    internal record AreCredentialsValidResult (RegisteredUser? user, bool credentialsValid);
+    internal record AreCredentialsValidResult (DB.User? user, bool credentialsValid);
     internal static async Task<AreCredentialsValidResult> AreCredentialsValid(IDbConnection db, string email, string password)
     {
-        var user = await db.QuerySingleOrDefaultAsync<RegisteredUser>("SELECT * FROM users WHERE email = @Email", new { email });
+        var user = await db.QuerySingleOrDefaultAsync<DB.User>("SELECT * FROM users WHERE email = @Email", new { email });
         return new (user, !(user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)));
     }
 

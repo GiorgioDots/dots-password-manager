@@ -1,11 +1,11 @@
 ﻿namespace User.Register;
 
-internal sealed class Mapper : Mapper<Request, Response, RegisteredUser>
+internal sealed class Mapper : Mapper<Request, Response, DB.User>
 {
-    public override RegisteredUser ToEntity(Request r)
+    public override DB.User ToEntity(Request r)
     {
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(r.Password);
-        var user = new RegisteredUser { Email = r.Email, Username = r.Username, PasswordHash = passwordHash };
+        var user = new DB.User { Email = r.Email, Username = r.Username, PasswordHash = passwordHash };
         return user;
     }
 }

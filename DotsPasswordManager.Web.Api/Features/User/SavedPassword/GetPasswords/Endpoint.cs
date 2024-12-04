@@ -1,6 +1,6 @@
 ﻿using DotsPasswordManager.Web.Api.Extensions;
 
-namespace User.SavedPasswords.GetPasswords;
+namespace User.SavedPassword.GetPasswords;
 
 internal sealed class Endpoint : EndpointWithoutRequest<Response, Mapper>
 {

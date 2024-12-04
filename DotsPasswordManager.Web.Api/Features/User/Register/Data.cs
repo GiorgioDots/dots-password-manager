@@ -4,13 +4,6 @@ namespace User.Register;
 
 internal sealed class Data
 {
-    public readonly IdbConnectionFactory _dbFactory;
-
-    public Data(IdbConnectionFactory dbFactory)
-    {
-        _dbFactory = dbFactory;
-    }
-
     internal static bool EmailAddressIsTaken(IDbConnection _db, string email) =>
         _db.QuerySingle<bool>(
             @"SELECT EXISTS (SELECT 1 FROM users WHERE email = @Email) AS UserExists", 
@@ -23,7 +16,7 @@ internal sealed class Data
             new { Username = username }
         );
 
-    internal static async Task<Guid> CreateNewUser(IDbConnection _db, RegisteredUser user) =>
+    internal static async Task<Guid> CreateNewUser(IDbConnection _db, DB.User user) =>
         await _db.QuerySingleAsync<Guid>(
             @"INSERT INTO users (email, username, passwordhash) VALUES (@Email, @Username, @PasswordHash) RETURNING id;", 
             user

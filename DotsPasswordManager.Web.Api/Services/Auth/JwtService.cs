@@ -20,7 +20,7 @@ public class JwtService : IJwtService
         _jwtExpirationMinutes = int.Parse(configuration["Jwt:ExpirationMinutes"]!);
     }
 
-    public string GenerateJwt(RegisteredUser user)
+    public string GenerateJwt(DB.User user)
     {
         var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_jwtSecret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

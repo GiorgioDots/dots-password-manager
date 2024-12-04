@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using DbUp;
 
-namespace DotsPasswordManager.Web.Api.Database;
+namespace DB;
 
 public class DatabaseInitializer
 {

@@ -1,4 +1,3 @@
-using DotsPasswordManager.Web.Api.Database;
 using DotsPasswordManager.Web.Api.Services.Auth;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
