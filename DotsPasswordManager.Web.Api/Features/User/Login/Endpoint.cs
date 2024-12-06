@@ -24,7 +24,7 @@ internal sealed class Endpoint : Endpoint<Request, Response>
     public override async Task HandleAsync(Request r, CancellationToken c)
     {
         using var _db = await _dbFactory.CreateConnectionAsync(c);
-        var result = await Data.AreCredentialsValid(_db, r.Email, r.Password);
+        var result = await Data.AreCredentialsValid(_db, r.Login, r.Password);
         if (!result.credentialsValid)
         {
             ThrowError("Invalid credentials.");

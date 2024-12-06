@@ -1,30 +1,22 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using FastEndpoints.Security;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DotsPasswordManager.Web.Api.Services.Auth;
 
 public class JwtService : IJwtService
 {
-    private readonly string _jwtSecret;
-    private readonly string _issuer;
-    private readonly string _audience;
     private readonly int _jwtExpirationMinutes;
 
     public JwtService(IConfiguration configuration)
     {
-        _jwtSecret = configuration["Jwt:Secret"]!;
-        _issuer = configuration["Jwt:Issuer"]!;
-        _audience = configuration["Jwt:Audience"]!;
         _jwtExpirationMinutes = int.Parse(configuration["Jwt:ExpirationMinutes"]!);
     }
 
     public string GenerateJwt(DB.User user)
     {
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_jwtSecret));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -33,14 +25,11 @@ public class JwtService : IJwtService
             new Claim(ClaimTypes.Role, "User") // Puoi aggiungere ruoli o altri claim
         };
 
-        var token = new JwtSecurityToken(
-            issuer: _issuer,
-            audience: _audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_jwtExpirationMinutes),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return JwtBearer.CreateToken(o =>
+        {
+            o.ExpireAt = DateTime.UtcNow.AddMinutes(_jwtExpirationMinutes);
+            o.User.Claims.AddRange(claims);
+        });
     }
 
     public string GenerateRefreshToken()

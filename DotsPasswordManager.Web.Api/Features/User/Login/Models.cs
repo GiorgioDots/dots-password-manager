@@ -2,14 +2,14 @@
 
 internal sealed class Request
 {
-    public string Email { get; set; }
+    public string Login { get; set; }
     public string Password { get; set; }
 
     internal sealed class Validator : Validator<Request>
     {
         public Validator()
         {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
+            RuleFor(x => x.Login).NotEmpty().MinimumLength(2);
             RuleFor(x => x.Password).NotEmpty();
         }
     }

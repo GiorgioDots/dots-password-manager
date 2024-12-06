@@ -1,14 +1,13 @@
 using DotsPasswordManager.Web.Api.Services.Auth;
+using FastEndpoints.Security;
 using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddFastEndpoints();
-builder.Services.SwaggerDocument();
 
 builder.Services.AddSingleton(_ =>
     new DatabaseInitializer(builder.Configuration["DbConnectionString"]!));
@@ -17,45 +16,50 @@ builder.Services.AddSingleton<IdbConnectionFactory>(_ =>
 
 builder.Services.AddSingleton<IJwtService, JwtService>();
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder.Services.AddAuthenticationJwtBearer(
+    s =>
     {
-        ValidateIssuer = true, 
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true, 
-
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]!))
-    };
+        s.SigningKey = builder.Configuration["Jwt:Secret"]!;
+    },
+    b =>
+    {
+        b.TokenValidationParameters.ValidIssuer = builder.Configuration["Jwt:Issuer"];
+        b.TokenValidationParameters.ValidAudience = builder.Configuration["Jwt:Audience"];
+        b.TokenValidationParameters.ValidateLifetime = true;
+        b.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+    }
+);
+builder.Services.Configure<JwtCreationOptions>(o =>
+{
+    o.SigningKey = builder.Configuration["Jwt:Secret"]!;
+    o.Issuer = builder.Configuration["Jwt:Issuer"];
+    o.Audience = builder.Configuration["Jwt:Audience"];
 });
 builder.Services.AddAuthorization();
+builder.Services.AddFastEndpoints();
+builder.Services.SwaggerDocument();
+
 builder.Services.AddCors(o => o.AddPolicy("cors", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
 
 app.UseCors("cors");
 
-// Configure the HTTP request pipeline.
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseFastEndpoints(c =>
+{
+    c.Security.RoleClaimType = ClaimTypes.Role;
+    c.Serializer.Options.PropertyNamingPolicy = null;
+    c.Serializer.Options.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwaggerGen();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication(); 
-app.UseAuthorization();
-
-app.UseFastEndpoints();
 
 var initializer = app.Services.GetRequiredService<DatabaseInitializer>();
 await initializer.InitializeAsync();
