@@ -9,5 +9,6 @@ export { UserRefreshTokenRequest } from './models/user-refresh-token-request';
 export { UserRefreshTokenResponse } from './models/user-refresh-token-response';
 export { UserRegisterRequest } from './models/user-register-request';
 export { UserRegisterResponse } from './models/user-register-response';
-export { UserSavedPasswordGetPasswordsResponse } from './models/user-saved-password-get-passwords-response';
-export { UserSavedPasswordGetPasswordsResponsePassword } from './models/user-saved-password-get-passwords-response-password';
+export { UserSavedPasswordCreatePasswordRequest } from './models/user-saved-password-create-password-request';
+export { UserSavedPasswordCreatePasswordResponse } from './models/user-saved-password-create-password-response';
+export { UserSavedPasswordGetPasswordsPasswordResponse } from './models/user-saved-password-get-passwords-password-response';

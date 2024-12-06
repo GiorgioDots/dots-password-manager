@@ -8,12 +8,12 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { UserSavedPasswordGetPasswordsResponse } from '../../models/user-saved-password-get-passwords-response';
+import { UserSavedPasswordGetPasswordsPasswordResponse } from '../../models/user-saved-password-get-passwords-password-response';
 
 export interface UserSavedPasswordGetPasswordsEndpoint$Params {
 }
 
-export function userSavedPasswordGetPasswordsEndpoint(http: HttpClient, rootUrl: string, params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordGetPasswordsResponse>> {
+export function userSavedPasswordGetPasswordsEndpoint(http: HttpClient, rootUrl: string, params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserSavedPasswordGetPasswordsPasswordResponse>>> {
   const rb = new RequestBuilder(rootUrl, userSavedPasswordGetPasswordsEndpoint.PATH, 'get');
   if (params) {
   }
@@ -23,7 +23,7 @@ export function userSavedPasswordGetPasswordsEndpoint(http: HttpClient, rootUrl:
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserSavedPasswordGetPasswordsResponse>;
+      return r as StrictHttpResponse<Array<UserSavedPasswordGetPasswordsPasswordResponse>>;
     })
   );
 }

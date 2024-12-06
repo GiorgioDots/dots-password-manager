@@ -2,6 +2,6 @@
 
 public interface IJwtService
 {
-    string GenerateJwt(DB.User user);
+    string GenerateJwt(DB.User user, string publicKey);
     string GenerateRefreshToken();
 }

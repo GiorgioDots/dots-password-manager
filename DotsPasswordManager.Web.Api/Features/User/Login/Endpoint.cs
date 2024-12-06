@@ -30,7 +30,7 @@ internal sealed class Endpoint : Endpoint<Request, Response>
             ThrowError("Invalid credentials.");
         }
 
-        var jwt = _jwtService.GenerateJwt(result.user!);
+        var jwt = _jwtService.GenerateJwt(result.user!, r.PublicKey);
         var refreshToken = _jwtService.GenerateRefreshToken();
 
         await Data.CreateRefreshToken(_db, result.user!.Id, refreshToken);

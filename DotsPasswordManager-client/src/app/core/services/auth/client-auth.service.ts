@@ -12,12 +12,18 @@ export class ClientAuthService {
 
   constructor(private authApi: AuthService) {}
 
-  login(username: string, password: string): Observable<any> {
+  login(
+    username: string,
+    password: string,
+    publickKey: string
+  ): Observable<any> {
     return this.authApi
-      .userLoginEndpoint({ body: { Login: username, Password: password } })
+      .userLoginEndpoint({
+        body: { Login: username, Password: password, PublicKey: publickKey },
+      })
       .pipe(
         tap((response) => {
-          console.log(response.Token)
+          console.log(response.Token);
           this.setTokens(response.Token, response.RefreshToken);
         })
       );
@@ -27,13 +33,15 @@ export class ClientAuthService {
     this.clearTokens();
   }
 
-  refreshToken(): Observable<any> {
+  refreshToken(publicKey: string): Observable<any> {
     const refreshToken = this.getRefreshToken();
     return this.authApi
-      .userRefreshTokenEndpoint({ body: { Token: refreshToken } })
+      .userRefreshTokenEndpoint({
+        body: { Token: refreshToken ?? '', PublicKey: publicKey },
+      })
       .pipe(
         tap((response) => {
-          console.log(response)
+          console.log(response);
           this.setTokens(response.Token, response.RefreshToken);
         })
       );
@@ -51,6 +59,7 @@ export class ClientAuthService {
     accessToken: string | undefined,
     refreshToken: string | undefined
   ): void {
+    console.log("Setting tokens", accessToken, refreshToken)
     if (!accessToken || !refreshToken) {
       this.clearTokens();
       return;
@@ -61,6 +70,7 @@ export class ClientAuthService {
   }
 
   private clearTokens(): void {
+    console.log("Clearing tokens")
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     this.tokenSubject.next(null);

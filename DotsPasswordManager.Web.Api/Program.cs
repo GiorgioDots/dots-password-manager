@@ -1,4 +1,5 @@
 using DotsPasswordManager.Web.Api.Services.Auth;
+using DotsPasswordManager.Web.Api.Services.Crypto;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using System.Security.Claims;
@@ -15,6 +16,8 @@ builder.Services.AddSingleton<IdbConnectionFactory>(_ =>
     new NpgsqlDbConnectionFactory(builder.Configuration["DbConnectionString"]!));
 
 builder.Services.AddSingleton<IJwtService, JwtService>();
+builder.Services.AddSingleton<ClientCryptoService>();
+builder.Services.AddSingleton<CryptoService>();
 
 builder.Services.AddAuthenticationJwtBearer(
     s =>

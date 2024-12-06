@@ -15,19 +15,20 @@ public class JwtService : IJwtService
         _jwtExpirationMinutes = int.Parse(configuration["Jwt:ExpirationMinutes"]!);
     }
 
-    public string GenerateJwt(DB.User user)
+    public string GenerateJwt(DB.User user, string publicKey)
     {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, "User") // Puoi aggiungere ruoli o altri claim
+            new Claim(ClaimTypes.Role, "User"), // Puoi aggiungere ruoli o altri claim
+            new Claim("PublicKey", publicKey)
         };
 
         return JwtBearer.CreateToken(o =>
         {
-            o.ExpireAt = DateTime.UtcNow.AddMinutes(_jwtExpirationMinutes);
+            o.ExpireAt = DateTime.UtcNow.AddSeconds(_jwtExpirationMinutes);
             o.User.Claims.AddRange(claims);
         });
     }
