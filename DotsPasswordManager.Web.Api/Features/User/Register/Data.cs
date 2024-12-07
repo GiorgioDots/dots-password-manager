@@ -18,7 +18,10 @@ internal sealed class Data
 
     internal static async Task<Guid> CreateNewUser(IDbConnection _db, DB.User user) =>
         await _db.QuerySingleAsync<Guid>(
-            @"INSERT INTO users (email, username, passwordhash) VALUES (@Email, @Username, @PasswordHash) RETURNING id;", 
+            @"
+                INSERT INTO users (email, username, passwordhash, originalusername) VALUES 
+                (@Email, @Username, @PasswordHash, @OriginalUsername) RETURNING id;
+            ", 
             user
         );
 }

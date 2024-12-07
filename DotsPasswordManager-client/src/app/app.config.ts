@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
+  provideAppInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -15,6 +16,23 @@ import { refreshTokenInterceptor } from './core/interceptors/refresh-token.inter
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideAppInitializer(() => {
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', (event) => {
+          const theme = event.matches ? 'frappe' : 'cupcake';
+          document.documentElement.setAttribute('data-theme', theme);
+        });
+      let theme = localStorage.getItem('app_theme');
+      if (theme == null) {
+        theme =
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'frappe'
+            : 'cupcake';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    }),
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([jwtInterceptor, refreshTokenInterceptor])

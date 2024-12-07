@@ -21,7 +21,7 @@ public class JwtService : IJwtService
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Name, user.OriginalUsername),
             new Claim(ClaimTypes.Role, "User"), // Puoi aggiungere ruoli o altri claim
             new Claim("PublicKey", publicKey)
         };

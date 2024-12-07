@@ -23,6 +23,7 @@
       "@/env/*": ["./src/environments/*"],
       "@/api/*": ["./src/app/core/main-api/*"],
       "@/svcs/*": ["./src/app/core/svcs/*"],
+      "@/cmp/*": ["./src/app/core/components/*"]
     }
   },
   "angularCompilerOptions": {

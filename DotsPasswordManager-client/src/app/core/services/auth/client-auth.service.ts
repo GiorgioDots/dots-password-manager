@@ -1,6 +1,7 @@
+import { AuthService } from '@/api/services';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { AuthService } from '@/api/services';
+import { UserLoginRequest } from '../../main-api/models/user-login-request';
 
 @Injectable({
   providedIn: 'root',
@@ -12,14 +13,10 @@ export class ClientAuthService {
 
   constructor(private authApi: AuthService) {}
 
-  login(
-    username: string,
-    password: string,
-    publickKey: string
-  ): Observable<any> {
+  login(data: UserLoginRequest): Observable<any> {
     return this.authApi
       .userLoginEndpoint({
-        body: { Login: username, Password: password, PublicKey: publickKey },
+        body: data,
       })
       .pipe(
         tap((response) => {
@@ -59,7 +56,7 @@ export class ClientAuthService {
     accessToken: string | undefined,
     refreshToken: string | undefined
   ): void {
-    console.log("Setting tokens", accessToken, refreshToken)
+    console.log('Setting tokens', accessToken, refreshToken);
     if (!accessToken || !refreshToken) {
       this.clearTokens();
       return;
@@ -70,7 +67,7 @@ export class ClientAuthService {
   }
 
   private clearTokens(): void {
-    console.log("Clearing tokens")
+    console.log('Clearing tokens');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     this.tokenSubject.next(null);

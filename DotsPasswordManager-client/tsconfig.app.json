@@ -10,7 +10,8 @@
       "@/app/*": ["./src/app/*"],
       "@/env/*": ["./src/environments/*"],
       "@/api/*": ["./src/app/core/main-api/*"],
-      "@/svcs/*": ["./src/app/core/svcs/*"],
+      "@/svcs/*": ["./src/app/core/services/*"],
+      "@/cmp/*": ["./src/app/core/components/*"]
     }
   },
   "files": [

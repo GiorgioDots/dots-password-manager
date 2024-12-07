@@ -23,13 +23,13 @@ internal sealed class Endpoint : Endpoint<Request, Response, Mapper>
 
         using var _db = await _dbFactory.CreateConnectionAsync(c);
 
-        var emailIsTaken = Data.EmailAddressIsTaken(_db, user.Email);
+        var emailIsTaken = Data.EmailAddressIsTaken(_db, user.Email.ToLower());
         if (emailIsTaken)
         {
             AddError("Email is already taken.");
         }
 
-        var usernameIsTaken = Data.UsernameIsTaken(_db, user.Username);
+        var usernameIsTaken = Data.UsernameIsTaken(_db, user.Username.ToLower());
         if (usernameIsTaken)
         {
             AddError("Username is already taken.");

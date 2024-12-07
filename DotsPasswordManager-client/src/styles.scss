@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    height: 100vh;
+    height: 100dvh;
+}
+
+.modal-box {
+    @apply w-full;
+}
+
+.mat-mdc-dialog-surface {
+    background: transparent !important;
+}
