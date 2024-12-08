@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
+  inject,
   provideAppInitializer,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -12,6 +13,9 @@ import { ApiModule } from './core/main-api/api.module';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { refreshTokenInterceptor } from './core/interceptors/refresh-token.interceptor';
+import { ClientAuthService } from './core/services/auth/client-auth.service';
+import { ClientCryptoService } from './core/services/e2e-encryption/client-crypto.service';
+import { of, switchMap } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,6 +36,16 @@ export const appConfig: ApplicationConfig = {
             : 'cupcake';
       }
       document.documentElement.setAttribute('data-theme', theme);
+      const clientAuthSvc = inject(ClientAuthService);
+      if (clientAuthSvc.isLoggedIn()) {
+        const clientCrypto = inject(ClientCryptoService);
+        return clientCrypto.exportPublicKey().pipe(
+          switchMap((publicKey) => {
+            return clientAuthSvc.refreshToken(publicKey);
+          })
+        );
+      }
+      return of();
     }),
     provideRouter(routes),
     provideHttpClient(

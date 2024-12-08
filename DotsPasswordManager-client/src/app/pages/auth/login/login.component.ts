@@ -40,7 +40,6 @@ export class LoginComponent {
     const state = history.state as
       | { username: string; password: string }
       | undefined;
-    console.log(state);
     if (state) {
       form.get('Login')?.setValue(state.username);
       form.get('Password')?.setValue(state.password);
@@ -65,9 +64,7 @@ export class LoginComponent {
       .pipe(
         switchMap(() => this.clientCrypto.exportPublicKey()),
         switchMap((publicKey) => {
-          console.log(publicKey);
           data.PublicKey = publicKey;
-          console.log(data);
           return this.authService.login(data);
         })
       )

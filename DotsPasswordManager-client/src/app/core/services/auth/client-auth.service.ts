@@ -20,7 +20,6 @@ export class ClientAuthService {
       })
       .pipe(
         tap((response) => {
-          console.log(response.Token);
           this.setTokens(response.Token, response.RefreshToken);
         })
       );
@@ -38,7 +37,6 @@ export class ClientAuthService {
       })
       .pipe(
         tap((response) => {
-          console.log(response);
           this.setTokens(response.Token, response.RefreshToken);
         })
       );
@@ -56,7 +54,6 @@ export class ClientAuthService {
     accessToken: string | undefined,
     refreshToken: string | undefined
   ): void {
-    console.log('Setting tokens', accessToken, refreshToken);
     if (!accessToken || !refreshToken) {
       this.clearTokens();
       return;
@@ -67,7 +64,6 @@ export class ClientAuthService {
   }
 
   private clearTokens(): void {
-    console.log('Clearing tokens');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     this.tokenSubject.next(null);

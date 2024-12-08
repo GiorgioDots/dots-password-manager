@@ -28,6 +28,23 @@ export const routes: Routes = [
       import('@/app/pages/passwords/passwords.component').then(
         (k) => k.PasswordsComponent
       ),
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import(
+            '@/app/pages/passwords/password/no-selection/no-selection.component'
+          ).then((k) => k.NoSelectionComponent),
+      },
+      {
+        path: ':id',
+        loadComponent: () =>
+          import('@/app/pages/passwords/password/password.component').then(
+            (k) => k.PasswordComponent
+          ),
+      },
+    ],
   },
   {
     path: '**',

@@ -65,4 +65,23 @@ export class ClientCryptoService {
       })
     );
   }
+
+  async decryptDataAsync(encryptedData: string): Promise<string> {
+    if (!this.keyPair || !this.keyPair.privateKey) {
+      throw new Error('Key pair not generated.');
+    }
+
+    const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) =>
+      c.charCodeAt(0)
+    );
+    var decryptedBytes = await window.crypto.subtle.decrypt(
+      {
+        name: 'RSA-OAEP',
+      },
+      this.keyPair.privateKey,
+      encryptedBytes
+    ); 
+    
+    return new TextDecoder().decode(decryptedBytes);
+  }
 }
