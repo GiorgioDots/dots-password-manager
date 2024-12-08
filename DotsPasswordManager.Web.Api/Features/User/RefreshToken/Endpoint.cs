@@ -33,7 +33,7 @@ internal sealed class Endpoint : Endpoint<Request, Response>
         if (user == null)
             ThrowError("User not found.");
 
-        var newJwt = _jwtService.GenerateJwt(user, r.PublicKey);
+        var newJwt = _jwtService.GenerateJwt(user);
         var newRefreshToken = _jwtService.GenerateRefreshToken();
 
         await Data.RevokeToken(_db, token.Id);

@@ -33,28 +33,22 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       refreshTokenService.isRefreshing = true;
       refreshTokenService.refreshTokenSubject.next(undefined);
 
-      return clientCrypto.generateKeyPair().pipe(
-        switchMap(() => clientCrypto.exportPublicKey()),
-        switchMap((publicKey) => {
-          return authService.refreshToken(publicKey).pipe(
-            switchMap((tokenResponse: UserRefreshTokenResponse) => {
-              refreshTokenService.isRefreshing = false;
-              refreshTokenService.refreshTokenSubject.next(tokenResponse.Token);
-
-              return next(
-                req.clone({
-                  setHeaders: {
-                    Authorization: `Bearer ${tokenResponse.Token}`,
-                  },
-                })
-              );
-            }),
-            catchError((err) => {
-              refreshTokenService.isRefreshing = false;
-              authService.logout();
-              return throwError(() => err);
+      return authService.refreshToken().pipe(
+        switchMap((tokenResponse: UserRefreshTokenResponse) => {
+          refreshTokenService.isRefreshing = false;
+          refreshTokenService.refreshTokenSubject.next(tokenResponse.Token);
+          return next(
+            req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${tokenResponse.Token}`,
+              },
             })
           );
+        }),
+        catchError((err) => {
+          refreshTokenService.isRefreshing = false;
+          authService.logout();
+          return throwError(() => err);
         })
       );
     } else {

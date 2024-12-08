@@ -23,12 +23,11 @@ export class LoginComponent {
   constructor(
     private clientCrypto: ClientCryptoService,
     private authService: ClientAuthService,
-    private router: Router,
+    private router: Router
   ) {
     const form = new TypedFormGroup<UserLoginRequest>({
       Login: new FormControl(),
       Password: new FormControl(),
-      PublicKey: new FormControl(),
     });
     form
       .get('Login')
@@ -43,8 +42,8 @@ export class LoginComponent {
     if (state) {
       form.get('Login')?.setValue(state.username);
       form.get('Password')?.setValue(state.password);
-      state.password = "";
-      state.username = "";
+      state.password = '';
+      state.username = '';
     }
     this.form = signal(form);
   }
@@ -59,20 +58,11 @@ export class LoginComponent {
     }
 
     const data = this.form().getRawValue() as UserLoginRequest;
-    this.clientCrypto
-      .generateKeyPair()
-      .pipe(
-        switchMap(() => this.clientCrypto.exportPublicKey()),
-        switchMap((publicKey) => {
-          data.PublicKey = publicKey;
-          return this.authService.login(data);
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/','passwords'])
-        },
-        error: (err) => console.error('Login failed', err),
-      });
+    this.authService.login(data).subscribe({
+      next: () => {
+        this.router.navigate(['/', 'passwords']);
+      },
+      error: (err) => console.error('Login failed', err),
+    });
   }
 }

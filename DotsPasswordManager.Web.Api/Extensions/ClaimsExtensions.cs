@@ -10,9 +10,4 @@ public static class ClaimsExtensions
         if (uid == null) return null;
         return new Guid(uid);
     }
-
-    public static string GetPublicKey(this IEnumerable<Claim> claims)
-    {
-        return claims.FirstOrDefault(k => k.Type == "PublicKey")?.Value?.ToString() ?? "";
-    }
 }

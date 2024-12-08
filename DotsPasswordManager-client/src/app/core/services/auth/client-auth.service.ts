@@ -29,11 +29,11 @@ export class ClientAuthService {
     this.clearTokens();
   }
 
-  refreshToken(publicKey: string): Observable<any> {
+  refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
     return this.authApi
       .userRefreshTokenEndpoint({
-        body: { Token: refreshToken ?? '', PublicKey: publicKey },
+        body: { Token: refreshToken ?? '' },
       })
       .pipe(
         tap((response) => {

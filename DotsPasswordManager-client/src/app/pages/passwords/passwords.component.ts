@@ -11,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { from, switchMap } from 'rxjs';
 import { PasswordsListComponent } from '../../core/components/passwords/passwords-list/passwords-list.component';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { PasswordSharedService } from '@/app/core/services/password-shared.service';
+import {sortBy} from 'underscore';
 
 @Component({
   selector: 'app-passwords',
@@ -30,38 +32,42 @@ export class PasswordsComponent implements OnInit {
   private router = inject(Router);
   private passwordsApi = inject(PasswordsService);
   private clientCrypto = inject(ClientCryptoService);
+  private passwordShared = inject(PasswordSharedService);
 
   passwords = signal<UserSavedPasswordGetPasswordsPasswordResponse[]>([]);
 
-  constructor() {}
 
   ngOnInit(): void {
-    this.passwordsApi
-      .userSavedPasswordGetPasswordsEndpoint()
-      .pipe(
-        switchMap((res) => {
-          const promises = res.map(async (k) => {
-            k.Login = await this.clientCrypto.decryptDataAsync(k.Login!);
-            k.Password = await this.clientCrypto.decryptDataAsync(k.Password!);
-            if (k.SecondLogin) {
-              k.SecondLogin = await this.clientCrypto.decryptDataAsync(
-                k.SecondLogin
-              );
-            }
-            return k;
-          });
-          return from(Promise.all(promises));
-        })
-      )
-      .subscribe({
-        next: (res) => {
-          console.log(res);
-          this.passwords.set(res);
-        },
-      });
+    this.passwordShared.passwordCreated.subscribe(() => {
+      this.fetchPasswords();
+    })
   }
 
-  performDecrypt(encrypted: string) {}
+  fetchPasswords(){
+    this.passwordsApi
+    .userSavedPasswordGetPasswordsEndpoint()
+    .pipe(
+      switchMap((res) => {
+        const promises = res.map(async (k) => {
+          k.Login = await this.clientCrypto.decryptDataAsync(k.Login!);
+          k.Password = await this.clientCrypto.decryptDataAsync(k.Password!);
+          if (k.SecondLogin) {
+            k.SecondLogin = await this.clientCrypto.decryptDataAsync(
+              k.SecondLogin
+            );
+          }
+          return k;
+        });
+        return from(Promise.all(promises));
+      })
+    )
+    .subscribe({
+      next: (res) => {
+        const sorted = sortBy(res, (k) => k.Name?.toLowerCase())
+        this.passwords.set(sorted);
+      },
+    });
+  }
 
   onQuickSearch() {
     this.dialog.open(QuickSearchDialogComponent, {

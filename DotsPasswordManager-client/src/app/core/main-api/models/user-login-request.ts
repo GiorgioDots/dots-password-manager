@@ -5,5 +5,4 @@
 export interface UserLoginRequest {
   Login: string;
   Password: string;
-  PublicKey: string;
 }

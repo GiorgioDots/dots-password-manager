@@ -28,15 +28,12 @@ internal sealed class Endpoint : EndpointWithoutRequest<List<PasswordResponse>>
         using var _db = await _dbFactory.CreateConnectionAsync(c);
 
         var passwords = await Data.GetPasswords(_db, userId.Value);
-        var publicKey = User.Claims.GetPublicKey();
+        var publicKey = HttpContext.Request.Headers.GetPublicKey();
         var retPasswords = passwords
             .Select(k => new PasswordResponse
             {
                 Id = k.Id,
                 Name = k.Name,
-                Login = clientCrypto.Encrypt(k.Login, publicKey),
-                SecondLogin = k.SecondLogin == null ? null : clientCrypto.Encrypt(k.SecondLogin, publicKey),
-                Password = clientCrypto.Encrypt(crypto.Decrypt(k.PasswordHash), publicKey),
                 Notes = k.Notes,
                 Tags = k.Tags,
                 Url = k.Url,

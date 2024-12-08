@@ -24,30 +24,39 @@ internal sealed class Endpoint : Endpoint<GetPasswordRequest, PasswordResponse>
         {
             ThrowError("Invalid user id");
         }
-        
-        using var _db = await _dbFactory.CreateConnectionAsync(ct);
-        var password = await Data.GetPassword(_db, userId, pwdId);
-
-        if (password == null)
+        try
         {
-            ThrowError("Not Found");
+            using var _db = await _dbFactory.CreateConnectionAsync(ct);
+            var password = await Data.GetPassword(_db, userId, pwdId);
+
+            if (password == null)
+            {
+                ThrowError("Not Found");
+            }
+
+            var publicKey = HttpContext.Request.Headers.GetPublicKey();
+            var ret = new PasswordResponse()
+            {
+                Id = password.Id,
+                Name = password.Name,
+                Login = clientCrypto.Encrypt(password.Login, publicKey),
+                SecondLogin = password.SecondLogin == null ? null : clientCrypto.Encrypt(password.SecondLogin, publicKey),
+                Password = clientCrypto.Encrypt(crypto.Decrypt(password.PasswordHash), publicKey),
+                Notes = password.Notes,
+                Tags = password.Tags,
+                Url = password.Url,
+                CreatedAt = password.CreatedAt,
+                UpdatedAt = password.UpdatedAt,
+            };
+
+            await SendOkAsync(ret, ct);
+
         }
-
-        var publicKey = User.Claims.GetPublicKey();
-        var ret = new PasswordResponse()
+        catch (Exception e)
         {
-            Id = password.Id,
-            Name = password.Name,
-            Login = clientCrypto.Encrypt(password.Login, publicKey),
-            SecondLogin = password.SecondLogin == null ? null : clientCrypto.Encrypt(password.SecondLogin, publicKey),
-            Password = clientCrypto.Encrypt(crypto.Decrypt(password.PasswordHash), publicKey),
-            Notes = password.Notes,
-            Tags = password.Tags,
-            Url = password.Url,
-            CreatedAt = password.CreatedAt,
-            UpdatedAt = password.UpdatedAt,
-        };
 
-        await SendOkAsync(ret, ct);
+            throw;
+        }
+        
     }
 }

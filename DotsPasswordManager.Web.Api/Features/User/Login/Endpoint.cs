@@ -1,4 +1,5 @@
-﻿using DotsPasswordManager.Web.Api.Services.Auth;
+﻿using DotsPasswordManager.Web.Api.Extensions;
+using DotsPasswordManager.Web.Api.Services.Auth;
 
 namespace User.Login;
 
@@ -30,7 +31,9 @@ internal sealed class Endpoint : Endpoint<Request, Response>
             ThrowError("Invalid credentials.");
         }
 
-        var jwt = _jwtService.GenerateJwt(result.user!, r.PublicKey);
+        var publicKey = this.HttpContext.Request.Headers.GetPublicKey();
+
+        var jwt = _jwtService.GenerateJwt(result.user);
         var refreshToken = _jwtService.GenerateRefreshToken();
 
         await Data.CreateRefreshToken(_db, result.user!.Id, refreshToken);

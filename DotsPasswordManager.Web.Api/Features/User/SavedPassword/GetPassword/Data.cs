@@ -8,7 +8,7 @@ public class Data
     {
         var pwd = await db.QuerySingleAsync<DB.SavedPassword>(@"
            SELECT * FROM SavedPasswords WHERE Id = @Id AND UserId = @IdUser 
-        ");
+        ", new { Id = pwdId, IdUser = userId  });
         return pwd;
     }
 }

@@ -3,7 +3,6 @@
 internal sealed class Request
 {
     public string Token { get; set; }
-    public string PublicKey { get; set; }
 
     internal sealed class Validator : Validator<Request>
     {

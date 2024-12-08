@@ -1,14 +1,16 @@
 import {
   UserSavedPasswordCreatePasswordRequest,
   UserSavedPasswordGetPasswordPasswordResponse,
+  UserSavedPasswordUpdatePasswordRequest,
 } from '@/app/core/main-api/models';
 import { PasswordsService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
+import { PasswordSharedService } from '@/app/core/services/password-shared.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { from, switchMap } from 'rxjs';
 
 @Component({
@@ -18,8 +20,9 @@ import { from, switchMap } from 'rxjs';
   styleUrl: './password.component.scss',
 })
 export class PasswordComponent {
-  pwdApi = inject(PasswordsService);
-  clientCrypto = inject(ClientCryptoService);
+  private pwdApi = inject(PasswordsService);
+  private clientCrypto = inject(ClientCryptoService);
+  private passwordShared = inject(PasswordSharedService);
 
   form = signal<
     TypedFormGroup<UserSavedPasswordGetPasswordPasswordResponse> | undefined
@@ -28,7 +31,9 @@ export class PasswordComponent {
   isNew = signal(false);
   id = signal<string | null>(null);
 
-  constructor(private route: ActivatedRoute) {
+  private router = inject(Router);
+
+  constructor(route: ActivatedRoute) {
     route.paramMap.subscribe((params) => {
       this.init(params.get('id'));
     });
@@ -44,6 +49,7 @@ export class PasswordComponent {
       )
     ) {
       this.isNew.set(false);
+      this.form()?.disable();
       this.pwdApi
         .userSavedPasswordGetPasswordEndpoint({
           Id: pwdId,
@@ -55,7 +61,6 @@ export class PasswordComponent {
         )
         .subscribe({
           next: (pwd) => {
-            console.log(pwd);
             this.initForm(pwd);
           },
         });
@@ -90,7 +95,15 @@ export class PasswordComponent {
     this.form()!.get('Login')?.addValidators([Validators.required]);
     this.form()!.get('Password')?.addValidators([Validators.required]);
 
-    this.form()!.setValue(pwd);
+    this.form()!.setValue({
+      Name: pwd.Name,
+      Login: pwd.Login,
+      SecondLogin: pwd.SecondLogin,
+      Password: pwd.Password,
+      Notes: pwd.Notes,
+      Url: pwd.Url,
+      Tags: pwd.Tags,
+    });
   }
 
   async decryptPwd(pwd: UserSavedPasswordGetPasswordPasswordResponse) {
@@ -112,13 +125,22 @@ export class PasswordComponent {
     this.form()?.get('Tags')?.setValue(currTags);
   }
 
+  onRemoveTag(tag: string) {
+    if (tag == '') return;
+    let currTags = this.form()?.get('Tags')?.value ?? [];
+    currTags = currTags.filter((k) => k != tag);
+    this.form()?.get('Tags')?.setValue(currTags);
+  }
+
   onSave() {
     const form = this.form();
     if (!form || form.invalid) return;
 
+    this.form()?.updateValueAndValidity();
+    this.form()?.disable();
+
     if (this.isNew()) {
       const data = form.getRawValue() as UserSavedPasswordCreatePasswordRequest;
-      console.log(data);
       this.pwdApi
         .userSavedPasswordCreatePasswordEndpoint({
           body: data,
@@ -130,7 +152,26 @@ export class PasswordComponent {
         )
         .subscribe({
           next: (res) => {
-            this.init(res.Id ?? null);
+            this.passwordShared.setPasswordsChanged();
+            this.router.navigate(['passwords', res.Id]);
+          },
+        });
+    } else {
+      const data = form.getRawValue() as UserSavedPasswordUpdatePasswordRequest;
+      this.pwdApi
+        .userSavedPasswordUpdatePasswordEndpoint({
+          body: data,
+          id: this.id()!,
+        })
+        .pipe(
+          switchMap((ret) => {
+            return from(this.decryptPwd(ret));
+          })
+        )
+        .subscribe({
+          next: (res) => {
+            this.passwordShared.setPasswordsChanged();
+            this.initForm(res);
           },
         });
     }

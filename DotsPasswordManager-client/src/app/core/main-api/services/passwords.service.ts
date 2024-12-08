@@ -20,6 +20,9 @@ import { UserSavedPasswordGetPasswordPasswordResponse } from '../models/user-sav
 import { userSavedPasswordGetPasswordsEndpoint } from '../fn/passwords/user-saved-password-get-passwords-endpoint';
 import { UserSavedPasswordGetPasswordsEndpoint$Params } from '../fn/passwords/user-saved-password-get-passwords-endpoint';
 import { UserSavedPasswordGetPasswordsPasswordResponse } from '../models/user-saved-password-get-passwords-password-response';
+import { userSavedPasswordUpdatePasswordEndpoint } from '../fn/passwords/user-saved-password-update-password-endpoint';
+import { UserSavedPasswordUpdatePasswordEndpoint$Params } from '../fn/passwords/user-saved-password-update-password-endpoint';
+import { UserSavedPasswordUpdatePasswordResponse } from '../models/user-saved-password-update-password-response';
 
 @Injectable({ providedIn: 'root' })
 export class PasswordsService extends BaseService {
@@ -27,28 +30,28 @@ export class PasswordsService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `userSavedPasswordGetPasswordsEndpoint()` */
-  static readonly UserSavedPasswordGetPasswordsEndpointPath = '/passwords';
+  /** Path part for operation `userSavedPasswordUpdatePasswordEndpoint()` */
+  static readonly UserSavedPasswordUpdatePasswordEndpointPath = '/passwords/edit/{id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `userSavedPasswordGetPasswordsEndpoint()` instead.
+   * To access only the response body, use `userSavedPasswordUpdatePasswordEndpoint()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordGetPasswordsEndpoint$Response(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserSavedPasswordGetPasswordsPasswordResponse>>> {
-    return userSavedPasswordGetPasswordsEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordUpdatePasswordEndpoint$Response(params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordUpdatePasswordResponse>> {
+    return userSavedPasswordUpdatePasswordEndpoint(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `userSavedPasswordGetPasswordsEndpoint$Response()` instead.
+   * To access the full response (for headers, for example), `userSavedPasswordUpdatePasswordEndpoint$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordGetPasswordsEndpoint(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<Array<UserSavedPasswordGetPasswordsPasswordResponse>> {
-    return this.userSavedPasswordGetPasswordsEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<UserSavedPasswordGetPasswordsPasswordResponse>>): Array<UserSavedPasswordGetPasswordsPasswordResponse> => r.body)
+  userSavedPasswordUpdatePasswordEndpoint(params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordUpdatePasswordResponse> {
+    return this.userSavedPasswordUpdatePasswordEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UserSavedPasswordUpdatePasswordResponse>): UserSavedPasswordUpdatePasswordResponse => r.body)
     );
   }
 
@@ -74,6 +77,31 @@ export class PasswordsService extends BaseService {
   userSavedPasswordGetPasswordEndpoint(params: UserSavedPasswordGetPasswordEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordGetPasswordPasswordResponse> {
     return this.userSavedPasswordGetPasswordEndpoint$Response(params, context).pipe(
       map((r: StrictHttpResponse<UserSavedPasswordGetPasswordPasswordResponse>): UserSavedPasswordGetPasswordPasswordResponse => r.body)
+    );
+  }
+
+  /** Path part for operation `userSavedPasswordGetPasswordsEndpoint()` */
+  static readonly UserSavedPasswordGetPasswordsEndpointPath = '/passwords';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `userSavedPasswordGetPasswordsEndpoint()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  userSavedPasswordGetPasswordsEndpoint$Response(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserSavedPasswordGetPasswordsPasswordResponse>>> {
+    return userSavedPasswordGetPasswordsEndpoint(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `userSavedPasswordGetPasswordsEndpoint$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  userSavedPasswordGetPasswordsEndpoint(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<Array<UserSavedPasswordGetPasswordsPasswordResponse>> {
+    return this.userSavedPasswordGetPasswordsEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<Array<UserSavedPasswordGetPasswordsPasswordResponse>>): Array<UserSavedPasswordGetPasswordsPasswordResponse> => r.body)
     );
   }
 

@@ -42,9 +42,9 @@ internal sealed class Endpoint : Endpoint<Request, Response>
         };
         var createdPassword = await Data.CreatePassword(db, savedPassword);
 
-        var publicKey = User.Claims.GetPublicKey();
+        var publicKey = HttpContext.Request.Headers.GetPublicKey();
 
-        await SendAsync(new Response()
+        await SendOkAsync(new Response()
         {
             Id = createdPassword.Id,
             Name = createdPassword.Name,
@@ -56,6 +56,6 @@ internal sealed class Endpoint : Endpoint<Request, Response>
             Tags = createdPassword.Tags,
             CreatedAt = createdPassword.CreatedAt,
             UpdatedAt = createdPassword.UpdatedAt
-        }, cancellation: c);
+        }, c);
     }
 }

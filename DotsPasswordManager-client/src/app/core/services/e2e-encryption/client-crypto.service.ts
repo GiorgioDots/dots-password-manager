@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { from, map, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, map, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientCryptoService {
   private keyPair: CryptoKeyPair | null = null;
+  private isGenerating = new BehaviorSubject<boolean>(false);
 
   // Generate the RSA key pair
   generateKeyPair(): Observable<void> {
@@ -80,8 +81,8 @@ export class ClientCryptoService {
       },
       this.keyPair.privateKey,
       encryptedBytes
-    ); 
-    
+    );
+
     return new TextDecoder().decode(decryptedBytes);
   }
 }

@@ -14,3 +14,5 @@ export { type UserSavedPasswordCreatePasswordResponse } from './models/user-save
 export { type UserSavedPasswordGetPasswordGetPasswordRequest } from './models/user-saved-password-get-password-get-password-request';
 export { type UserSavedPasswordGetPasswordPasswordResponse } from './models/user-saved-password-get-password-password-response';
 export { type UserSavedPasswordGetPasswordsPasswordResponse } from './models/user-saved-password-get-passwords-password-response';
+export { type UserSavedPasswordUpdatePasswordRequest } from './models/user-saved-password-update-password-request';
+export { type UserSavedPasswordUpdatePasswordResponse } from './models/user-saved-password-update-password-response';
