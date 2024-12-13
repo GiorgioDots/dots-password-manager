@@ -1,14 +1,14 @@
 ﻿using DotsPasswordManager.Web.Api.Extensions;
+using DotsPasswordManager.Web.Api.Features.User.SavedPassword._Services;
 using DotsPasswordManager.Web.Api.Services.Crypto;
-using System.Text.Json;
+using User.SavedPassword._DTOs;
 
 namespace User.SavedPassword.GetPasswords;
 
-internal sealed class Endpoint : EndpointWithoutRequest<List<PasswordResponse>>
+internal sealed class Endpoint : EndpointWithoutRequest<List<SavedPasswordDTO>>
 {
-    public IdbConnectionFactory _dbFactory { get; set; }
-    public ClientCryptoService clientCrypto { get; set; }
-    public CryptoService crypto { get; set; }
+    public DPMDbContext _db{ get; set; }
+    public SavedPasswordMapper _mapper { get; set; }
 
     public override void Configure()
     {
@@ -25,22 +25,9 @@ internal sealed class Endpoint : EndpointWithoutRequest<List<PasswordResponse>>
             return;
         }
 
-        using var _db = await _dbFactory.CreateConnectionAsync(c);
+        var passwords = await _db.SavedPasswords.Where(k => k.UserId == userId)
+            .Select(k => _mapper.FromEntity(k)).ToListAsync();
 
-        var passwords = await Data.GetPasswords(_db, userId.Value);
-        var publicKey = HttpContext.Request.Headers.GetPublicKey();
-        var retPasswords = passwords
-            .Select(k => new PasswordResponse
-            {
-                Id = k.Id,
-                Name = k.Name,
-                Notes = k.Notes,
-                Tags = k.Tags,
-                Url = k.Url,
-                CreatedAt = k.CreatedAt,
-                UpdatedAt = k.UpdatedAt,
-            }).ToList();
-
-        await SendOkAsync(retPasswords, c);
+        await SendOkAsync(passwords, c);
     }
 }

@@ -1,61 +1,40 @@
 ﻿using DotsPasswordManager.Web.Api.Extensions;
+using User.SavedPassword._DTOs;
 using DotsPasswordManager.Web.Api.Services.Crypto;
+using DotsPasswordManager.Web.Api.Features.User.SavedPassword._Services;
 
 namespace User.SavedPassword.CreatePassword;
 
-internal sealed class Endpoint : Endpoint<Request, Response>
+internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
 {
-    public IdbConnectionFactory _dbFactory { get; set; }
+    public DPMDbContext _db{ get; set; }
+    public SavedPasswordMapper _mapper { get; set; }
     public CryptoService _cryptoService { get; set; }
-    public ClientCryptoService _clientCrypto { get; set; }
 
     public override void Configure()
     {
         Post("/passwords/create");
         Roles("User");
+        Validator<SavedPasswordDTO.Validator>();
     }
 
-    public override async Task HandleAsync(Request r, CancellationToken c)
+    public override async Task HandleAsync(SavedPasswordDTO r, CancellationToken c)
     {
         var userId = User.Claims.GetUserId();
         if(userId == null)
         {
-            this.AddError("User not found");
+            AddError("User not found");
         }
         ThrowIfAnyErrors();
 
-        var db = await _dbFactory.CreateConnectionAsync(c);
+        var savedPassword = _mapper.ToEntity(r);
+        savedPassword.UserId = userId!.Value;
+        savedPassword.CreatedAt = DateTime.UtcNow;
+        savedPassword.UpdatedAt = DateTime.UtcNow;
 
-        var savedPassword = new DB.SavedPassword
-        {
-            Id = Guid.NewGuid(),
-            Name = r.Name,
-            UserId = userId!.Value,
-            Login = r.Login,
-            SecondLogin = r.SecondLogin,
-            PasswordHash = _cryptoService.Encrypt(r.Password),
-            Url = r.Url,
-            Notes = r.Notes,
-            Tags = r.Tags,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-        var createdPassword = await Data.CreatePassword(db, savedPassword);
+        _db.Add(savedPassword);
+        await _db.SaveChangesAsync(c);
 
-        var publicKey = HttpContext.Request.Headers.GetPublicKey();
-
-        await SendOkAsync(new Response()
-        {
-            Id = createdPassword.Id,
-            Name = createdPassword.Name,
-            Login = _clientCrypto.Encrypt(createdPassword.Login, publicKey),
-            SecondLogin = createdPassword.SecondLogin == null ? null : _clientCrypto.Encrypt(createdPassword.SecondLogin, publicKey),
-            Password = _clientCrypto.Encrypt(_cryptoService.Decrypt(createdPassword.PasswordHash), publicKey),
-            Url = createdPassword.Url,
-            Notes = createdPassword.Notes,
-            Tags = createdPassword.Tags,
-            CreatedAt = createdPassword.CreatedAt,
-            UpdatedAt = createdPassword.UpdatedAt
-        }, c);
+        await SendOkAsync(_mapper.FromEntity(savedPassword), c);
     }
 }

@@ -1,22 +1,22 @@
-using DotsPasswordManager.Web.Api.Extensions;
+﻿using DotsPasswordManager.Web.Api.Extensions;
 using DotsPasswordManager.Web.Api.Features.User.SavedPassword._Services;
 using DotsPasswordManager.Web.Api.Services.Crypto;
 using User.SavedPassword._DTOs;
 
-namespace User.SavedPassword.GetPassword;
+namespace User.SavedPassword.DeletePassword;
 
-internal sealed class Endpoint : Endpoint<GetPasswordRequest, SavedPasswordDTO>
+internal sealed class Endpoint : Endpoint<DeletePasswordRequest, DeletePasswordResponse>
 {
     public DPMDbContext _db { get; set; }
     public SavedPasswordMapper _mapper { get; set; }
 
     public override void Configure()
     {
-        Get("/passwords/{Id}");
+        Delete("/passwords/{Id}");
         Roles("User");
     }
 
-    public override async Task HandleAsync(GetPasswordRequest req, CancellationToken ct)
+    public override async Task HandleAsync(DeletePasswordRequest req, CancellationToken c)
     {
         var userId = User.Claims.GetUserId();
         if (userId == null)
@@ -30,11 +30,22 @@ internal sealed class Endpoint : Endpoint<GetPasswordRequest, SavedPasswordDTO>
             ThrowError("Not Found");
         }
 
-        await SendOkAsync(_mapper.FromEntity(password), ct);
+        _db.Remove(password);
+        await _db.SaveChangesAsync(c);
+
+        await SendOkAsync(new()
+        {
+            Message = "Password deleted"
+        }, c);
     }
 }
 
-internal sealed class GetPasswordRequest
+internal sealed class DeletePasswordRequest
 {
     public Guid Id { get; set; }
+}
+
+internal sealed class DeletePasswordResponse
+{
+    public string Message { get; set; }
 }
