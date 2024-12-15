@@ -1,13 +1,11 @@
-import { UserLoginRequest } from '@/app/core/main-api/models/user-login-request';
+import { UserAuthLoginRequest } from '@/app/core/main-api/models';
 import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
-import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import { CommonModule } from '@angular/common';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -18,14 +16,13 @@ import { switchMap } from 'rxjs';
 export class LoginComponent {
   passwordVisible = signal(false);
 
-  form: WritableSignal<TypedFormGroup<UserLoginRequest>>;
+  form: WritableSignal<TypedFormGroup<UserAuthLoginRequest>>;
 
   constructor(
-    private clientCrypto: ClientCryptoService,
     private authService: ClientAuthService,
     private router: Router
   ) {
-    const form = new TypedFormGroup<UserLoginRequest>({
+    const form = new TypedFormGroup<UserAuthLoginRequest>({
       Login: new FormControl(),
       Password: new FormControl(),
     });
@@ -57,12 +54,17 @@ export class LoginComponent {
       return;
     }
 
-    const data = this.form().getRawValue() as UserLoginRequest;
+    this.form().disable()
+    const data = this.form().getRawValue() as UserAuthLoginRequest;
     this.authService.login(data).subscribe({
       next: () => {
+        this.form().enable();
         this.router.navigate(['/', 'passwords']);
       },
-      error: (err) => console.error('Login failed', err),
+      error: (err) => {
+        this.form().enable();
+        console.error('Login failed', err);
+      },
     });
   }
 }

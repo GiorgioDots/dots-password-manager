@@ -1,5 +1,6 @@
-import { UserRegisterRequest } from '@/app/core/main-api/models/user-register-request';
+import { UserAuthRegisterRequest } from '@/app/core/main-api/models';
 import { AuthService } from '@/app/core/main-api/services';
+import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,10 +16,14 @@ import { of } from 'rxjs';
 })
 export class RegisterComponent {
   passwordVisible = signal(false);
-  form: WritableSignal<TypedFormGroup<UserRegisterRequest>>;
+  form: WritableSignal<TypedFormGroup<UserAuthRegisterRequest>>;
 
-  constructor(private authApi: AuthService, private router: Router) {
-    const form = new TypedFormGroup<UserRegisterRequest>({
+  constructor(
+    private authApi: AuthService,
+    private router: Router,
+    private authService: ClientAuthService
+  ) {
+    const form = new TypedFormGroup<UserAuthRegisterRequest>({
       Email: new FormControl(),
       Username: new FormControl(),
       Password: new FormControl(),
@@ -48,20 +53,23 @@ export class RegisterComponent {
       return;
     }
 
-    const data = this.form().getRawValue() as UserRegisterRequest;
+    const data = this.form().getRawValue() as UserAuthRegisterRequest;
+
+    this.form().disable();
 
     this.authApi
-      .userRegisterEndpoint({
+      .userAuthRegisterEndpoint({
         body: data,
       })
       .subscribe({
-        complete: () => {
-          this.router.navigate(['login'], {
-            state: {
-              username: data.Username,
-              password: data.Password,
-            },
-          });
+        next: (res) => {
+          this.form().enable();
+          this.authService.setTokens(res.Token, res.RefreshToken);
+          this.router.navigate(['/', 'passwords']);
+        },
+        error: (err) => {
+          this.form().enable();
+          console.error('Login failed', err);
         },
       });
   }

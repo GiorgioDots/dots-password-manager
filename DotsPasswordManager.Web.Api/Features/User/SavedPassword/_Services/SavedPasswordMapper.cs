@@ -27,7 +27,7 @@ public class SavedPasswordMapper
         var publicKey = httpContext.HttpContext.Request.Headers.GetPublicKey();
         return new()
         {
-            Id = entity.Id,
+            PasswordId = entity.Id,
             Name = entity.Name,
             Login = clientCrypto.Encrypt(entity.Login, publicKey),
             SecondLogin = entity.SecondLogin == null ? null : clientCrypto.Encrypt(entity.SecondLogin, publicKey),
@@ -35,6 +35,7 @@ public class SavedPasswordMapper
             Url = entity.Url,
             Notes = entity.Notes,
             Tags = entity.Tags,
+            IsFavourite = entity.IsFavourite,
             CreatedAt = entity.CreatedAt,
             UpdatedAt = entity.UpdatedAt
         };
@@ -48,6 +49,7 @@ public class SavedPasswordMapper
             Login = r.Login,
             SecondLogin = r.SecondLogin,
             PasswordHash = cryptoService.Encrypt(r.Password),
+            IsFavourite = r.IsFavourite,
             Url = r.Url,
             Notes = r.Notes,
             Tags = r.Tags,

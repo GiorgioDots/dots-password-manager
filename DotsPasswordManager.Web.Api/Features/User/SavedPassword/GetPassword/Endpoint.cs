@@ -16,7 +16,7 @@ internal sealed class Endpoint : Endpoint<GetPasswordRequest, SavedPasswordDTO>
         Roles("User");
     }
 
-    public override async Task HandleAsync(GetPasswordRequest req, CancellationToken ct)
+    public override async Task HandleAsync(GetPasswordRequest req, CancellationToken c)
     {
         var userId = User.Claims.GetUserId();
         if (userId == null)
@@ -30,7 +30,7 @@ internal sealed class Endpoint : Endpoint<GetPasswordRequest, SavedPasswordDTO>
             ThrowError("Not Found");
         }
 
-        await SendOkAsync(_mapper.FromEntity(password), ct);
+        await SendOkAsync(_mapper.FromEntity(password), c);
     }
 }
 

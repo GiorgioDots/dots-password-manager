@@ -1,8 +1,11 @@
-﻿namespace User.Auth.Register;
+﻿using DotsPasswordManager.Web.Api.Services.Auth;
+
+namespace User.Auth.Register;
 
 internal sealed class Endpoint : Endpoint<Request, Response, Mapper>
 {
     public DPMDbContext _db { get; set; }
+    public IJwtService _jwtService { get; set; }
 
     public override void Configure()
     {
@@ -33,6 +36,19 @@ internal sealed class Endpoint : Endpoint<Request, Response, Mapper>
         _db.Add(user);
         await _db.SaveChangesAsync(c);
 
-        await SendOkAsync(new Response { UserId = user.Id }, c);
+
+        var jwt = _jwtService.GenerateJwt(user);
+        var refreshToken = _jwtService.GenerateRefreshToken();
+
+        _db.RefreshTokens.Add(new()
+        {
+            UserId = user.Id,
+            Token = refreshToken,
+            ExpiresAt = DateTime.UtcNow.AddDays(Config.GetValue<int>("Jwt:RefreshTokenExpirationDays"))
+        });
+
+        await _db.SaveChangesAsync(c);
+
+        await SendOkAsync(new Response { Token = jwt, RefreshToken = refreshToken }, c);
     }
 }

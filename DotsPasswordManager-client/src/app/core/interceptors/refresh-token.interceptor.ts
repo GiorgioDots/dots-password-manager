@@ -17,8 +17,8 @@ import {
   take,
   throwError,
 } from 'rxjs';
-import { UserRefreshTokenResponse } from '../main-api/models/user-refresh-token-response';
 import { ClientCryptoService } from '../services/e2e-encryption/client-crypto.service';
+import { UserAuthRefreshTokenResponse } from '../main-api/models';
 
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(ClientAuthService);
@@ -34,7 +34,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       refreshTokenService.refreshTokenSubject.next(undefined);
 
       return authService.refreshToken().pipe(
-        switchMap((tokenResponse: UserRefreshTokenResponse) => {
+        switchMap((tokenResponse: UserAuthRefreshTokenResponse) => {
           refreshTokenService.isRefreshing = false;
           refreshTokenService.refreshTokenSubject.next(tokenResponse.Token);
           return next(

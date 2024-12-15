@@ -1,7 +1,7 @@
 import { AuthService } from '@/api/services';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { UserLoginRequest } from '../../main-api/models/user-login-request';
+import { UserAuthLoginRequest } from '../../main-api/models';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +13,9 @@ export class ClientAuthService {
 
   constructor(private authApi: AuthService) {}
 
-  login(data: UserLoginRequest): Observable<any> {
+  login(data: UserAuthLoginRequest): Observable<any> {
     return this.authApi
-      .userLoginEndpoint({
+      .userAuthLoginEndpoint({
         body: data,
       })
       .pipe(
@@ -32,7 +32,7 @@ export class ClientAuthService {
   refreshToken(): Observable<any> {
     const refreshToken = this.getRefreshToken();
     return this.authApi
-      .userRefreshTokenEndpoint({
+      .userAuthRefreshTokenEndpoint({
         body: { Token: refreshToken ?? '' },
       })
       .pipe(
@@ -50,7 +50,7 @@ export class ClientAuthService {
     return localStorage.getItem('refreshToken') ?? undefined;
   }
 
-  private setTokens(
+  setTokens(
     accessToken: string | undefined,
     refreshToken: string | undefined
   ): void {

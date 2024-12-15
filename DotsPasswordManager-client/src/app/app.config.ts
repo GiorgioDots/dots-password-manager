@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
       window
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (event) => {
-          const theme = event.matches ? 'frappe' : 'cupcake';
+          const theme = event.matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', theme);
         });
       let theme = localStorage.getItem('app_theme');
@@ -30,8 +30,8 @@ export const appConfig: ApplicationConfig = {
         theme =
           window.matchMedia &&
           window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'frappe'
-            : 'cupcake';
+            ? 'dark'
+            : 'light';
       }
       document.documentElement.setAttribute('data-theme', theme);
       const cryptoSvc = inject(ClientCryptoService);

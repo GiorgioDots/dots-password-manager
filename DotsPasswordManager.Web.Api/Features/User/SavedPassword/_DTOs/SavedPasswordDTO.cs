@@ -1,8 +1,8 @@
 ﻿namespace User.SavedPassword._DTOs;
 
-public sealed class SavedPasswordDTO
+public class SavedPasswordDTO
 {
-    public Guid Id { get; set; }
+    public Guid PasswordId { get; set; }
     public string Name { get; set; }
     public string Login { get; set; }
     public string? SecondLogin { get; set; }
@@ -10,6 +10,7 @@ public sealed class SavedPasswordDTO
     public string Url { get; set; }
     public string Notes { get; set; }
     public string[] Tags { get; set; }
+    public bool IsFavourite { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

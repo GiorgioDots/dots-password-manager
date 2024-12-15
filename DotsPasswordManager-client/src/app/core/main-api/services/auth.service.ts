@@ -11,15 +11,15 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { userLoginEndpoint } from '../fn/auth/user-login-endpoint';
-import { UserLoginEndpoint$Params } from '../fn/auth/user-login-endpoint';
-import { UserLoginResponse } from '../models/user-login-response';
-import { userRefreshTokenEndpoint } from '../fn/auth/user-refresh-token-endpoint';
-import { UserRefreshTokenEndpoint$Params } from '../fn/auth/user-refresh-token-endpoint';
-import { UserRefreshTokenResponse } from '../models/user-refresh-token-response';
-import { userRegisterEndpoint } from '../fn/auth/user-register-endpoint';
-import { UserRegisterEndpoint$Params } from '../fn/auth/user-register-endpoint';
-import { UserRegisterResponse } from '../models/user-register-response';
+import { userAuthLoginEndpoint } from '../fn/auth/user-auth-login-endpoint';
+import { UserAuthLoginEndpoint$Params } from '../fn/auth/user-auth-login-endpoint';
+import { UserAuthLoginResponse } from '../models/user-auth-login-response';
+import { userAuthRefreshTokenEndpoint } from '../fn/auth/user-auth-refresh-token-endpoint';
+import { UserAuthRefreshTokenEndpoint$Params } from '../fn/auth/user-auth-refresh-token-endpoint';
+import { UserAuthRefreshTokenResponse } from '../models/user-auth-refresh-token-response';
+import { userAuthRegisterEndpoint } from '../fn/auth/user-auth-register-endpoint';
+import { UserAuthRegisterEndpoint$Params } from '../fn/auth/user-auth-register-endpoint';
+import { UserAuthRegisterResponse } from '../models/user-auth-register-response';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseService {
@@ -27,78 +27,78 @@ export class AuthService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `userRegisterEndpoint()` */
-  static readonly UserRegisterEndpointPath = '/auth/register';
+  /** Path part for operation `userAuthRegisterEndpoint()` */
+  static readonly UserAuthRegisterEndpointPath = '/auth/register';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `userRegisterEndpoint()` instead.
+   * To access only the response body, use `userAuthRegisterEndpoint()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userRegisterEndpoint$Response(params: UserRegisterEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserRegisterResponse>> {
-    return userRegisterEndpoint(this.http, this.rootUrl, params, context);
+  userAuthRegisterEndpoint$Response(params: UserAuthRegisterEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthRegisterResponse>> {
+    return userAuthRegisterEndpoint(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `userRegisterEndpoint$Response()` instead.
+   * To access the full response (for headers, for example), `userAuthRegisterEndpoint$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userRegisterEndpoint(params: UserRegisterEndpoint$Params, context?: HttpContext): Observable<UserRegisterResponse> {
-    return this.userRegisterEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserRegisterResponse>): UserRegisterResponse => r.body)
+  userAuthRegisterEndpoint(params: UserAuthRegisterEndpoint$Params, context?: HttpContext): Observable<UserAuthRegisterResponse> {
+    return this.userAuthRegisterEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UserAuthRegisterResponse>): UserAuthRegisterResponse => r.body)
     );
   }
 
-  /** Path part for operation `userRefreshTokenEndpoint()` */
-  static readonly UserRefreshTokenEndpointPath = '/auth/refresh-token';
+  /** Path part for operation `userAuthRefreshTokenEndpoint()` */
+  static readonly UserAuthRefreshTokenEndpointPath = '/auth/refresh-token';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `userRefreshTokenEndpoint()` instead.
+   * To access only the response body, use `userAuthRefreshTokenEndpoint()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userRefreshTokenEndpoint$Response(params: UserRefreshTokenEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserRefreshTokenResponse>> {
-    return userRefreshTokenEndpoint(this.http, this.rootUrl, params, context);
+  userAuthRefreshTokenEndpoint$Response(params: UserAuthRefreshTokenEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthRefreshTokenResponse>> {
+    return userAuthRefreshTokenEndpoint(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `userRefreshTokenEndpoint$Response()` instead.
+   * To access the full response (for headers, for example), `userAuthRefreshTokenEndpoint$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userRefreshTokenEndpoint(params: UserRefreshTokenEndpoint$Params, context?: HttpContext): Observable<UserRefreshTokenResponse> {
-    return this.userRefreshTokenEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserRefreshTokenResponse>): UserRefreshTokenResponse => r.body)
+  userAuthRefreshTokenEndpoint(params: UserAuthRefreshTokenEndpoint$Params, context?: HttpContext): Observable<UserAuthRefreshTokenResponse> {
+    return this.userAuthRefreshTokenEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UserAuthRefreshTokenResponse>): UserAuthRefreshTokenResponse => r.body)
     );
   }
 
-  /** Path part for operation `userLoginEndpoint()` */
-  static readonly UserLoginEndpointPath = '/auth/login';
+  /** Path part for operation `userAuthLoginEndpoint()` */
+  static readonly UserAuthLoginEndpointPath = '/auth/login';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `userLoginEndpoint()` instead.
+   * To access only the response body, use `userAuthLoginEndpoint()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userLoginEndpoint$Response(params: UserLoginEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserLoginResponse>> {
-    return userLoginEndpoint(this.http, this.rootUrl, params, context);
+  userAuthLoginEndpoint$Response(params: UserAuthLoginEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthLoginResponse>> {
+    return userAuthLoginEndpoint(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `userLoginEndpoint$Response()` instead.
+   * To access the full response (for headers, for example), `userAuthLoginEndpoint$Response()` instead.
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userLoginEndpoint(params: UserLoginEndpoint$Params, context?: HttpContext): Observable<UserLoginResponse> {
-    return this.userLoginEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserLoginResponse>): UserLoginResponse => r.body)
+  userAuthLoginEndpoint(params: UserAuthLoginEndpoint$Params, context?: HttpContext): Observable<UserAuthLoginResponse> {
+    return this.userAuthLoginEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UserAuthLoginResponse>): UserAuthLoginResponse => r.body)
     );
   }
 

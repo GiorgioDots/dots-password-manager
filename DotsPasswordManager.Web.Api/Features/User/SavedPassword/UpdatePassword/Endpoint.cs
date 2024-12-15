@@ -29,7 +29,7 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
         ThrowIfAnyErrors();
 
         var password = await _db.SavedPasswords
-            .FirstOrDefaultAsync(k => k.Id == r.Id && k.UserId == userId);
+            .FirstOrDefaultAsync(k => k.Id == r.PasswordId && k.UserId == userId);
 
         if (password == null)
         {

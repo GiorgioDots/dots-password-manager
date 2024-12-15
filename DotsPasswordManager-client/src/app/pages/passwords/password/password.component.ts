@@ -1,7 +1,5 @@
 import {
-  UserSavedPasswordCreatePasswordRequest,
-  UserSavedPasswordGetPasswordPasswordResponse,
-  UserSavedPasswordUpdatePasswordRequest,
+UserSavedPasswordDtOsSavedPasswordDto
 } from '@/app/core/main-api/models';
 import { PasswordsService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
@@ -25,7 +23,7 @@ export class PasswordComponent {
   private passwordShared = inject(PasswordSharedService);
 
   form = signal<
-    TypedFormGroup<UserSavedPasswordGetPasswordPasswordResponse> | undefined
+    TypedFormGroup<UserSavedPasswordDtOsSavedPasswordDto> | undefined
   >(undefined);
 
   isNew = signal(false);
@@ -78,9 +76,9 @@ export class PasswordComponent {
     }
   }
 
-  initForm(pwd: UserSavedPasswordGetPasswordPasswordResponse) {
+  initForm(pwd: UserSavedPasswordDtOsSavedPasswordDto) {
     this.form.set(
-      new TypedFormGroup<UserSavedPasswordGetPasswordPasswordResponse>({
+      new TypedFormGroup<UserSavedPasswordDtOsSavedPasswordDto>({
         Name: new FormControl(),
         Login: new FormControl(),
         SecondLogin: new FormControl(),
@@ -106,7 +104,7 @@ export class PasswordComponent {
     });
   }
 
-  async decryptPwd(pwd: UserSavedPasswordGetPasswordPasswordResponse) {
+  async decryptPwd(pwd: UserSavedPasswordDtOsSavedPasswordDto) {
     pwd.Login = await this.clientCrypto.decryptDataAsync(pwd.Login!);
     pwd.Password = await this.clientCrypto.decryptDataAsync(pwd.Password!);
     if (pwd.SecondLogin) {
@@ -140,7 +138,7 @@ export class PasswordComponent {
     this.form()?.disable();
 
     if (this.isNew()) {
-      const data = form.getRawValue() as UserSavedPasswordCreatePasswordRequest;
+      const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
       this.pwdApi
         .userSavedPasswordCreatePasswordEndpoint({
           body: data,
@@ -153,11 +151,11 @@ export class PasswordComponent {
         .subscribe({
           next: (res) => {
             this.passwordShared.setPasswordsChanged();
-            this.router.navigate(['passwords', res.Id]);
+            this.router.navigate(['passwords', res.PasswordId]);
           },
         });
     } else {
-      const data = form.getRawValue() as UserSavedPasswordUpdatePasswordRequest;
+      const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
       this.pwdApi
         .userSavedPasswordUpdatePasswordEndpoint({
           body: data,

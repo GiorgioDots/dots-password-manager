@@ -1,49 +1,54 @@
-<main class="h-full content-center p-4">
-    <form
-      [formGroup]="form()"
-      (ngSubmit)="onSubmit()"
-      class="mx-auto text-center flex flex-col gap-2 max-w-[22rem]"
-    >
-      <label class="input input-bordered flex items-center gap-2">
-        <mat-icon>mail</mat-icon>
-        <input
-          formControlName="Email"
-          type="email"
-          name="email"
-          class="flex-1"
-          placeholder="Your email"
-        />
-      </label>
-      <label class="input input-bordered flex items-center gap-2">
-        <mat-icon>person</mat-icon>
-        <input
-          formControlName="Username"
-          name="username"
-          class="flex-1"
-          placeholder="Your username"
-        />
-      </label>
-      <label class="input input-bordered flex items-center gap-2">
-        <mat-icon>key</mat-icon>
-        <input
-          [type]="passwordVisible() ? 'text' : 'password'"
-          formControlName="Password"
-          name="password"
-          class="flex-1"
-          placeholder="Password"
-        />
-        <mat-icon (click)="togglePwdVisibility()" class="cursor-pointer">
-          {{ passwordVisible() ? "visibility_off" : "visibility" }}
-        </mat-icon>
-      </label>
+<main class="container">
+  <form
+    [formGroup]="form()"
+    (ngSubmit)="onSubmit()"
+    class="card form-container"
+  >
+    <span style="text-align: center; margin-bottom: 1rem">
+      <h2 style="margin-top: 0; margin-bottom: 0">Hello!</h2>
+      <small>Insert your information to sign up</small>
+    </span>
+    <label class="input">
+      <mat-icon>mail</mat-icon>
+      <input
+        formControlName="Email"
+        type="email"
+        name="email"
+        placeholder="Your email"
+      />
+    </label>
+    <label class="input">
+      <mat-icon>person</mat-icon>
+      <input
+        formControlName="Username"
+        name="username"
+        placeholder="Your username"
+      />
+    </label>
+    <label class="input">
+      <mat-icon>key</mat-icon>
+      <input
+        [type]="passwordVisible() ? 'text' : 'password'"
+        formControlName="Password"
+        name="password"
+        placeholder="Password"
+      />
+      <mat-icon (click)="togglePwdVisibility()" class="cursor-pointer">
+        {{ passwordVisible() ? "visibility_off" : "visibility" }}
+      </mat-icon>
+    </label>
+    <button class="btn btn-primary" style="margin-top: 1rem" [disabled]="form().disabled">
+      SIGN UP
+    </button>
+    <span class="with-account">
+      Already have an account?
       <a
         [routerLink]="['/login']"
         routerLinkActive="router-link-active"
-        class="link link-hover ml-auto"
+        class="link"
       >
-        Already have an account?
+        Log In!
       </a>
-      <button class="btn btn-secondary">SIGN UP</button>
-    </form>
-  </main>
-  
+    </span>
+  </form>
+</main>

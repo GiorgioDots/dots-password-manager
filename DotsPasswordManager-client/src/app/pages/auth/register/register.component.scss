@@ -1,0 +1,24 @@
+.container {
+  height: 100%;
+  display: grid;
+  place-content: center;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 360px;
+  label + label {
+    margin-top: 0.5rem;
+  }
+}
+
+.with-account {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+small {
+  color: var(--subtext-0);
+}

@@ -8,15 +8,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { UserSavedPasswordUpdatePasswordRequest } from '../../models/user-saved-password-update-password-request';
-import { UserSavedPasswordUpdatePasswordResponse } from '../../models/user-saved-password-update-password-response';
+import { UserSavedPasswordDtOsSavedPasswordDto } from '../../models/user-saved-password-dt-os-saved-password-dto';
 
 export interface UserSavedPasswordUpdatePasswordEndpoint$Params {
   id: string;
-      body: UserSavedPasswordUpdatePasswordRequest
+      body: UserSavedPasswordDtOsSavedPasswordDto
 }
 
-export function userSavedPasswordUpdatePasswordEndpoint(http: HttpClient, rootUrl: string, params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordUpdatePasswordResponse>> {
+export function userSavedPasswordUpdatePasswordEndpoint(http: HttpClient, rootUrl: string, params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
   const rb = new RequestBuilder(rootUrl, userSavedPasswordUpdatePasswordEndpoint.PATH, 'post');
   if (params) {
     rb.path('id', params.id, {});
@@ -28,7 +27,7 @@ export function userSavedPasswordUpdatePasswordEndpoint(http: HttpClient, rootUr
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserSavedPasswordUpdatePasswordResponse>;
+      return r as StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>;
     })
   );
 }
