@@ -24,6 +24,13 @@ internal sealed class Endpoint : Endpoint<ToggleFavouriteRequest, SavedPasswordD
             ThrowError("Invalid user id");
         }
 
+        var user = await _db.Users.FirstOrDefaultAsync(k => k.Id == userId);
+
+        if (user == null)
+        {
+            ThrowError("User not found");
+        }
+
         var password = await _db.SavedPasswords.FirstOrDefaultAsync(k => k.UserId == userId && k.Id == req.Id);
         if (password == null)
         {
@@ -33,7 +40,7 @@ internal sealed class Endpoint : Endpoint<ToggleFavouriteRequest, SavedPasswordD
         await _db.SaveChangesAsync(ct);
 
 
-        await SendOkAsync(_mapper.FromEntity(password), ct);
+        await SendOkAsync(_mapper.FromEntity(password, user!), ct);
     }
 }
 

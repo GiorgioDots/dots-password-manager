@@ -5,72 +5,113 @@ namespace DotsPasswordManager.Web.Api.Services.Crypto;
 
 public class OptimizedCryptoService
 {
-    private readonly byte[] _baseKey;
-    private readonly int _iterations;
-    private readonly HashAlgorithmName _hashAlgorithm;
+    private readonly string password;
 
     public OptimizedCryptoService(IConfiguration config)
     {
-        var password = config["Crypto:Base64Key"]!;
-        _baseKey = Encoding.UTF8.GetBytes(password);
-        _iterations = 100_000;
-        _hashAlgorithm = HashAlgorithmName.SHA256;
+        password = config["Crypto:Base64Key"]!;
     }
 
-    public string Encrypt(string plainText)
+    public string Encrypt(string plainText, string userSalt)
     {
-        byte[] salt = RandomNumberGenerator.GetBytes(16);
-        (byte[] key, byte[] iv) = DeriveKeyAndIv(salt);
+        // Genera il salt e crea la chiave/IV
+        byte[] salt = Convert.FromBase64String(userSalt);
+        using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256))
+        {
+            byte[] key = deriveBytes.GetBytes(32);
+            byte[] iv = deriveBytes.GetBytes(16);
 
-        using var aes = Aes.Create();
+            // Cripta il testo
+            string encryptedText = Encrypt(plainText, key, iv);
+
+            // Combina salt e testo criptato in Base64
+            return encryptedText;
+        }
+    }
+
+    public string Decrypt(string encrypted, string userSalt)
+    {
+        // Separare il salt dal testo criptato
+        byte[] salt = Convert.FromBase64String(userSalt);
+
+        // Ricrea la chiave e l'IV
+        using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256))
+        {
+            byte[] key = deriveBytes.GetBytes(32);
+            byte[] iv = deriveBytes.GetBytes(16);
+
+            // Decripta il testo
+            return Decrypt(encrypted, key, iv);
+        }
+    }
+
+    public List<DB.SavedPassword> DecryptPasswords(List<DB.SavedPassword> passwords, string userSalt)
+    {
+        byte[] salt = Convert.FromBase64String(userSalt);
+        using var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
+
+        byte[] key = deriveBytes.GetBytes(32);
+        byte[] iv = deriveBytes.GetBytes(16);
+
+        using Aes aes = Aes.Create();
         aes.Key = key;
         aes.IV = iv;
 
-        using var ms = new MemoryStream();
-        using var cryptoStream = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write);
-        using var writer = new StreamWriter(cryptoStream);
+        foreach (var password in passwords)
+        {
+            using (var ms = new System.IO.MemoryStream(Convert.FromBase64String(password.PasswordHash)))
+            {
+                using (var cryptoStream = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                {
+                    using (var reader = new System.IO.StreamReader(cryptoStream))
+                    {
+                        password.PasswordHash =  reader.ReadToEnd(); // Lettura completa, compreso il padding
+                    }
+                }
+            }
+        }
 
-        writer.Write(plainText);
-        writer.Flush();
-        cryptoStream.FlushFinalBlock();
-
-        return $"{Convert.ToBase64String(salt)}:{Convert.ToBase64String(ms.ToArray())}";
+        return passwords;
     }
 
-    public string Decrypt(string encryptedWithSalt)
+    private string Encrypt(string plainText, byte[] key, byte[] iv)
     {
-        var parts = encryptedWithSalt.Split(':');
-        byte[] salt = Convert.FromBase64String(parts[0]);
-        byte[] encryptedBytes = Convert.FromBase64String(parts[1]);
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = key;
+            aes.IV = iv;
 
-        (byte[] key, byte[] iv) = DeriveKeyAndIv(salt);
-
-        using var aes = Aes.Create();
-        aes.Key = key;
-        aes.IV = iv;
-
-        using var ms = new MemoryStream(encryptedBytes);
-        using var cryptoStream = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read);
-        using var reader = new StreamReader(cryptoStream);
-
-        return reader.ReadToEnd();
+            using (var ms = new System.IO.MemoryStream())
+            {
+                using (var cryptoStream = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    using (var writer = new System.IO.StreamWriter(cryptoStream))
+                    {
+                        writer.Write(plainText);
+                    }
+                }
+                return Convert.ToBase64String(ms.ToArray());
+            }
+        }
     }
 
-    private (byte[] Key, byte[] Iv) DeriveKeyAndIv(byte[] salt)
+    private string Decrypt(string encryptedText, byte[] key, byte[] iv)
     {
-        using var deriveBytes = new Rfc2898DeriveBytes(_baseKey, salt, _iterations, _hashAlgorithm);
-        return (
-            deriveBytes.GetBytes(32),  // 256-bit key
-            deriveBytes.GetBytes(16)   // 128-bit IV
-        );
-    }
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = key;
+            aes.IV = iv;
 
-    // Parallel decryption method
-    public List<string> DecryptPasswords(IEnumerable<string> encryptedPasswords)
-    {
-        return encryptedPasswords
-            .AsParallel()
-            .Select(Decrypt)
-            .ToList();
+            using (var ms = new System.IO.MemoryStream(Convert.FromBase64String(encryptedText)))
+            {
+                using (var cryptoStream = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Read))
+                {
+                    using (var reader = new System.IO.StreamReader(cryptoStream))
+                    {
+                        return reader.ReadToEnd(); // Lettura completa, compreso il padding
+                    }
+                }
+            }
+        }
     }
 }

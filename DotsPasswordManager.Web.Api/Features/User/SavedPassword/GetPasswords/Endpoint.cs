@@ -21,13 +21,20 @@ internal sealed class Endpoint : EndpointWithoutRequest<List<SavedPasswordDTO>>
         var userId = User.Claims.GetUserId(); 
         if (userId == null)
         {
-            await SendOkAsync([], c);
-            return;
+            ThrowError("User not found");
+        }
+
+        var user = await _db.Users.FirstOrDefaultAsync(k => k.Id == userId);
+
+        if (user == null)
+        {
+            ThrowError("User not found");
         }
 
         var passwords = await _db.SavedPasswords.Where(k => k.UserId == userId).ToListAsync();
-            
 
-        await SendOkAsync(passwords.AsParallel().Select(k => _mapper.FromEntity(k)).ToList(), c);
+        var ret = _mapper.FromEntities(passwords, user!);
+
+        await SendOkAsync(ret, c);
     }
 }

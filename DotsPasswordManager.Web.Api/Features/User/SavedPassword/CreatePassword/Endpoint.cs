@@ -23,11 +23,16 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
         var userId = User.Claims.GetUserId();
         if(userId == null)
         {
-            AddError("User not found");
+            ThrowError("User not found");
         }
-        ThrowIfAnyErrors();
+        var user = await _db.Users.FirstOrDefaultAsync(k => k.Id == userId);
 
-        var savedPassword = _mapper.ToEntity(r);
+        if (user == null)
+        {
+            ThrowError("User not found");
+        }
+
+        var savedPassword = _mapper.ToEntity(r, user);
         savedPassword.UserId = userId!.Value;
         savedPassword.CreatedAt = DateTime.UtcNow;
         savedPassword.UpdatedAt = DateTime.UtcNow;
@@ -35,6 +40,6 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
         _db.Add(savedPassword);
         await _db.SaveChangesAsync(c);
 
-        await SendOkAsync(_mapper.FromEntity(savedPassword), c);
+        await SendOkAsync(_mapper.FromEntity(savedPassword, user), c);
     }
 }

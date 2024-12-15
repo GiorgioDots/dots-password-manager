@@ -9,7 +9,7 @@ namespace User.SavedPassword.UpdatePassword;
 internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
 {
     public DPMDbContext _db{ get; set; }
-    public CryptoService _cryptoService { get; set; }
+    public OptimizedCryptoService _cryptoService { get; set; }
     public SavedPasswordMapper _mapper { get; set; }
 
     public override void Configure()
@@ -24,9 +24,14 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
         var userId = User.Claims.GetUserId();
         if (userId == null)
         {
-            this.AddError("User not found");
+            ThrowError("Invalid user id");
         }
-        ThrowIfAnyErrors();
+        var user = await _db.Users.FirstOrDefaultAsync(k => k.Id == userId);
+
+        if (user == null)
+        {
+            ThrowError("User not found");
+        }
 
         var password = await _db.SavedPasswords
             .FirstOrDefaultAsync(k => k.Id == r.PasswordId && k.UserId == userId);
@@ -39,7 +44,7 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
         password.Name = r.Name;
         password.Login = r.Login;
         password.SecondLogin = r.SecondLogin;
-        password.PasswordHash = _cryptoService.Encrypt(r.Password);
+        password.PasswordHash = _cryptoService.Encrypt(r.Password, user.Salt);
         password.Url = r.Url;
         password.Notes = r.Notes;
         password.Tags = r.Tags;
@@ -47,6 +52,6 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
 
         await _db.SaveChangesAsync(c);
 
-        await SendOkAsync(_mapper.FromEntity(password), c);
+        await SendOkAsync(_mapper.FromEntity(password, user!), c);
     }
 }
