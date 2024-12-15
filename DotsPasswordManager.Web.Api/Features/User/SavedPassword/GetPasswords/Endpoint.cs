@@ -25,9 +25,9 @@ internal sealed class Endpoint : EndpointWithoutRequest<List<SavedPasswordDTO>>
             return;
         }
 
-        var passwords = await _db.SavedPasswords.Where(k => k.UserId == userId)
-            .Select(k => _mapper.FromEntity(k)).ToListAsync();
+        var passwords = await _db.SavedPasswords.Where(k => k.UserId == userId).ToListAsync();
+            
 
-        await SendOkAsync(passwords, c);
+        await SendOkAsync(passwords.AsParallel().Select(k => _mapper.FromEntity(k)).ToList(), c);
     }
 }

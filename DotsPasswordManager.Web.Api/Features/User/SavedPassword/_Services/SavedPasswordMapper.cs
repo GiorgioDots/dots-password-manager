@@ -32,6 +32,7 @@ public class SavedPasswordMapper
             Login = clientCrypto.Encrypt(entity.Login, publicKey),
             SecondLogin = entity.SecondLogin == null ? null : clientCrypto.Encrypt(entity.SecondLogin, publicKey),
             Password = clientCrypto.Encrypt(cryptoService.Decrypt(entity.PasswordHash), publicKey),
+            //Password = clientCrypto.Encrypt(entity.PasswordHash, publicKey),
             Url = entity.Url,
             Notes = entity.Notes,
             Tags = entity.Tags,

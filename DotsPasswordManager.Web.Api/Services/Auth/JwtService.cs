@@ -27,7 +27,7 @@ public class JwtService : IJwtService
 
         return JwtBearer.CreateToken(o =>
         {
-            o.ExpireAt = DateTime.UtcNow.AddSeconds(_jwtExpirationMinutes);
+            o.ExpireAt = DateTime.UtcNow.AddMinutes(_jwtExpirationMinutes);
             o.User.Claims.AddRange(claims);
         });
     }

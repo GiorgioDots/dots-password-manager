@@ -11,14 +11,12 @@ import { RequestBuilder } from '../../request-builder';
 import { UserSavedPasswordDtOsSavedPasswordDto } from '../../models/user-saved-password-dt-os-saved-password-dto';
 
 export interface UserSavedPasswordUpdatePasswordEndpoint$Params {
-  id: string;
       body: UserSavedPasswordDtOsSavedPasswordDto
 }
 
 export function userSavedPasswordUpdatePasswordEndpoint(http: HttpClient, rootUrl: string, params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
   const rb = new RequestBuilder(rootUrl, userSavedPasswordUpdatePasswordEndpoint.PATH, 'post');
   if (params) {
-    rb.path('id', params.id, {});
     rb.body(params.body, 'application/json');
   }
 
@@ -32,4 +30,4 @@ export function userSavedPasswordUpdatePasswordEndpoint(http: HttpClient, rootUr
   );
 }
 
-userSavedPasswordUpdatePasswordEndpoint.PATH = '/passwords/edit/{id}';
+userSavedPasswordUpdatePasswordEndpoint.PATH = '/passwords/edit';

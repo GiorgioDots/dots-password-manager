@@ -33,7 +33,7 @@ export class PasswordsService extends BaseService {
   }
 
   /** Path part for operation `userSavedPasswordUpdatePasswordEndpoint()` */
-  static readonly UserSavedPasswordUpdatePasswordEndpointPath = '/passwords/edit/{id}';
+  static readonly UserSavedPasswordUpdatePasswordEndpointPath = '/passwords/edit';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.

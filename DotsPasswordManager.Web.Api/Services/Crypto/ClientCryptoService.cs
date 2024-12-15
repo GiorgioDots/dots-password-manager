@@ -6,6 +6,7 @@ public class ClientCryptoService
 {
     public string Encrypt(string text, string publicKeyBase64)
     {
+        if (string.IsNullOrEmpty(publicKeyBase64)) return text;
         var publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
         using var rsa = RSA.Create();
         rsa.ImportSubjectPublicKeyInfo(publicKeyBytes, out _);

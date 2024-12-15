@@ -18,8 +18,9 @@ builder.Services.AddDbContextPool<DPMDbContext>(o => o.UseNpgsql(connStr));
 
 builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.AddSingleton<ClientCryptoService>();
-builder.Services.AddSingleton<CryptoService>();
-builder.Services.AddSingleton<SavedPasswordMapper>();
+builder.Services.AddScoped<CryptoService>();
+builder.Services.AddScoped<OptimizedCryptoService>();
+builder.Services.AddScoped<SavedPasswordMapper>();
 
 builder.Services.AddHttpContextAccessor();
 

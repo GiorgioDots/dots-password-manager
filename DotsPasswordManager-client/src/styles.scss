@@ -9,6 +9,8 @@
   --pink: hsl(316deg, 73%, 69%);
   --mauve: hsl(266deg, 85%, 58%);
   --red: hsl(347deg, 87%, 44%);
+  --red-d1: hsl(347deg, 87%, 40%);
+  --red-d2: hsl(347deg, 87%, 36%);
   --maroon: hsl(355deg, 76%, 59%);
   --peach: hsl(22deg, 99%, 52%);
   --yellow: hsl(35deg, 77%, 49%);
@@ -20,6 +22,7 @@
   --lavender: hsl(231deg, 97%, 72%);
   --lavender-d2: hsl(234deg, 82%, 68%);
   --lavender-d1: hsl(234deg, 82%, 64%);
+  --lavender-dd: hsl(234deg, 82%, 86%);
   --text: hsl(234deg, 16%, 35%);
   --subtext-1: hsl(233deg, 13%, 41%);
   --subtext-0: hsl(233deg, 10%, 47%);
@@ -49,6 +52,8 @@
   --pink: hsl(316deg, 74%, 85%);
   --mauve: hsl(267deg, 83%, 80%);
   --red: hsl(351deg, 74%, 73%);
+  --red-d1: hsl(351deg, 74%, 69%);
+  --red-d2: hsl(351deg, 74%, 65%);
   --maroon: hsl(355deg, 71%, 77%);
   --peach: hsl(21deg, 86%, 73%);
   --yellow: hsl(40deg, 70%, 78%);
@@ -60,6 +65,7 @@
   --lavender: hsl(234deg, 82%, 85%);
   --lavender-d2: hsl(234deg, 82%, 80%);
   --lavender-d1: hsl(234deg, 82%, 75%);
+  --lavender-dd: hsl(234deg, 82%, 70%);
   --text: hsl(227deg, 68%, 88%);
   --subtext-1: hsl(228deg, 39%, 80%);
   --subtext-0: hsl(227deg, 27%, 72%);
@@ -80,6 +86,11 @@
   border: 1px solid var(--surface-0);
 }
 
+.mat-mdc-menu-panel {
+  border-radius: var(--default-radius) !important;
+  background-color: var(--mantle) !important;
+}
+
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
@@ -98,6 +109,17 @@
 
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+::-moz-selection {
+  /* Code for Firefox */
+  color: var(--base);
+  background: var(--mauve);
+}
+
+::selection {
+  color: var(--base);
+  background: var(--mauve);
 }
 
 html,
@@ -175,6 +197,56 @@ label.input {
   }
 }
 
+label.textarea {
+  position: relative;
+  width: 100%;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+
+  background: var(--surface-0);
+  border-radius: var(--default-radius);
+  padding: 0.125rem 0.5rem 0.125rem 0.5rem;
+  min-height: 36px;
+
+  border: 2px solid transparent;
+
+  outline-offset: 2px;
+
+  &:has(textarea:focus) {
+    outline: 2px solid var(--lavender);
+  }
+  &:has(textarea:not(:disabled)):not(:has(textarea:focus)):has(
+      textarea.ng-invalid.ng-dirty
+    ),
+  &:has(textarea:not(:disabled)):not(:has(textarea:focus)):has(
+      textarea.ng-invalid.ng-touched
+    ) {
+    border: 2px solid var(--red);
+    color: var(--red);
+  }
+  &:has(textarea:disabled) {
+    background: var(--surface-1);
+    color: var(--subtext-1);
+  }
+
+  > textarea {
+    border: none;
+    padding: 0.5rem;
+    height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    width: 100% !important;
+    background: transparent;
+    outline: none;
+    font-size: 0.875rem;
+    &::placeholder {
+      color: var(--subtext-1);
+    }
+  }
+}
+
 .btn {
   inset: 0;
   border: none;
@@ -228,6 +300,24 @@ label.input {
     }
   }
 
+  &.btn-error {
+    background-color: var(--red);
+    color: var(--base);
+    &:not(:disabled):hover {
+      background-color: var(--red-d2);
+    }
+    &:not(:disabled):active {
+      background-color: var(--red-d1);
+    }
+    &:not(:disabled):focus {
+      outline: 2px solid var(--red);
+    }
+    &:disabled {
+      opacity: 0.8;
+      cursor: default;
+    }
+  }
+
   &.btn-crust {
     background-color: var(--crust);
     color: var(--text);
@@ -258,6 +348,10 @@ a.link {
   background: var(--crust);
   border-radius: var(--default-radius);
   border: 1px solid var(--surface-0);
+
+  &.card-mantle {
+    background: var(--mantle);
+  }
 }
 
 .kbd {
