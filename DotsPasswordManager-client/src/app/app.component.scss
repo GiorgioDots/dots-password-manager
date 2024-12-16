@@ -2,7 +2,10 @@
 
 .app-container {
   height: 100%;
-  background-color: var(--base);
+  background-image: url('/1544x1544_circle (1).webp');
+  background-size: 400px;
+  background-position-y: 50%;
+  background-repeat: repeat-x;
 }
 
 .content-container {
@@ -10,6 +13,7 @@
   max-width: bps.$lgBreakpoint;
   margin-left: auto;
   margin-right: auto;
+  background-color: var(--base);
 
   @include bps.xl-breakpoint {
     border-left: 1px solid var(--surface-0);
