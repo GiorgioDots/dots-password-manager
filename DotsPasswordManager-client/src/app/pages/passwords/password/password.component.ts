@@ -6,6 +6,9 @@ import { TypedFormGroup } from '@/app/core/utils/forms';
 import { Component, inject, signal } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 
+import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { CommonModule } from '@angular/common';
 import {
   FormControl,
   FormsModule,
@@ -15,9 +18,9 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { from, switchMap } from 'rxjs';
-import { CommonModule } from '@angular/common';
-import {ClipboardModule} from '@angular/cdk/clipboard';
-import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
+import PasswordGenerator from '@/app/core/utils/password-generator';
+
+
 
 @Component({
   selector: 'app-password',
@@ -29,7 +32,7 @@ import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard
     MatMenuModule,
     CommonModule,
     ClipboardModule,
-    CopyClipboardIconComponent
+    CopyClipboardIconComponent,
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
@@ -207,8 +210,13 @@ export class PasswordComponent {
       .subscribe({
         complete: () => {
           this.router.navigate(['passwords']);
-          this.passwordShared.setPasswordsChanged()
+          this.passwordShared.setPasswordsChanged();
         },
       });
+  }
+
+  generatePassword() {
+    const generated = PasswordGenerator.strongPassword();
+    this.form()?.get('Password')?.setValue(generated);
   }
 }
