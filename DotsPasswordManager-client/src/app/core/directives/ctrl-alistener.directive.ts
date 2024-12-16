@@ -1,16 +1,16 @@
 import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
 
 @Directive({
-  selector: '[appCtrlKListener]',
+  selector: '[appCtrlQListener]',
 })
-export class CtrlKListenerDirective {
-  @Output() ctrlKPressed = new EventEmitter<void>();
+export class CtrlQListenerDirective {
+  @Output() ctrlQPressed = new EventEmitter<void>();
 
   @HostListener('keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === 'k') {
+    if (event.ctrlKey && event.key === 'q') {
       event.preventDefault();
-      this.ctrlKPressed.emit();
+      this.ctrlQPressed.emit();
     }
   }
 }

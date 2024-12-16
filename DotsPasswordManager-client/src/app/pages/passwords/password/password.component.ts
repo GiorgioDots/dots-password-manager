@@ -3,10 +3,19 @@ import { PasswordsService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
 import { PasswordSharedService } from '@/app/core/services/password-shared.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
-import { Component, inject, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
+import PasswordGenerator from '@/app/core/utils/password-generator';
+import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
 import {
@@ -18,9 +27,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { from, switchMap } from 'rxjs';
-import PasswordGenerator from '@/app/core/utils/password-generator';
-
-
+import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
 
 @Component({
   selector: 'app-password',
@@ -33,6 +40,8 @@ import PasswordGenerator from '@/app/core/utils/password-generator';
     CommonModule,
     ClipboardModule,
     CopyClipboardIconComponent,
+    A11yModule,
+    CtrlQListenerDirective
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
@@ -125,6 +134,10 @@ export class PasswordComponent {
       Url: pwd.Url,
       Tags: pwd.Tags,
     });
+    setTimeout(() => {
+      const inp = document.getElementById('firstInput');
+      inp?.focus();
+    }, 200);
   }
 
   async decryptPwd(pwd: UserSavedPasswordDtOsSavedPasswordDto) {

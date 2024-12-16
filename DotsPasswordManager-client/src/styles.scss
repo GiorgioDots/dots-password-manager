@@ -348,6 +348,9 @@ a.link {
     text-decoration: underline;
     text-underline-offset: 0.125rem;
   }
+  &:not(:disabled):focus {
+    outline: 2px solid var(--lavender);
+  }
 }
 
 .card {
