@@ -4,6 +4,11 @@
     (ngSubmit)="onSubmit()"
     class="card form-container"
   >
+    <div style="display: flex; justify-content: center">
+      <div style="min-width: 60px">
+        <app-logo></app-logo>
+      </div>
+    </div>
     <span style="text-align: center; margin-bottom: 1rem">
       <h2 style="margin-top: 0; margin-bottom: 0">Hello!</h2>
       <small>Insert your information to sign up</small>
@@ -37,7 +42,11 @@
         {{ passwordVisible() ? "visibility_off" : "visibility" }}
       </mat-icon>
     </label>
-    <button class="btn btn-primary" style="margin-top: 1rem" [disabled]="form().disabled">
+    <button
+      class="btn btn-primary"
+      style="margin-top: 1rem"
+      [disabled]="form().disabled"
+    >
       SIGN UP
     </button>
     <span class="with-account">

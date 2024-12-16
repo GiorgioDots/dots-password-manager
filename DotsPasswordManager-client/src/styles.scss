@@ -19,7 +19,7 @@
   --sky: hsl(197deg, 97%, 46%);
   --sapphire: hsl(189deg, 70%, 42%);
   --blue: hsl(220deg, 91%, 54%);
-  --lavender: hsl(231deg, 97%, 72%);
+  --lavender: #7287fd;
   --lavender-d2: hsl(234deg, 82%, 68%);
   --lavender-d1: hsl(234deg, 82%, 64%);
   --lavender-dd: hsl(234deg, 82%, 86%);
@@ -43,6 +43,9 @@
   --lg-breakpoint: 992px;
   --xl-breakpoint: 1200px;
   --xxl-breakpoint: 1400px;
+  .logo {
+    fill: var(--lavender);
+  }
 }
 
 [data-theme="dark"] {
@@ -62,7 +65,7 @@
   --sky: hsl(189deg, 59%, 73%);
   --sapphire: hsl(199deg, 66%, 69%);
   --blue: hsl(220deg, 83%, 75%);
-  --lavender: hsl(234deg, 82%, 85%);
+  --lavender: hsl(233, 82%, 85%);
   --lavender-d2: hsl(234deg, 82%, 80%);
   --lavender-d1: hsl(234deg, 82%, 75%);
   --lavender-dd: hsl(234deg, 82%, 70%);
@@ -78,6 +81,10 @@
   --base: hsl(232deg, 23%, 18%);
   --mantle: hsl(233deg, 23%, 15%);
   --crust: hsl(236deg, 23%, 12%);
+
+  .logo {
+    fill: var(--lavender);
+  }
 }
 
 .mat-mdc-dialog-surface {

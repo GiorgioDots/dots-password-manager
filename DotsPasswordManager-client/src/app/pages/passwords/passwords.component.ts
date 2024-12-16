@@ -1,3 +1,4 @@
+import { LogoComponent } from '@/app/core/components/logo/logo.component';
 import { CtrlKListenerDirective } from '@/app/core/directives/ctrl-klistener.directive';
 import { UserSavedPasswordDtOsSavedPasswordDto } from '@/app/core/main-api/models';
 import { PasswordsService } from '@/app/core/main-api/services';
@@ -21,6 +22,7 @@ import { filter, sortBy } from 'underscore';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
+    LogoComponent,
   ],
   templateUrl: './passwords.component.html',
   styleUrl: './passwords.component.scss',

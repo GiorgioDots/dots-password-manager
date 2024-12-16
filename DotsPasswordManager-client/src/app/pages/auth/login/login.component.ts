@@ -6,10 +6,11 @@ import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
+import { LogoComponent } from "../../../core/components/logo/logo.component";
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatIconModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, MatIconModule, CommonModule, RouterModule, LogoComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
