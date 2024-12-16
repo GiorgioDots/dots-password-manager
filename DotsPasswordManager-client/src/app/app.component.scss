@@ -1,0 +1,18 @@
+@use "/breakpoints" as bps;
+
+.app-container {
+  height: 100%;
+  background-color: var(--base);
+}
+
+.content-container {
+  height: 100%;
+  max-width: bps.$lgBreakpoint;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include bps.xl-breakpoint {
+    border-left: 1px solid var(--surface-0);
+    border-right: 1px solid var(--surface-0);
+  }
+}
