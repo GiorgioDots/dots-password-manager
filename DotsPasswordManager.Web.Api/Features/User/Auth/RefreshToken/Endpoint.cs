@@ -33,11 +33,18 @@ internal sealed class Endpoint : Endpoint<Request, Response>
 
         token.RevokedAt = DateTime.UtcNow;
 
+        var refreshTokenExpEnv = Environment.GetEnvironmentVariable("JWT_REFRESH_TOKEN_EXP_DAYS");
+        if (refreshTokenExpEnv == null)
+        {
+            ThrowError("JWT_REFRESH_TOKEN_EXP_DAYS is not defined.");
+        }
+        var refreshTokenExp = int.Parse(refreshTokenExpEnv);
+
         _db.RefreshTokens.Add(new()
         {
             UserId = user.Id,
             Token = newRefreshToken,
-            ExpiresAt = DateTime.UtcNow.AddDays(Config.GetValue<int>("Jwt:RefreshTokenExpirationDays"))
+            ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenExp)
         });
 
         await _db.SaveChangesAsync(c);

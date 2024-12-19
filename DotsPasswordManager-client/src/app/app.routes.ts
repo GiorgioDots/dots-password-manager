@@ -21,7 +21,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'passwords',
+    path: 'saved-passwords',
     title: 'Passwords',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -48,6 +48,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'passwords',
+    redirectTo: 'saved-passwords',
   },
 ];

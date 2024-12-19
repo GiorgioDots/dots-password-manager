@@ -93,7 +93,7 @@ export class PasswordsComponent implements OnInit {
   }
 
   onEdit(password?: UserSavedPasswordDtOsSavedPasswordDto) {
-    this.router.navigate(['passwords', password?.PasswordId ?? 'new']);
+    this.router.navigate(['saved-passwords', password?.PasswordId ?? 'new']);
   }
 
   logout() {

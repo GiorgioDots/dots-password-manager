@@ -11,7 +11,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 
 import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
 import PasswordGenerator from '@/app/core/utils/password-generator';
@@ -41,7 +41,7 @@ import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.dir
     ClipboardModule,
     CopyClipboardIconComponent,
     A11yModule,
-    CtrlQListenerDirective
+    CtrlQListenerDirective,
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
@@ -50,6 +50,7 @@ export class PasswordComponent {
   private pwdApi = inject(PasswordsService);
   private clientCrypto = inject(ClientCryptoService);
   private passwordShared = inject(PasswordSharedService);
+  private router = inject(Router);
 
   form = signal<
     TypedFormGroup<UserSavedPasswordDtOsSavedPasswordDto> | undefined
@@ -60,12 +61,21 @@ export class PasswordComponent {
   isNew = signal(false);
   id = signal<string | null>(null);
 
-  private router = inject(Router);
-
   constructor(route: ActivatedRoute) {
     route.paramMap.subscribe((params) => {
       this.tagInput = '';
-      this.init(params.get('id'));
+      let paramId = params.get('id');
+      let confirmInit = true;
+      if (this.form()?.dirty && paramId != this.id()) {
+        confirmInit = confirm(
+          'You have some data changed, do you want to discard them?'
+        );
+      }
+      if (confirmInit && paramId != this.id()) {
+        this.init(paramId);
+      } else {
+        this.router.navigate(['/saved-passwords', this.id()]);
+      }
     });
   }
 
@@ -134,10 +144,16 @@ export class PasswordComponent {
       Url: pwd.Url,
       Tags: pwd.Tags,
     });
-    setTimeout(() => {
-      const inp = document.getElementById('firstInput');
-      inp?.focus();
-    }, 200);
+    if (
+      !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      ) || this.isNew()
+    ) {
+      setTimeout(() => {
+        const inp = document.getElementById('firstInput');
+        inp?.focus();
+      }, 200);
+    }
   }
 
   async decryptPwd(pwd: UserSavedPasswordDtOsSavedPasswordDto) {
@@ -157,6 +173,7 @@ export class PasswordComponent {
     if (currTags.some((k) => k.toLowerCase() == tag.toLowerCase())) return;
     currTags.push(tag);
     this.form()?.get('Tags')?.setValue(currTags);
+    this.form()?.markAsDirty();
   }
 
   onRemoveTag(tag: string) {
@@ -187,8 +204,11 @@ export class PasswordComponent {
         )
         .subscribe({
           next: (res) => {
+            this.id.set(res.PasswordId!);
+            this.isNew.set(false);
+            this.initForm(res);
             this.passwordShared.setPasswordsChanged();
-            this.router.navigate(['passwords', res.PasswordId]);
+            this.router.navigate(['saved-passwords', res.PasswordId]);
           },
         });
     } else {
@@ -222,7 +242,7 @@ export class PasswordComponent {
       })
       .subscribe({
         complete: () => {
-          this.router.navigate(['passwords']);
+          this.router.navigate(['saved-passwords']);
           this.passwordShared.setPasswordsChanged();
         },
       });
@@ -232,4 +252,19 @@ export class PasswordComponent {
     const generated = PasswordGenerator.strongPassword();
     this.form()?.get('Password')?.setValue(generated);
   }
+
+  onRefresh(menuTrigger: MatMenuTrigger) {
+    if (this.form()?.dirty == false) {
+      this.init(this.id());
+      menuTrigger.closeMenu();
+    }
+  }
+
+  onBack(menuTrigger: MatMenuTrigger) {
+    if (this.form()?.dirty == false) {
+      this.router.navigate(['/saved-password']);
+      menuTrigger.closeMenu();
+    }
+  }
 }
+

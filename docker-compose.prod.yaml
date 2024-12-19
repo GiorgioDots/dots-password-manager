@@ -1,13 +1,47 @@
 services:
-  dotspasswordmanager.web.api:
-    image: ghcr.io/giorgiodots/dots-password-manager:prod
-    container_name: dotspasswordmanagerwebapi
-    build:
-      context: .
-      dockerfile: DotsPasswordManager.Web.Api/Dockerfile
+  watchtower:
+    image: containrrr/watchtower
+    command:
+      - "--label-enable"
+      - "--interval"
+      - "30"
+      - "--rolling-restart"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  reverse-proxy:
+    image: traefik:v3.1
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=giorgiodotsdev@giorgio-dots.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     ports:
+      # Http port
+      - "80:80"
+      # Https port
+      - "443:443"
+      # Web Ui (enabled by command --api.insecure=true)
       - "8080:8080"
-      - "8081:8081"
+    volumes:
+      - letsencrypt:/letsencrypt
+      # So that Traefik can listen to Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  dotspasswordmanager-web-api:
+    image: ghcr.io/giorgiodots/dots-password-manager:prod
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.guestbook.rule=Host(`pm.giorgio-dots.com`)"
+      - "traefik.http.routers.guestbook.entrypoints=websecure"
+      - "traefik.http.routers.guestbook.tls.certresolver=myresolver"
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
       - JWT_ISSUER=${JWT_ISSUER}
@@ -18,10 +52,16 @@ services:
       - DB_CONNECTION_STRING_FILE=/run/secrets/db_connection_string
       - JWT_SECRET_FILE=/run/secrets/jwt_secret
       - CRYPTO_BASE_64_KEY_FILE=/run/secrets/crypto_key
+    deploy:
+      mode: replicated
+      replicas: 2
     secrets:
       - db_connection_string
       - jwt_secret
       - crypto_key
+
+volumes:
+  letsencrypt:
 
 secrets:
   db_connection_string:

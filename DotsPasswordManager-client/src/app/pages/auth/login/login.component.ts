@@ -51,7 +51,8 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (!this.form().valid) {
+    this.form().markAllAsTouched();
+    if (this.form().invalid) {
       return;
     }
 
@@ -60,7 +61,7 @@ export class LoginComponent {
     this.authService.login(data).subscribe({
       next: () => {
         this.form().enable();
-        this.router.navigate(['/', 'passwords']);
+        this.router.navigate(['/', 'saved-passwords']);
       },
       error: (err) => {
         this.form().enable();

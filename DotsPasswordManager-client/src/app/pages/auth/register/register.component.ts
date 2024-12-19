@@ -50,7 +50,8 @@ export class RegisterComponent {
   }
 
   onSubmit() {
-    if (!this.form().valid) {
+    this.form().markAllAsTouched();
+    if (this.form().invalid) {
       return;
     }
 
@@ -66,7 +67,7 @@ export class RegisterComponent {
         next: (res) => {
           this.form().enable();
           this.authService.setTokens(res.Token, res.RefreshToken);
-          this.router.navigate(['/', 'passwords']);
+          this.router.navigate(['/', 'saved-passwords']);
         },
         error: (err) => {
           this.form().enable();

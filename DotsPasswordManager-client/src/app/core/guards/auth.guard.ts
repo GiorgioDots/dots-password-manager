@@ -15,7 +15,7 @@ export const notAuthGuard: CanActivateFn = (route, state) => {
   const clientAuth = inject(ClientAuthService);
   const router = inject(Router);
   if (clientAuth.isLoggedIn()) {
-    router.navigate(['passwords']);
+    router.navigate(['saved-passwords']);
   }
   return !clientAuth.isLoggedIn();
 };
