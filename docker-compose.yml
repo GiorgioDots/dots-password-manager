@@ -1,6 +1,7 @@
 services:
   dotspasswordmanager.web.api:
-    image: ${DOCKER_REGISTRY-}dotspasswordmanagerwebapi
+    image: ghcr.io/giorgiodots/dots-password-manager:prod
+    container_name: dotspasswordmanagerwebapi
     build:
       context: .
       dockerfile: DotsPasswordManager.Web.Api/Dockerfile
