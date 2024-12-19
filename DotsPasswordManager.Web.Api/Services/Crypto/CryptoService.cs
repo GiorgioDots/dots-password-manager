@@ -6,9 +6,9 @@ public class CryptoService
 {
     private readonly string password;
 
-    public CryptoService(IConfiguration config)
+    public CryptoService(AppSettings appSettings)
     {
-        password = config["Crypto:Base64Key"]!;
+        password = appSettings.CryptoBase64Key;
     }
 
     public string Encrypt(string plainText)

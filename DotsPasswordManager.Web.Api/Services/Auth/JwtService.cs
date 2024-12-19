@@ -10,9 +10,11 @@ public class JwtService : IJwtService
 {
     private readonly int _jwtExpirationMinutes;
 
-    public JwtService(IConfiguration configuration)
+    public JwtService()
     {
-        _jwtExpirationMinutes = int.Parse(configuration["Jwt:ExpirationMinutes"]!);
+        var expMin = Environment.GetEnvironmentVariable("JWT_EXP_MINUTES")
+            ?? throw new ArgumentNullException("No JWT_EXP_MINUTES variable found");
+        _jwtExpirationMinutes = int.Parse(expMin);
     }
 
     public string GenerateJwt(DB.User user)

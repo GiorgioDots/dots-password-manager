@@ -7,9 +7,9 @@ public class OptimizedCryptoService
 {
     private readonly string password;
 
-    public OptimizedCryptoService(IConfiguration config)
+    public OptimizedCryptoService(AppSettings appSettings)
     {
-        password = config["Crypto:Base64Key"]!;
+        password = appSettings.CryptoBase64Key;
     }
 
     public string Encrypt(string plainText, string userSalt)

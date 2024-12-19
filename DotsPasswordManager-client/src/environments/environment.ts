@@ -1,3 +1,3 @@
 export const environment = {
-    rootUrl: "http://localhost:8080"
+    rootUrl: "http://pm.giorgio-dots.com:8080"
 };
