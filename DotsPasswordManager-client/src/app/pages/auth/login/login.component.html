@@ -14,7 +14,7 @@
       <small>Login with your account</small>
     </span>
     <label class="input">
-      <mat-icon>person</mat-icon>
+      <lucide-angular [img]="UserIcon"></lucide-angular>
       <input
         formControlName="Login"
         name="login"
@@ -22,16 +22,21 @@
       />
     </label>
     <label class="input">
-      <mat-icon>key</mat-icon>
+      <lucide-angular [img]="LockKeyholeIcon"></lucide-angular>
       <input
-        [type]="passwordVisible() ? 'text' : 'password'"
+        #pwdInput
+        type="password"
         formControlName="Password"
         name="password"
         placeholder="Password"
       />
-      <mat-icon (click)="togglePwdVisibility()" class="cursor-pointer">
-        {{ passwordVisible() ? "visibility_off" : "visibility" }}
-      </mat-icon>
+      <lucide-angular
+        (click)="
+          pwdInput.type = pwdInput.type == 'password' ? 'text' : 'password'
+        "
+        class="cursor-pointer"
+        [img]="pwdInput.type == 'password' ? EyeOffIcon : EyeIcon"
+      ></lucide-angular>
     </label>
     <button
       class="btn btn-primary"

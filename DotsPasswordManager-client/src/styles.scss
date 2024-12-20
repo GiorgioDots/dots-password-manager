@@ -261,6 +261,7 @@ label.textarea {
   background-color: var(--base);
   color: var(--text);
   min-height: 36px;
+  min-width: 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -284,12 +285,6 @@ label.textarea {
   &.btn-small {
     min-height: 32px;
     min-width: 32px;
-    > mat-icon {
-      height: 1.1rem;
-      width: 1.1rem;
-      font-size: 1.1rem;
-      line-height: 1.1rem;
-    }
   }
 
   &.btn-primary {
@@ -380,4 +375,15 @@ a.link {
   line-height: 1.25rem;
   min-height: 1.6em;
   min-width: 1.6em;
+}
+
+lucide-angular {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    stroke-width: 2;
+  }
 }

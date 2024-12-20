@@ -1,28 +1,34 @@
 import { UserAuthLoginRequest } from '@/app/core/main-api/models';
 import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
+import { LogoComponent } from '@/cmp/logo/logo.component';
 import { CommonModule } from '@angular/common';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
-import { LogoComponent } from "../../../core/components/logo/logo.component";
+import { Eye, EyeOff, LockKeyhole, LucideAngularModule, User } from 'lucide-angular';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, MatIconModule, CommonModule, RouterModule, LogoComponent],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    RouterModule,
+    LogoComponent,
+    LucideAngularModule,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  passwordVisible = signal(false);
+  readonly UserIcon = User;
+  readonly LockKeyholeIcon = LockKeyhole;
+  readonly EyeIcon = Eye;
+  readonly EyeOffIcon = EyeOff;
 
   form: WritableSignal<TypedFormGroup<UserAuthLoginRequest>>;
 
-  constructor(
-    private authService: ClientAuthService,
-    private router: Router
-  ) {
+  constructor(private authService: ClientAuthService, private router: Router) {
     const form = new TypedFormGroup<UserAuthLoginRequest>({
       Login: new FormControl(),
       Password: new FormControl(),
@@ -46,17 +52,13 @@ export class LoginComponent {
     this.form = signal(form);
   }
 
-  togglePwdVisibility() {
-    this.passwordVisible.update((u) => !u);
-  }
-
   onSubmit() {
     this.form().markAllAsTouched();
     if (this.form().invalid) {
       return;
     }
 
-    this.form().disable()
+    this.form().disable();
     const data = this.form().getRawValue() as UserAuthLoginRequest;
     this.authService.login(data).subscribe({
       next: () => {

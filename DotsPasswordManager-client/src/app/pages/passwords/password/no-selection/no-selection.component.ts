@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { LucideAngularModule, Plus } from 'lucide-angular';
 
 @Component({
   selector: 'app-no-selection',
-  imports: [MatIconModule, RouterModule],
+  imports: [ RouterModule, LucideAngularModule],
   templateUrl: './no-selection.component.html',
   styleUrl: './no-selection.component.scss',
 })
-export class NoSelectionComponent {}
+export class NoSelectionComponent {
+  readonly PlusIcon = Plus;
+}

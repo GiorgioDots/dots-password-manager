@@ -8,32 +8,40 @@ import { PasswordSharedService } from '@/app/core/services/password-shared.servi
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
+import { CircleX, LogOut, LucideAngularModule, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, Star, Sun } from 'lucide-angular';
 import { debounceTime, from, switchMap } from 'rxjs';
 import { filter, sortBy } from 'underscore';
 
 @Component({
   selector: 'app-passwords',
   imports: [
-    MatIconModule,
     CtrlKListenerDirective,
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
     LogoComponent,
+    LucideAngularModule
   ],
   templateUrl: './passwords.component.html',
   styleUrl: './passwords.component.scss',
 })
 export class PasswordsComponent implements OnInit {
-  private dialog = inject(MatDialog);
   private router = inject(Router);
   private passwordsApi = inject(PasswordsService);
   private clientCrypto = inject(ClientCryptoService);
   private passwordShared = inject(PasswordSharedService);
   private clientAuth = inject(ClientAuthService);
+
+  readonly SearchIcon = Search;
+  readonly CircleXIcon = CircleX;
+  readonly StarIcon = Star;
+  readonly PanelLeftCloseIcon = PanelLeftClose;
+  readonly PanelLeftOpenIcon = PanelLeftOpen;
+  readonly PlusIcon = Plus;
+  readonly SunIcon = Sun;
+  readonly MoonIcon = Moon;
+  readonly LogOutIcon = LogOut;
 
   sideClosed = signal(document.body.clientWidth < 576);
 
@@ -109,13 +117,9 @@ export class PasswordsComponent implements OnInit {
     this.filteredPasswords.set(sorted);
   }
 
+  isDarkMode = signal(document.documentElement.getAttribute("data-theme") == "dark")
+
   toggleTheme() {
-    window
-      .matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', (event) => {
-        const theme = event.matches ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', theme);
-      });
     let theme = localStorage.getItem('app_theme');
     if (theme == null) {
       theme =
@@ -127,6 +131,7 @@ export class PasswordsComponent implements OnInit {
     theme = theme == 'dark' ? 'light' : 'dark';
     localStorage.setItem('app_theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
+    this.isDarkMode.set(theme == "dark")
   }
 
   toggleFavourite(password: UserSavedPasswordDtOsSavedPasswordDto) {

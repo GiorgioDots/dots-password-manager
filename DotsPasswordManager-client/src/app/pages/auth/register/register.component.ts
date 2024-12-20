@@ -5,18 +5,35 @@ import { ClientAuthService } from '@/app/core/services/auth/client-auth.service'
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
+import {
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  LucideAngularModule,
+  Mail,
+  User,
+} from 'lucide-angular';
 import { of } from 'rxjs';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, MatIconModule, RouterModule, LogoComponent],
+  imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    LogoComponent,
+    LucideAngularModule,
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  passwordVisible = signal(false);
+  readonly UserIcon = User;
+  readonly LockKeyholeIcon = LockKeyhole;
+  readonly EyeIcon = Eye;
+  readonly EyeOffIcon = EyeOff;
+  readonly MailIcon = Mail;
+
   form: WritableSignal<TypedFormGroup<UserAuthRegisterRequest>>;
 
   constructor(
@@ -43,10 +60,6 @@ export class RegisterComponent {
       ?.addValidators([Validators.required, Validators.minLength(6)]);
 
     this.form = signal(form);
-  }
-
-  togglePwdVisibility() {
-    this.passwordVisible.update((u) => !u);
   }
 
   onSubmit() {

@@ -4,16 +4,13 @@ import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-c
 import { PasswordSharedService } from '@/app/core/services/password-shared.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import {
-  AfterViewInit,
   Component,
-  ElementRef,
   inject,
-  signal,
-  ViewChild,
+  signal
 } from '@angular/core';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-
 import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
+import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
 import PasswordGenerator from '@/app/core/utils/password-generator';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
@@ -24,16 +21,14 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ChevronLeft, Eye, EyeOff, Link, LockKeyhole, LucideAngularModule, Pencil, RefreshCcw, RotateCw, Save, ScrollText, Tag, Trash, Trash2, User, UserPlus } from 'lucide-angular';
 import { from, switchMap } from 'rxjs';
-import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
 
 @Component({
   selector: 'app-password',
   imports: [
     ReactiveFormsModule,
-    MatIconModule,
     RouterModule,
     FormsModule,
     MatMenuModule,
@@ -42,6 +37,7 @@ import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.dir
     CopyClipboardIconComponent,
     A11yModule,
     CtrlQListenerDirective,
+    LucideAngularModule
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
@@ -51,6 +47,22 @@ export class PasswordComponent {
   private clientCrypto = inject(ClientCryptoService);
   private passwordShared = inject(PasswordSharedService);
   private router = inject(Router);
+
+  readonly ChevronLeftIcon = ChevronLeft;
+  readonly RefreshCCwIcon = RefreshCcw;
+  readonly Trash2Icon = Trash2;
+  readonly SaveIcon = Save;
+  readonly PencilIcon = Pencil;
+  readonly UserIcon = User;
+  readonly UserPlusIcon = UserPlus;
+  readonly LockKeyHoleIcon = LockKeyhole;
+  readonly RotateCwIcon = RotateCw;
+  readonly EyeIcon = Eye;
+  readonly EyeOffIcon = EyeOff;
+  readonly LinkIcon = Link;
+  readonly ScrollTextIcon = ScrollText;
+  readonly TagIcon = Tag;
+  readonly TrashIcon = Trash;
 
   form = signal<
     TypedFormGroup<UserSavedPasswordDtOsSavedPasswordDto> | undefined
@@ -147,7 +159,8 @@ export class PasswordComponent {
     if (
       !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
-      ) || this.isNew()
+      ) ||
+      this.isNew()
     ) {
       setTimeout(() => {
         const inp = document.getElementById('firstInput');
@@ -267,4 +280,3 @@ export class PasswordComponent {
     }
   }
 }
-
