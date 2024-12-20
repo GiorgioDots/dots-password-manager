@@ -43,9 +43,6 @@
   --lg-breakpoint: 992px;
   --xl-breakpoint: 1200px;
   --xxl-breakpoint: 1400px;
-  .logo {
-    fill: var(--lavender);
-  }
 }
 
 [data-theme="dark"] {
@@ -81,10 +78,6 @@
   --base: hsl(232deg, 23%, 18%);
   --mantle: hsl(233deg, 23%, 15%);
   --crust: hsl(236deg, 23%, 12%);
-
-  .logo {
-    fill: var(--lavender);
-  }
 }
 
 .mat-mdc-dialog-surface {
@@ -151,6 +144,10 @@ body {
     Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
   transition: background-color 100ms linear, color 25ms linear;
+
+  .logo {
+    fill: var(--lavender);
+  }
 }
 
 .cursor-pointer {
