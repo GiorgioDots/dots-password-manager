@@ -1,22 +1,22 @@
+import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
+import { MessagesService } from '@/app/core/components/messages-wrapper/messages.service';
+import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
 import { UserSavedPasswordDtOsSavedPasswordDto } from '@/app/core/main-api/models';
 import { PasswordsService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
-import { PasswordSharedService } from '@/app/core/services/password-shared.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
-import { Component, inject, signal } from '@angular/core';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
-import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
 import PasswordGenerator from '@/app/core/utils/password-generator';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   ChevronLeft,
@@ -36,7 +36,7 @@ import {
   User,
   UserPlus,
 } from 'lucide-angular';
-import { from, switchMap } from 'rxjs';
+import { PasswordsCacheService } from '../passwords-cache.service';
 
 @Component({
   selector: 'app-password',
@@ -56,9 +56,9 @@ import { from, switchMap } from 'rxjs';
   styleUrl: './password.component.scss',
 })
 export class PasswordComponent {
-  private pwdApi = inject(PasswordsService);
+  private msgsSvc = inject(MessagesService);
+  private pwdCache = inject(PasswordsCacheService);
   private clientCrypto = inject(ClientCryptoService);
-  private passwordShared = inject(PasswordSharedService);
   private router = inject(Router);
 
   readonly ChevronLeftIcon = ChevronLeft;
@@ -104,7 +104,7 @@ export class PasswordComponent {
     });
   }
 
-  init(pwdId: string | null) {
+  init(pwdId: string | null, forceRefresh = false) {
     this.id.set(pwdId);
     if (
       pwdId &&
@@ -115,20 +115,12 @@ export class PasswordComponent {
     ) {
       this.isNew.set(false);
       this.form()?.disable();
-      this.pwdApi
-        .userSavedPasswordGetPasswordEndpoint({
-          Id: pwdId,
-        })
-        .pipe(
-          switchMap((res) => {
-            return from(this.decryptPwd(res));
-          })
-        )
-        .subscribe({
-          next: (pwd) => {
-            this.initForm(pwd);
-          },
-        });
+
+      this.pwdCache.get(pwdId, forceRefresh).subscribe({
+        next: (pwd) => {
+          this.initForm(pwd);
+        },
+      });
     } else {
       this.isNew.set(true);
       this.initForm({
@@ -182,17 +174,6 @@ export class PasswordComponent {
     }
   }
 
-  async decryptPwd(pwd: UserSavedPasswordDtOsSavedPasswordDto) {
-    pwd.Login = await this.clientCrypto.decryptDataAsync(pwd.Login!);
-    pwd.Password = await this.clientCrypto.decryptDataAsync(pwd.Password!);
-    if (pwd.SecondLogin) {
-      pwd.SecondLogin = await this.clientCrypto.decryptDataAsync(
-        pwd.SecondLogin!
-      );
-    }
-    return pwd;
-  }
-
   onAddTag(tag: string) {
     if (tag == '') return;
     let currTags = this.form()?.get('Tags')?.value ?? [];
@@ -219,65 +200,43 @@ export class PasswordComponent {
 
     if (this.isNew()) {
       const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
-      this.pwdApi
-        .userSavedPasswordCreatePasswordEndpoint({
-          body: data,
-        })
-        .pipe(
-          switchMap((ret) => {
-            return from(this.decryptPwd(ret));
-          })
-        )
-        .subscribe({
-          next: (res) => {
-            this.id.set(res.PasswordId!);
-            this.isNew.set(false);
-            this.initForm(res);
-            this.passwordShared.setPasswordsChanged();
-            this.router.navigate(['saved-passwords', res.PasswordId]);
-          },
-          error: () => {
-            this.form()?.enable();
-          },
-        });
+      this.pwdCache.create(data).subscribe({
+        next: (res) => {
+          this.id.set(res.PasswordId!);
+          this.isNew.set(false);
+          this.initForm(res);
+          this.router.navigate(['saved-passwords', res.PasswordId]);
+        },
+        error: () => {
+          this.form()?.enable();
+        },
+      });
     } else {
       const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
       console.log(data);
       data.PasswordId = this.id()!;
-      this.pwdApi
-        .userSavedPasswordUpdatePasswordEndpoint({
-          body: data,
-        })
-        .pipe(
-          switchMap((ret) => {
-            return from(this.decryptPwd(ret));
-          })
-        )
-        .subscribe({
-          next: (res) => {
-            this.passwordShared.setPasswordsChanged();
-            this.initForm(res);
-          },
-          error: () => {
-            this.form()?.enable();
-          },
-        });
+      this.pwdCache.update(data).subscribe({
+        next: (res) => {
+          this.initForm(res);
+        },
+        error: () => {
+          this.form()?.enable();
+        },
+      });
     }
   }
 
   onDelete() {
     if (this.isNew()) return;
 
-    this.pwdApi
-      .userSavedPasswordDeletePasswordEndpoint({
-        Id: this.id()!,
-      })
-      .subscribe({
-        complete: () => {
-          this.router.navigate(['saved-passwords']);
-          this.passwordShared.setPasswordsChanged();
-        },
-      });
+    this.pwdCache.delete(this.id()!).subscribe({
+      next: (msg) => {
+        this.msgsSvc.addInfo('Completed', msg.Message!, 2000);
+      },
+      complete: () => {
+        this.router.navigate(['saved-passwords']);
+      },
+    });
   }
 
   generatePassword() {
@@ -287,7 +246,7 @@ export class PasswordComponent {
 
   onRefresh(menuTrigger: MatMenuTrigger) {
     if (this.form()?.dirty == false) {
-      this.init(this.id());
+      this.init(this.id(), true);
       menuTrigger.closeMenu();
     }
   }
