@@ -1,9 +1,8 @@
 import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
 import { MessagesService } from '@/app/core/components/messages-wrapper/messages.service';
+import { ConfirmButtonComponent } from '@/app/core/components/ui/confirm-button/confirm-button.component';
 import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
 import { UserSavedPasswordDtOsSavedPasswordDto } from '@/app/core/main-api/models';
-import { PasswordsService } from '@/app/core/main-api/services';
-import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import PasswordGenerator from '@/app/core/utils/password-generator';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -16,7 +15,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   ChevronLeft,
@@ -37,7 +35,6 @@ import {
   UserPlus,
 } from 'lucide-angular';
 import { PasswordsCacheService } from '../passwords-cache.service';
-import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 
 @Component({
   selector: 'app-password',
@@ -45,14 +42,13 @@ import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.direct
     ReactiveFormsModule,
     RouterModule,
     FormsModule,
-    MatMenuModule,
     CommonModule,
     ClipboardModule,
     CopyClipboardIconComponent,
     A11yModule,
     CtrlQListenerDirective,
     LucideAngularModule,
-    DotsButtonDirective
+    ConfirmButtonComponent,
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
@@ -60,7 +56,6 @@ import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.direct
 export class PasswordComponent {
   private msgsSvc = inject(MessagesService);
   private pwdCache = inject(PasswordsCacheService);
-  private clientCrypto = inject(ClientCryptoService);
   private router = inject(Router);
 
   readonly ChevronLeftIcon = ChevronLeft;
@@ -246,17 +241,11 @@ export class PasswordComponent {
     this.form()?.get('Password')?.setValue(generated);
   }
 
-  onRefresh(menuTrigger: MatMenuTrigger) {
-    if (this.form()?.dirty == false) {
-      this.init(this.id(), true);
-      menuTrigger.closeMenu();
-    }
+  onRefresh() {
+    this.init(this.id(), true);
   }
 
-  onBack(menuTrigger: MatMenuTrigger) {
-    if (this.form()?.dirty == false) {
-      this.router.navigate(['/saved-password']);
-      menuTrigger.closeMenu();
-    }
+  onBack() {
+    this.router.navigate(['/saved-password']);
   }
 }

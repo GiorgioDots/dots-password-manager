@@ -1,1 +1,37 @@
-<p>confirm-button works!</p>
+<button
+  dotsButton
+  [dotsSize]="buttonSize"
+  [dotsColor]="buttonColor"
+  [disabled]="disabled"
+  [ngStyle]="buttonStyle"
+  [matMenuTriggerFor]="confirmMenu"
+  #confirmMenuTrigger="matMenuTrigger"
+  (click)="!menuEnabled ? handleMenuNotEnabled(confirmMenuTrigger) : {}"
+>
+  <ng-content></ng-content>
+</button>
+<mat-menu #confirmMenu>
+  <div style="padding: 0.5rem">
+    <h5 style="margin-top: 0">
+      {{ message }}
+    </h5>
+    <div style="display: flex; gap: 0.5rem">
+      <button
+        dotsButton
+        dotsColor="error"
+        style="flex: 1 0 0%"
+        (click)="confirmMenuTrigger.closeMenu()"
+      >
+        Cancel
+      </button>
+      <button
+        dotsButton
+        dotsColor="primary"
+        style="flex: 1 0 0%"
+        (click)="confirm.emit()"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</mat-menu>
