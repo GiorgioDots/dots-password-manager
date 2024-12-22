@@ -1,0 +1,29 @@
+.container {
+  background-color: var(--lavender);
+  color: var(--base);
+  border-radius: var(--default-radius);
+  pointer-events: all;
+  padding: 0.5rem;
+
+  &.msg-error {
+    background-color: var(--red);
+    color: var(--base);
+  }
+  &.msg-warning {
+    background-color: var(--peach);
+  }
+  &.msg-info {
+    background-color: var(--sapphire);
+    color: var(--base);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+}
+.title {
+  flex-grow: 1;
+  font-weight: 600;
+  font-size: 1rem;
+}

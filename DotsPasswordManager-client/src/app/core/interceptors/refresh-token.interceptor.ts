@@ -1,14 +1,11 @@
 import {
   HttpErrorResponse,
   HttpEvent,
-  HttpHandler,
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
 } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { ClientAuthService } from '../services/auth/client-auth.service';
-import { RefreshTokenService } from '../services/auth/refresh-token.service';
 import {
   catchError,
   filter,
@@ -17,13 +14,33 @@ import {
   take,
   throwError,
 } from 'rxjs';
-import { ClientCryptoService } from '../services/e2e-encryption/client-crypto.service';
 import { UserAuthRefreshTokenResponse } from '../main-api/models';
+import { ClientAuthService } from '../services/auth/client-auth.service';
+import { RefreshTokenService } from '../services/auth/refresh-token.service';
+import { MessagesService } from '../components/messages-wrapper/messages.service';
+import { Router } from '@angular/router';
 
 export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(ClientAuthService);
   const refreshTokenService = inject(RefreshTokenService);
-  const clientCrypto = inject(ClientCryptoService);
+  const msgSvc = inject(MessagesService);
+  const router = inject(Router);
+  const errorDuration = 5000;
+
+  const handleErrors = (error: any) => {
+    const errors = error.error.Errors;
+    if (errors && Object.keys(errors).length > 0) {
+      for(let key in errors){
+        for(let errorMsg of errors[key]){
+          msgSvc.addError(error.error.Message, errorMsg);
+        }
+      }
+    } else if (error.error.Message) {
+      msgSvc.addError(error.error.Message, 'An unexpected error occured');
+    } else {
+      msgSvc.addError("Error", 'An unexpected error occured');
+    }
+  };
 
   const handle401Error = (
     req: HttpRequest<any>,
@@ -46,8 +63,15 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
           );
         }),
         catchError((err) => {
+          console.log(err.status);
           refreshTokenService.isRefreshing = false;
           authService.logout();
+          msgSvc.addError(
+            'Session expired',
+            'Your session has expired, please login again',
+            errorDuration
+          );
+          router.navigate(['login']);
           return throwError(() => err);
         })
       );
@@ -73,6 +97,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
         return handle401Error(req, next);
       }
+      handleErrors(error);
       return throwError(() => error);
     })
   );

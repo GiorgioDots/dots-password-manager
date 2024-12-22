@@ -3,11 +3,7 @@ import { PasswordsService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
 import { PasswordSharedService } from '@/app/core/services/password-shared.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
-import {
-  Component,
-  inject,
-  signal
-} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CopyClipboardIconComponent } from '@/app/core/components/copy-clipboard-icon/copy-clipboard-icon.component';
 import { CtrlQListenerDirective } from '@/app/core/directives/ctrl-alistener.directive';
@@ -22,7 +18,24 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ChevronLeft, Eye, EyeOff, Link, LockKeyhole, LucideAngularModule, Pencil, RefreshCcw, RotateCw, Save, ScrollText, Tag, Trash, Trash2, User, UserPlus } from 'lucide-angular';
+import {
+  ChevronLeft,
+  Eye,
+  EyeOff,
+  Link,
+  LockKeyhole,
+  LucideAngularModule,
+  Pencil,
+  RefreshCcw,
+  RotateCw,
+  Save,
+  ScrollText,
+  Tag,
+  Trash,
+  Trash2,
+  User,
+  UserPlus,
+} from 'lucide-angular';
 import { from, switchMap } from 'rxjs';
 
 @Component({
@@ -37,7 +50,7 @@ import { from, switchMap } from 'rxjs';
     CopyClipboardIconComponent,
     A11yModule,
     CtrlQListenerDirective,
-    LucideAngularModule
+    LucideAngularModule,
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
@@ -223,6 +236,9 @@ export class PasswordComponent {
             this.passwordShared.setPasswordsChanged();
             this.router.navigate(['saved-passwords', res.PasswordId]);
           },
+          error: () => {
+            this.form()?.enable();
+          },
         });
     } else {
       const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
@@ -241,6 +257,9 @@ export class PasswordComponent {
           next: (res) => {
             this.passwordShared.setPasswordsChanged();
             this.initForm(res);
+          },
+          error: () => {
+            this.form()?.enable();
           },
         });
     }

@@ -18,7 +18,7 @@ internal sealed class Endpoint : EndpointWithoutRequest<List<SavedPasswordDTO>>
 
     public override async Task HandleAsync(CancellationToken c)
     {
-        var userId = User.Claims.GetUserId(); 
+        var userId = User.Claims.GetUserId();
         if (userId == null)
         {
             ThrowError("User not found");
