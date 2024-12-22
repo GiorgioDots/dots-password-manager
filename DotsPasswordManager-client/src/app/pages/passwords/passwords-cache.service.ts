@@ -74,7 +74,7 @@ export class PasswordsCacheService {
         switchMap((res) => {
           return from(this.decryptPwd(res));
         }),
-        tap(pwd => {
+        tap((pwd) => {
           this._passwords.update((k) => {
             const tmp = k.filter((p) => p.PasswordId != pwd.PasswordId);
             tmp.push(pwd);
@@ -133,20 +133,19 @@ export class PasswordsCacheService {
   }
 
   toggleFavourite(password: UserSavedPasswordDtOsSavedPasswordDto) {
-    this.passwordsApi
+    return this.passwordsApi
       .userSavedPasswordToggleFavouriteEndpoint({
         Id: password.PasswordId!,
       })
-      .subscribe({
-        next: (res) => {
+      .pipe(
+        tap((res) => {
           const pwd = this._passwords().find(
             (k) => k.PasswordId == res.PasswordId
           );
           if (pwd) pwd.IsFavourite = res.IsFavourite;
           this._passwords.set([...this._passwords()]);
-          // this.sort(this._passwords());
-        },
-      });
+        })
+      );
   }
 
   setFilter(k: string | null) {
