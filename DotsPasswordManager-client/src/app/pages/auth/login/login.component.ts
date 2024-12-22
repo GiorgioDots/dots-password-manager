@@ -1,3 +1,4 @@
+import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 import { UserAuthLoginRequest } from '@/app/core/main-api/models';
 import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
@@ -16,6 +17,7 @@ import { Eye, EyeOff, LockKeyhole, LucideAngularModule, User } from 'lucide-angu
     RouterModule,
     LogoComponent,
     LucideAngularModule,
+    DotsButtonDirective
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

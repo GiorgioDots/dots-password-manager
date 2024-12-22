@@ -17,6 +17,7 @@ import {
 } from 'lucide-angular';
 import { DrawerComponent } from '../../core/components/containers/drawer/drawer.component';
 import { PasswordsListComponent } from './components/passwords-list/passwords-list.component';
+import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 
 @Component({
   selector: 'app-passwords',
@@ -29,6 +30,7 @@ import { PasswordsListComponent } from './components/passwords-list/passwords-li
     LucideAngularModule,
     DrawerComponent,
     PasswordsListComponent,
+    DotsButtonDirective
   ],
   templateUrl: './passwords.component.html',
   styleUrl: './passwords.component.scss',

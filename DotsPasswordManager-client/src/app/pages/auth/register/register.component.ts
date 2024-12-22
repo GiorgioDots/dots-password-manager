@@ -1,4 +1,5 @@
 import { LogoComponent } from '@/app/core/components/logo/logo.component';
+import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 import { UserAuthRegisterRequest } from '@/app/core/main-api/models';
 import { AuthService } from '@/app/core/main-api/services';
 import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
@@ -23,6 +24,7 @@ import { of } from 'rxjs';
     RouterModule,
     LogoComponent,
     LucideAngularModule,
+    DotsButtonDirective
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',

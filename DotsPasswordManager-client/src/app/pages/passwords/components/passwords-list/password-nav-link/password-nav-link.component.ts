@@ -4,10 +4,11 @@ import { Component, inject, Input, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LoaderCircle, LucideAngularModule, Star } from 'lucide-angular';
 import { PasswordsCacheService } from '../../../passwords-cache.service';
+import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 
 @Component({
   selector: 'app-password-nav-link',
-  imports: [RouterModule, NgClass, LucideAngularModule],
+  imports: [RouterModule, NgClass, LucideAngularModule, DotsButtonDirective],
   templateUrl: './password-nav-link.component.html',
   styleUrl: './password-nav-link.component.scss',
 })

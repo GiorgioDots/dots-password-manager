@@ -4,18 +4,18 @@ import {
   ElementRef,
   inject,
   OnInit,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CircleX, LucideAngularModule, Search, Star } from 'lucide-angular';
 import { debounceTime } from 'rxjs';
 import { PasswordsCacheService } from '../../passwords-cache.service';
-import { PasswordNavLinkComponent } from "./password-nav-link/password-nav-link.component";
+import { PasswordNavLinkComponent } from './password-nav-link/password-nav-link.component';
 
 @Component({
   selector: 'app-passwords-list',
-  imports: [ReactiveFormsModule, LucideAngularModule, RouterModule, NgClass, PasswordNavLinkComponent],
+  imports: [ReactiveFormsModule, LucideAngularModule, PasswordNavLinkComponent],
   templateUrl: './passwords-list.component.html',
   styleUrl: './passwords-list.component.scss',
 })
@@ -24,7 +24,6 @@ export class PasswordsListComponent implements OnInit {
 
   readonly SearchIcon = Search;
   readonly CircleXIcon = CircleX;
-  readonly StarIcon = Star;
 
   @ViewChild('searchInput') searchInput:
     | ElementRef<HTMLInputElement>

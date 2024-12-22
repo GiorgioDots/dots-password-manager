@@ -37,6 +37,7 @@ import {
   UserPlus,
 } from 'lucide-angular';
 import { PasswordsCacheService } from '../passwords-cache.service';
+import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 
 @Component({
   selector: 'app-password',
@@ -51,6 +52,7 @@ import { PasswordsCacheService } from '../passwords-cache.service';
     A11yModule,
     CtrlQListenerDirective,
     LucideAngularModule,
+    DotsButtonDirective
   ],
   templateUrl: './password.component.html',
   styleUrl: './password.component.scss',
