@@ -12,6 +12,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CircleX, LogOut, LucideAngularModule, Moon, PanelLeftClose, PanelLeftOpen, Plus, Search, Star, Sun } from 'lucide-angular';
 import { debounceTime, from, switchMap } from 'rxjs';
 import { filter, sortBy } from 'underscore';
+import { DrawerComponent } from "../../core/components/containers/drawer/drawer.component";
 
 @Component({
   selector: 'app-passwords',
@@ -21,8 +22,9 @@ import { filter, sortBy } from 'underscore';
     RouterModule,
     ReactiveFormsModule,
     LogoComponent,
-    LucideAngularModule
-  ],
+    LucideAngularModule,
+    DrawerComponent
+],
   templateUrl: './passwords.component.html',
   styleUrl: './passwords.component.scss',
 })

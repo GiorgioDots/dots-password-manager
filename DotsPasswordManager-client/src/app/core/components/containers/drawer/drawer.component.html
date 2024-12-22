@@ -1,0 +1,17 @@
+<main class="container">
+  <div
+    class="side_backdrop"
+    [ngClass]="{ closed: isClosed() }"
+    (click)="isClosed.set(true); drawerClose.emit()"
+  ></div>
+  <aside class="side" [ngClass]="{ closed: isClosed() }">
+    <div class="side_container">
+      <ng-content select="[side]"></ng-content>
+    </div>
+  </aside>
+  <section class="card content">
+    <div class="main-content">
+      <ng-content select="[content]"></ng-content>
+    </div>
+  </section>
+</main>
