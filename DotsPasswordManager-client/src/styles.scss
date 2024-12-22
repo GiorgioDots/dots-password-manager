@@ -96,6 +96,7 @@
   scrollbar-width: thin;
   scrollbar-color: var(--surface-2) transparent;
   -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
 }
 
 ::-webkit-scrollbar {
