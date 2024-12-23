@@ -28,9 +28,8 @@ export class ConfirmButtonComponent {
 
   @Output() confirm = new EventEmitter();
 
-  handleMenuNotEnabled(trigger: MatMenuTrigger) {
+  handleMenuNotEnabled() {
     // Emits event
-    trigger.closeMenu();
     this.confirm.emit();
   }
 }

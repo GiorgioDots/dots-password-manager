@@ -4,12 +4,16 @@
   [dotsColor]="buttonColor"
   [disabled]="disabled"
   [ngStyle]="buttonStyle"
-  [matMenuTriggerFor]="confirmMenu"
-  #confirmMenuTrigger="matMenuTrigger"
-  (click)="!menuEnabled ? handleMenuNotEnabled(confirmMenuTrigger) : {}"
+  (click)="
+    !menuEnabled ? handleMenuNotEnabled() : confirmMenuTrigger.openMenu()
+  "
 >
   <ng-content></ng-content>
 </button>
+<div
+  #confirmMenuTrigger="matMenuTrigger"
+  [matMenuTriggerFor]="confirmMenu"
+></div>
 <mat-menu #confirmMenu>
   <div style="padding: 0.5rem">
     <h5 style="margin-top: 0">
