@@ -123,6 +123,10 @@
 
 html,
 body {
+  --mdc-plain-tooltip-container-color: var(--surface-0);
+  --mdc-plain-tooltip-supporting-text-color: var(--text);
+  --mdc-plain-tooltip-container-shape: var(--default-radius);
+  --mdc-plain-tooltip-supporting-text-size: .875rem;
   background: var(--base);
 
   background: linear-gradient(315deg, var(--base) 0%, var(--mantle) 100%);
