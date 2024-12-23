@@ -20,6 +20,7 @@
       [icon]="UploadIcon"
       (click)="importInput.click()"
       [isLoading]="importLoading"
+      [disabled]="importLoading()"
     >
       <span style="margin-left: 0.5rem">Import</span>
       <input style="display: none;" #importInput type="file" accept="application/json"  (change)="importInputChanged(importInput)">
