@@ -126,7 +126,7 @@ body {
   --mdc-plain-tooltip-container-color: var(--surface-0);
   --mdc-plain-tooltip-supporting-text-color: var(--text);
   --mdc-plain-tooltip-container-shape: var(--default-radius);
-  --mdc-plain-tooltip-supporting-text-size: .875rem;
+  --mdc-plain-tooltip-supporting-text-size: 0.875rem;
   background: var(--base);
 
   background: linear-gradient(315deg, var(--base) 0%, var(--mantle) 100%);
@@ -299,9 +299,14 @@ lucide-angular {
   display: flex;
   align-items: center;
   justify-content: center;
-  svg {
+  &:not(.big) svg {
     width: 1.2rem;
     height: 1.2rem;
+    stroke-width: 2;
+  }
+  &.big svg{
+    width: 2.5rem;
+    height: 2.5rem;
     stroke-width: 2;
   }
 }
@@ -328,4 +333,3 @@ lucide-angular {
     transform: rotate(360deg);
   }
 }
-

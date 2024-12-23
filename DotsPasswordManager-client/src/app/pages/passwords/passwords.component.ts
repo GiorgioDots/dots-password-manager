@@ -7,6 +7,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {
+  CircleUser,
   LogOut,
   LucideAngularModule,
   Moon,
@@ -20,6 +21,7 @@ import { DrawerComponent } from '../../core/components/containers/drawer/drawer.
 import { PasswordsListComponent } from './components/passwords-list/passwords-list.component';
 import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 import { PasswordsCacheService } from './passwords-cache.service';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-passwords',
@@ -32,7 +34,8 @@ import { PasswordsCacheService } from './passwords-cache.service';
     LucideAngularModule,
     DrawerComponent,
     PasswordsListComponent,
-    DotsButtonDirective
+    DotsButtonDirective,
+    MatMenuModule,
   ],
   templateUrl: './passwords.component.html',
   styleUrl: './passwords.component.scss',
@@ -49,6 +52,7 @@ export class PasswordsComponent implements OnInit {
   readonly MoonIcon = Moon;
   readonly LogOutIcon = LogOut;
   readonly SettingsIcon = Settings;
+  readonly CircleUserIcon = CircleUser;
 
   sideClosed = signal(document.body.clientWidth < 576);
 

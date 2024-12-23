@@ -1,7 +1,7 @@
 import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { LucideAngularModule, Plus } from 'lucide-angular';
+import { LucideAngularModule, Plus, Shield } from 'lucide-angular';
 
 @Component({
   selector: 'app-no-selection',
@@ -11,4 +11,5 @@ import { LucideAngularModule, Plus } from 'lucide-angular';
 })
 export class NoSelectionComponent {
   readonly PlusIcon = Plus;
+  readonly ShieldIcon = Shield;
 }
