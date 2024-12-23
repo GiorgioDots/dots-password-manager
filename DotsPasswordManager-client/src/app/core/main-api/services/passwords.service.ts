@@ -39,7 +39,8 @@ export class PasswordsService extends BaseService {
   }
 
   /** Path part for operation `userSavedPasswordUpdatePasswordEndpoint()` */
-  static readonly UserSavedPasswordUpdatePasswordEndpointPath = '/passwords/edit';
+  static readonly UserSavedPasswordUpdatePasswordEndpointPath =
+    '/passwords/edit';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -47,8 +48,16 @@ export class PasswordsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordUpdatePasswordEndpoint$Response(params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
-    return userSavedPasswordUpdatePasswordEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordUpdatePasswordEndpoint$Response(
+    params: UserSavedPasswordUpdatePasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
+    return userSavedPasswordUpdatePasswordEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -57,14 +66,25 @@ export class PasswordsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordUpdatePasswordEndpoint(params: UserSavedPasswordUpdatePasswordEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
-    return this.userSavedPasswordUpdatePasswordEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>): UserSavedPasswordDtOsSavedPasswordDto => r.body)
+  userSavedPasswordUpdatePasswordEndpoint(
+    params: UserSavedPasswordUpdatePasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
+    return this.userSavedPasswordUpdatePasswordEndpoint$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>
+        ): UserSavedPasswordDtOsSavedPasswordDto => r.body
+      )
     );
   }
 
   /** Path part for operation `userSavedPasswordToggleFavouriteEndpoint()` */
-  static readonly UserSavedPasswordToggleFavouriteEndpointPath = '/passwords/{Id}/toggle-favourite';
+  static readonly UserSavedPasswordToggleFavouriteEndpointPath =
+    '/passwords/{Id}/toggle-favourite';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -72,8 +92,16 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordToggleFavouriteEndpoint$Response(params: UserSavedPasswordToggleFavouriteEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
-    return userSavedPasswordToggleFavouriteEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordToggleFavouriteEndpoint$Response(
+    params: UserSavedPasswordToggleFavouriteEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
+    return userSavedPasswordToggleFavouriteEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -82,9 +110,19 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordToggleFavouriteEndpoint(params: UserSavedPasswordToggleFavouriteEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
-    return this.userSavedPasswordToggleFavouriteEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>): UserSavedPasswordDtOsSavedPasswordDto => r.body)
+  userSavedPasswordToggleFavouriteEndpoint(
+    params: UserSavedPasswordToggleFavouriteEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
+    return this.userSavedPasswordToggleFavouriteEndpoint$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>
+        ): UserSavedPasswordDtOsSavedPasswordDto => r.body
+      )
     );
   }
 
@@ -97,8 +135,16 @@ export class PasswordsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordImportEndpoint$Response(params: UserSavedPasswordImportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordImportResponse>> {
-    return userSavedPasswordImportEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordImportEndpoint$Response(
+    params: UserSavedPasswordImportEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserSavedPasswordImportResponse>> {
+    return userSavedPasswordImportEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -107,9 +153,16 @@ export class PasswordsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordImportEndpoint(params: UserSavedPasswordImportEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordImportResponse> {
+  userSavedPasswordImportEndpoint(
+    params: UserSavedPasswordImportEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordImportResponse> {
     return this.userSavedPasswordImportEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordImportResponse>): UserSavedPasswordImportResponse => r.body)
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordImportResponse>
+        ): UserSavedPasswordImportResponse => r.body
+      )
     );
   }
 
@@ -122,8 +175,16 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordGetPasswordEndpoint$Response(params: UserSavedPasswordGetPasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
-    return userSavedPasswordGetPasswordEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordGetPasswordEndpoint$Response(
+    params: UserSavedPasswordGetPasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
+    return userSavedPasswordGetPasswordEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -132,14 +193,25 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordGetPasswordEndpoint(params: UserSavedPasswordGetPasswordEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
-    return this.userSavedPasswordGetPasswordEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>): UserSavedPasswordDtOsSavedPasswordDto => r.body)
+  userSavedPasswordGetPasswordEndpoint(
+    params: UserSavedPasswordGetPasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
+    return this.userSavedPasswordGetPasswordEndpoint$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>
+        ): UserSavedPasswordDtOsSavedPasswordDto => r.body
+      )
     );
   }
 
   /** Path part for operation `userSavedPasswordDeletePasswordEndpoint()` */
-  static readonly UserSavedPasswordDeletePasswordEndpointPath = '/passwords/{Id}';
+  static readonly UserSavedPasswordDeletePasswordEndpointPath =
+    '/passwords/{Id}';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -147,8 +219,18 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordDeletePasswordEndpoint$Response(params: UserSavedPasswordDeletePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>> {
-    return userSavedPasswordDeletePasswordEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordDeletePasswordEndpoint$Response(
+    params: UserSavedPasswordDeletePasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<
+    StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>
+  > {
+    return userSavedPasswordDeletePasswordEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -157,9 +239,19 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordDeletePasswordEndpoint(params: UserSavedPasswordDeletePasswordEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDeletePasswordDeletePasswordResponse> {
-    return this.userSavedPasswordDeletePasswordEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>): UserSavedPasswordDeletePasswordDeletePasswordResponse => r.body)
+  userSavedPasswordDeletePasswordEndpoint(
+    params: UserSavedPasswordDeletePasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordDeletePasswordDeletePasswordResponse> {
+    return this.userSavedPasswordDeletePasswordEndpoint$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>
+        ): UserSavedPasswordDeletePasswordDeletePasswordResponse => r.body
+      )
     );
   }
 
@@ -172,8 +264,18 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordGetPasswordsEndpoint$Response(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<UserSavedPasswordDtOsSavedPasswordDto>>> {
-    return userSavedPasswordGetPasswordsEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordGetPasswordsEndpoint$Response(
+    params?: UserSavedPasswordGetPasswordsEndpoint$Params,
+    context?: HttpContext
+  ): Observable<
+    StrictHttpResponse<Array<UserSavedPasswordDtOsSavedPasswordDto>>
+  > {
+    return userSavedPasswordGetPasswordsEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -182,9 +284,19 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordGetPasswordsEndpoint(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<Array<UserSavedPasswordDtOsSavedPasswordDto>> {
-    return this.userSavedPasswordGetPasswordsEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<Array<UserSavedPasswordDtOsSavedPasswordDto>>): Array<UserSavedPasswordDtOsSavedPasswordDto> => r.body)
+  userSavedPasswordGetPasswordsEndpoint(
+    params?: UserSavedPasswordGetPasswordsEndpoint$Params,
+    context?: HttpContext
+  ): Observable<Array<UserSavedPasswordDtOsSavedPasswordDto>> {
+    return this.userSavedPasswordGetPasswordsEndpoint$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (
+          r: StrictHttpResponse<Array<UserSavedPasswordDtOsSavedPasswordDto>>
+        ): Array<UserSavedPasswordDtOsSavedPasswordDto> => r.body
+      )
     );
   }
 
@@ -197,8 +309,16 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordExportEndpoint$Response(params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>> {
-    return userSavedPasswordExportEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordExportEndpoint$Response(
+    params?: UserSavedPasswordExportEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>> {
+    return userSavedPasswordExportEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -207,14 +327,22 @@ export class PasswordsService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  userSavedPasswordExportEndpoint(params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsImportExportDto> {
+  userSavedPasswordExportEndpoint(
+    params?: UserSavedPasswordExportEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordDtOsImportExportDto> {
     return this.userSavedPasswordExportEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>): UserSavedPasswordDtOsImportExportDto => r.body)
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>
+        ): UserSavedPasswordDtOsImportExportDto => r.body
+      )
     );
   }
 
   /** Path part for operation `userSavedPasswordCreatePasswordEndpoint()` */
-  static readonly UserSavedPasswordCreatePasswordEndpointPath = '/passwords/create';
+  static readonly UserSavedPasswordCreatePasswordEndpointPath =
+    '/passwords/create';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
@@ -222,8 +350,16 @@ export class PasswordsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordCreatePasswordEndpoint$Response(params: UserSavedPasswordCreatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
-    return userSavedPasswordCreatePasswordEndpoint(this.http, this.rootUrl, params, context);
+  userSavedPasswordCreatePasswordEndpoint$Response(
+    params: UserSavedPasswordCreatePasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
+    return userSavedPasswordCreatePasswordEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -232,10 +368,19 @@ export class PasswordsService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userSavedPasswordCreatePasswordEndpoint(params: UserSavedPasswordCreatePasswordEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
-    return this.userSavedPasswordCreatePasswordEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>): UserSavedPasswordDtOsSavedPasswordDto => r.body)
+  userSavedPasswordCreatePasswordEndpoint(
+    params: UserSavedPasswordCreatePasswordEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
+    return this.userSavedPasswordCreatePasswordEndpoint$Response(
+      params,
+      context
+    ).pipe(
+      map(
+        (
+          r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>
+        ): UserSavedPasswordDtOsSavedPasswordDto => r.body
+      )
     );
   }
-
 }

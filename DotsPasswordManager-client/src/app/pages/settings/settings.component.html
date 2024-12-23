@@ -9,8 +9,7 @@
       [icon]="DownloadIcon"
       (click)="onExport()"
       [isLoading]="exportLoading"
-      [disabled]="exportLoading()"
-    >
+      [disabled]="exportLoading()">
       <span style="margin-left: 0.5rem">Export</span>
     </button>
     <button
@@ -20,10 +19,14 @@
       [icon]="UploadIcon"
       (click)="importInput.click()"
       [isLoading]="importLoading"
-      [disabled]="importLoading()"
-    >
+      [disabled]="importLoading()">
       <span style="margin-left: 0.5rem">Import</span>
-      <input style="display: none;" #importInput type="file" accept="application/json"  (change)="importInputChanged(importInput)">
+      <input
+        style="display: none"
+        #importInput
+        type="file"
+        accept="application/json"
+        (change)="importInputChanged(importInput)" />
     </button>
   </div>
 </app-setting-block>

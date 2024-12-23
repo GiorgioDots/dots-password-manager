@@ -36,7 +36,10 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userAuthRegisterEndpoint$Response(params: UserAuthRegisterEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthRegisterResponse>> {
+  userAuthRegisterEndpoint$Response(
+    params: UserAuthRegisterEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserAuthRegisterResponse>> {
     return userAuthRegisterEndpoint(this.http, this.rootUrl, params, context);
   }
 
@@ -46,9 +49,16 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userAuthRegisterEndpoint(params: UserAuthRegisterEndpoint$Params, context?: HttpContext): Observable<UserAuthRegisterResponse> {
+  userAuthRegisterEndpoint(
+    params: UserAuthRegisterEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserAuthRegisterResponse> {
     return this.userAuthRegisterEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserAuthRegisterResponse>): UserAuthRegisterResponse => r.body)
+      map(
+        (
+          r: StrictHttpResponse<UserAuthRegisterResponse>
+        ): UserAuthRegisterResponse => r.body
+      )
     );
   }
 
@@ -61,8 +71,16 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userAuthRefreshTokenEndpoint$Response(params: UserAuthRefreshTokenEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthRefreshTokenResponse>> {
-    return userAuthRefreshTokenEndpoint(this.http, this.rootUrl, params, context);
+  userAuthRefreshTokenEndpoint$Response(
+    params: UserAuthRefreshTokenEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserAuthRefreshTokenResponse>> {
+    return userAuthRefreshTokenEndpoint(
+      this.http,
+      this.rootUrl,
+      params,
+      context
+    );
   }
 
   /**
@@ -71,9 +89,16 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userAuthRefreshTokenEndpoint(params: UserAuthRefreshTokenEndpoint$Params, context?: HttpContext): Observable<UserAuthRefreshTokenResponse> {
+  userAuthRefreshTokenEndpoint(
+    params: UserAuthRefreshTokenEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserAuthRefreshTokenResponse> {
     return this.userAuthRefreshTokenEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserAuthRefreshTokenResponse>): UserAuthRefreshTokenResponse => r.body)
+      map(
+        (
+          r: StrictHttpResponse<UserAuthRefreshTokenResponse>
+        ): UserAuthRefreshTokenResponse => r.body
+      )
     );
   }
 
@@ -86,7 +111,10 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userAuthLoginEndpoint$Response(params: UserAuthLoginEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthLoginResponse>> {
+  userAuthLoginEndpoint$Response(
+    params: UserAuthLoginEndpoint$Params,
+    context?: HttpContext
+  ): Observable<StrictHttpResponse<UserAuthLoginResponse>> {
     return userAuthLoginEndpoint(this.http, this.rootUrl, params, context);
   }
 
@@ -96,10 +124,15 @@ export class AuthService extends BaseService {
    *
    * This method sends `application/json` and handles request body of type `application/json`.
    */
-  userAuthLoginEndpoint(params: UserAuthLoginEndpoint$Params, context?: HttpContext): Observable<UserAuthLoginResponse> {
+  userAuthLoginEndpoint(
+    params: UserAuthLoginEndpoint$Params,
+    context?: HttpContext
+  ): Observable<UserAuthLoginResponse> {
     return this.userAuthLoginEndpoint$Response(params, context).pipe(
-      map((r: StrictHttpResponse<UserAuthLoginResponse>): UserAuthLoginResponse => r.body)
+      map(
+        (r: StrictHttpResponse<UserAuthLoginResponse>): UserAuthLoginResponse =>
+          r.body
+      )
     );
   }
-
 }

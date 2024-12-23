@@ -34,7 +34,7 @@ export class SettingsComponent {
   onExport() {
     this.exportLoading.set(true);
     this.passwordsApi.userSavedPasswordExportEndpoint().subscribe({
-      next: (passwords) => {
+      next: passwords => {
         this.exportLoading.set(false);
         const data = JSON.stringify(passwords, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
@@ -65,7 +65,7 @@ export class SettingsComponent {
         body: data,
       })
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.importLoading.set(false);
           this.pwdCache.getAll(true);
           this.msgsSvc.addInfo(

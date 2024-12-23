@@ -32,10 +32,12 @@ export class PasswordsListComponent implements OnInit {
 
   searchCtrl = new FormControl('');
   loading = signal(false);
-  skeletons = Array(17).fill(0).map((_, i) => i);
+  skeletons = Array(17)
+    .fill(0)
+    .map((_, i) => i);
 
   constructor() {
-    this.searchCtrl.valueChanges.pipe(debounceTime(500)).subscribe((k) => {
+    this.searchCtrl.valueChanges.pipe(debounceTime(500)).subscribe(k => {
       this.pwdCache.setFilter(k);
     });
   }

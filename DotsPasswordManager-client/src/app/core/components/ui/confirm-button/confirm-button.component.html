@@ -6,14 +6,12 @@
   [ngStyle]="buttonStyle"
   (click)="
     !menuEnabled ? handleMenuNotEnabled() : confirmMenuTrigger.openMenu()
-  "
->
+  ">
   <ng-content></ng-content>
 </button>
 <div
   #confirmMenuTrigger="matMenuTrigger"
-  [matMenuTriggerFor]="confirmMenu"
-></div>
+  [matMenuTriggerFor]="confirmMenu"></div>
 <mat-menu #confirmMenu>
   <div style="padding: 0.5rem">
     <h5 style="margin-top: 0">
@@ -24,16 +22,14 @@
         dotsButton
         dotsColor="error"
         style="flex: 1 0 0%"
-        (click)="confirmMenuTrigger.closeMenu()"
-      >
+        (click)="confirmMenuTrigger.closeMenu()">
         Cancel
       </button>
       <button
         dotsButton
         dotsColor="primary"
         style="flex: 1 0 0%"
-        (click)="confirm.emit()"
-      >
+        (click)="confirm.emit()">
         Confirm
       </button>
     </div>

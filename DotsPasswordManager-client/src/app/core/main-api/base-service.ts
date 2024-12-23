@@ -14,8 +14,7 @@ export class BaseService {
   constructor(
     protected config: ApiConfiguration,
     protected http: HttpClient
-  ) {
-  }
+  ) {}
 
   private _rootUrl?: string;
 

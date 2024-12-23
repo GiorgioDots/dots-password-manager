@@ -5,7 +5,7 @@ import { LucideAngularModule, Plus, Shield } from 'lucide-angular';
 
 @Component({
   selector: 'app-no-selection',
-  imports: [ RouterModule, LucideAngularModule, DotsButtonDirective],
+  imports: [RouterModule, LucideAngularModule, DotsButtonDirective],
   templateUrl: './no-selection.component.html',
   styleUrl: './no-selection.component.scss',
 })

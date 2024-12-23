@@ -7,7 +7,13 @@ import { CommonModule } from '@angular/common';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Eye, EyeOff, LockKeyhole, LucideAngularModule, User } from 'lucide-angular';
+import {
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  LucideAngularModule,
+  User,
+} from 'lucide-angular';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +23,7 @@ import { Eye, EyeOff, LockKeyhole, LucideAngularModule, User } from 'lucide-angu
     RouterModule,
     LogoComponent,
     LucideAngularModule,
-    DotsButtonDirective
+    DotsButtonDirective,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
@@ -30,7 +36,10 @@ export class LoginComponent {
 
   form: WritableSignal<TypedFormGroup<UserAuthLoginRequest>>;
 
-  constructor(private authService: ClientAuthService, private router: Router) {
+  constructor(
+    private authService: ClientAuthService,
+    private router: Router
+  ) {
     const form = new TypedFormGroup<UserAuthLoginRequest>({
       Login: new FormControl(),
       Password: new FormControl(),
@@ -67,7 +76,7 @@ export class LoginComponent {
         this.form().enable();
         this.router.navigate(['/', 'saved-passwords']);
       },
-      error: (err) => {
+      error: err => {
         this.form().enable();
         console.error('Login failed', err);
       },

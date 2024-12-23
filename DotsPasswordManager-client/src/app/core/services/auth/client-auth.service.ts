@@ -19,7 +19,7 @@ export class ClientAuthService {
         body: data,
       })
       .pipe(
-        tap((response) => {
+        tap(response => {
           this.setTokens(response.Token, response.RefreshToken);
         })
       );
@@ -36,7 +36,7 @@ export class ClientAuthService {
         body: { Token: refreshToken ?? '' },
       })
       .pipe(
-        tap((response) => {
+        tap(response => {
           this.setTokens(response.Token, response.RefreshToken);
         })
       );

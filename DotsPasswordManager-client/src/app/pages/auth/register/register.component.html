@@ -2,8 +2,7 @@
   <form
     [formGroup]="form()"
     (ngSubmit)="onSubmit()"
-    class="card form-container"
-  >
+    class="card form-container">
     <div style="display: flex; justify-content: center">
       <div style="min-width: 60px">
         <app-logo></app-logo>
@@ -19,16 +18,14 @@
         formControlName="Email"
         type="email"
         name="email"
-        placeholder="Your email"
-      />
+        placeholder="Your email" />
     </label>
     <label class="input">
       <lucide-angular [img]="UserIcon"></lucide-angular>
       <input
         formControlName="Username"
         name="username"
-        placeholder="Your username"
-      />
+        placeholder="Your username" />
     </label>
     <label class="input">
       <lucide-angular [img]="LockKeyholeIcon"></lucide-angular>
@@ -37,22 +34,21 @@
         type="password"
         formControlName="Password"
         name="password"
-        placeholder="Password"
-      />
+        placeholder="Password" />
       <lucide-angular
         (click)="
           pwdInput.type = pwdInput.type == 'password' ? 'text' : 'password'
         "
         class="cursor-pointer"
-        [img]="pwdInput.type == 'password' ? EyeOffIcon : EyeIcon"
-      ></lucide-angular>
+        [img]="
+          pwdInput.type == 'password' ? EyeOffIcon : EyeIcon
+        "></lucide-angular>
     </label>
     <button
       style="margin-top: 1rem"
       [disabled]="form().disabled"
       dotsButton
-      dotsColor="primary"
-    >
+      dotsColor="primary">
       SIGN UP
     </button>
     <span class="with-account">
@@ -60,8 +56,7 @@
       <a
         [routerLink]="['/login']"
         routerLinkActive="router-link-active"
-        class="link"
-      >
+        class="link">
         Log In!
       </a>
     </span>

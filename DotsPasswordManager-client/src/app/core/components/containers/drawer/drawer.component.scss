@@ -39,7 +39,9 @@
     width: var(--side-width);
     width: var(--side-width);
     overflow: hidden;
-    transition: width 200ms linear, left 200ms ease-in-out;
+    transition:
+      width 200ms linear,
+      left 200ms ease-in-out;
 
     &.closed {
       width: 0;

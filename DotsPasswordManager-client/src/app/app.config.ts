@@ -3,7 +3,8 @@ import {
   importProvidersFrom,
   inject,
   provideAppInitializer,
-  provideZoneChangeDetection, isDevMode,
+  provideZoneChangeDetection,
+  isDevMode,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -22,7 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(() => {
       window
         .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', (event) => {
+        .addEventListener('change', event => {
           const theme = event.matches ? 'dark' : 'light';
           document.documentElement.setAttribute('data-theme', theme);
         });
@@ -43,9 +44,10 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([jwtInterceptor, refreshTokenInterceptor])
     ),
     provideAnimations(),
-    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.rootUrl })), provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }),
+    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.rootUrl })),
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 };

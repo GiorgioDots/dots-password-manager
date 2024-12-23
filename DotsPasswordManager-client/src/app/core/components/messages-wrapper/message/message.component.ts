@@ -16,20 +16,19 @@ export class MessageComponent implements AfterViewInit {
 
   private msgSvc = inject(MessagesService);
 
-  colorClass = signal('')
+  colorClass = signal('');
 
   ngAfterViewInit(): void {
     if (this.message && this.message?.closeIn) {
       setTimeout(() => {
         this.msgSvc.removeMessage(this.message!);
       }, this.message.closeIn);
-
     }
     this.colorClass.set(this.getColorClass());
   }
 
-  getColorClass(){
-    if(!this.message) return '';
+  getColorClass() {
+    if (!this.message) return '';
     return `msg-${this.message.type}`;
   }
 

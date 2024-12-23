@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 
 @Component({
   selector: 'app-drawer',
@@ -9,5 +16,5 @@ import { Component, EventEmitter, Input, Output, signal, WritableSignal } from '
 })
 export class DrawerComponent {
   @Input() isClosed!: WritableSignal<boolean>;
-  @Output() drawerClose = new EventEmitter()
+  @Output() drawerClose = new EventEmitter();
 }

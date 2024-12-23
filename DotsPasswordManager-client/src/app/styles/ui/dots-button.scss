@@ -82,8 +82,8 @@
       background-color: var(--surface-1);
     }
     &:not(:disabled):focus {
-        outline: 2px solid var(--lavender);
-      }
+      outline: 2px solid var(--lavender);
+    }
     &:disabled {
       opacity: 0.8;
       cursor: default;

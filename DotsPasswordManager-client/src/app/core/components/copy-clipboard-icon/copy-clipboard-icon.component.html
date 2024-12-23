@@ -4,6 +4,5 @@
     class="cursor-pointer"
     [ngStyle]="{ color: iscopied() ? 'var(--green)' : 'inherit' }"
     [cdkCopyToClipboard]="copyValue"
-    (click)="onCopied()"
-  />
+    (click)="onCopied()" />
 </span>

@@ -8,7 +8,13 @@ import PasswordGenerator from '@/app/core/utils/password-generator';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import {
   FormControl,
   FormsModule,
@@ -83,10 +89,12 @@ export class PasswordComponent {
   isNew = signal(false);
   id = signal<string | null>(null);
 
-  @ViewChild('passwordInput') passwordInput: ElementRef<HTMLInputElement> | undefined;
+  @ViewChild('passwordInput') passwordInput:
+    | ElementRef<HTMLInputElement>
+    | undefined;
 
   constructor(route: ActivatedRoute) {
-    route.paramMap.subscribe((params) => {
+    route.paramMap.subscribe(params => {
       this.tagInput = '';
       let paramId = params.get('id');
       let confirmInit = true;
@@ -100,9 +108,9 @@ export class PasswordComponent {
       } else {
         this.router.navigate(['/saved-passwords', this.id()]);
       }
-      
-      if(this.passwordInput){
-        this.passwordInput.nativeElement.type = 'password'
+
+      if (this.passwordInput) {
+        this.passwordInput.nativeElement.type = 'password';
       }
     });
   }
@@ -120,7 +128,7 @@ export class PasswordComponent {
       this.form()?.disable();
 
       this.pwdCache.get(pwdId, forceRefresh).subscribe({
-        next: (pwd) => {
+        next: pwd => {
           this.initForm(pwd);
         },
       });
@@ -180,7 +188,7 @@ export class PasswordComponent {
   onAddTag(tag: string) {
     if (tag == '') return;
     let currTags = this.form()?.get('Tags')?.value ?? [];
-    if (currTags.some((k) => k.toLowerCase() == tag.toLowerCase())) return;
+    if (currTags.some(k => k.toLowerCase() == tag.toLowerCase())) return;
     currTags.push(tag);
     this.form()?.get('Tags')?.setValue(currTags);
     this.form()?.markAsDirty();
@@ -189,7 +197,7 @@ export class PasswordComponent {
   onRemoveTag(tag: string) {
     if (tag == '') return;
     let currTags = this.form()?.get('Tags')?.value ?? [];
-    currTags = currTags.filter((k) => k != tag);
+    currTags = currTags.filter(k => k != tag);
     this.form()?.get('Tags')?.setValue(currTags);
   }
 
@@ -216,7 +224,7 @@ export class PasswordComponent {
     };
     if (this.isNew()) {
       this.pwdCache.create(body).subscribe({
-        next: (res) => {
+        next: res => {
           this.id.set(res.PasswordId!);
           this.isNew.set(false);
           this.initForm(res);
@@ -229,7 +237,7 @@ export class PasswordComponent {
     } else {
       body.PasswordId = this.id()!;
       this.pwdCache.update(body).subscribe({
-        next: (res) => {
+        next: res => {
           this.initForm(res);
         },
         error: () => {
@@ -243,7 +251,7 @@ export class PasswordComponent {
     if (this.isNew()) return;
 
     this.pwdCache.delete(this.id()!).subscribe({
-      next: (msg) => {
+      next: msg => {
         this.msgsSvc.addInfo('Completed', msg.Message!, 2000);
       },
       complete: () => {

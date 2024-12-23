@@ -34,29 +34,29 @@ export default class PasswordGenerator {
       typeof uppercase === 'string'
         ? uppercase
         : uppercase
-        ? this.DEFAULT_UPPERCASE
-        : '';
+          ? this.DEFAULT_UPPERCASE
+          : '';
 
     const lowercaseChars =
       typeof lowercase === 'string'
         ? lowercase
         : lowercase
-        ? this.DEFAULT_LOWERCASE
-        : '';
+          ? this.DEFAULT_LOWERCASE
+          : '';
 
     const numberChars =
       typeof numbers === 'string'
         ? numbers
         : numbers
-        ? this.DEFAULT_NUMBERS
-        : '';
+          ? this.DEFAULT_NUMBERS
+          : '';
 
     const specialCharSet =
       typeof specialChars === 'string'
         ? specialChars
         : specialChars
-        ? this.DEFAULT_SPECIAL_CHARS
-        : '';
+          ? this.DEFAULT_SPECIAL_CHARS
+          : '';
 
     // Combine character sets
     const allowedChars =
@@ -78,7 +78,7 @@ export default class PasswordGenerator {
 
     // Generate password
     return Array.from(randomValues)
-      .map((x) => allowedChars[x % allowedChars.length])
+      .map(x => allowedChars[x % allowedChars.length])
       .join('');
   }
 

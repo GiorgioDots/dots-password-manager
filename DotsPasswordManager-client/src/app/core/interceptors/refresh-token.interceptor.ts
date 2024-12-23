@@ -66,10 +66,10 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
             })
           );
         }),
-        catchError((err) => {
-          if(err.status == 400){
+        catchError(err => {
+          if (err.status == 400) {
             handleErrors(err);
-            return throwError(() => err);;
+            return throwError(() => err);
           }
           refreshTokenService.isRefreshing = false;
           authService.logout();
@@ -84,9 +84,9 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
       );
     } else {
       return refreshTokenService.refreshTokenSubject.pipe(
-        filter((token) => token !== undefined),
+        filter(token => token !== undefined),
         take(1),
-        switchMap((token) => {
+        switchMap(token => {
           return next(
             req.clone({
               setHeaders: {
@@ -100,7 +100,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   };
 
   return next(req).pipe(
-    catchError((error) => {
+    catchError(error => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
         return handle401Error(req, next);
       }

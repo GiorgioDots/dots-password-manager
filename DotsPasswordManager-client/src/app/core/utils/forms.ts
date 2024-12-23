@@ -3,9 +3,8 @@ import {
   AsyncValidatorFn,
   FormControl,
   FormGroup,
-  ValidatorFn
+  ValidatorFn,
 } from '@angular/forms';
-
 
 export class TypedFormGroup<T extends Record<string, any>> extends FormGroup {
   constructor(

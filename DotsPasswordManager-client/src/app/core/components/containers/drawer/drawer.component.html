@@ -2,8 +2,7 @@
   <div
     class="side_backdrop"
     [ngClass]="{ closed: isClosed() }"
-    (click)="isClosed.set(true); drawerClose.emit()"
-  ></div>
+    (click)="isClosed.set(true); drawerClose.emit()"></div>
   <aside class="side" [ngClass]="{ closed: isClosed() }">
     <div class="side_container">
       <ng-content select="[side]"></ng-content>

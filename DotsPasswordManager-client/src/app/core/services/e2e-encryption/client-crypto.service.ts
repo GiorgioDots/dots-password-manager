@@ -22,7 +22,7 @@ export class ClientCryptoService {
         ['encrypt', 'decrypt']
       )
     ).pipe(
-      map((keyPair) => {
+      map(keyPair => {
         this.keyPair = keyPair;
       })
     );
@@ -37,7 +37,7 @@ export class ClientCryptoService {
     return from(
       window.crypto.subtle.exportKey('spki', this.keyPair.publicKey)
     ).pipe(
-      map((exportedKey) => {
+      map(exportedKey => {
         return btoa(String.fromCharCode(...new Uint8Array(exportedKey)));
       })
     );
@@ -49,7 +49,7 @@ export class ClientCryptoService {
       throw new Error('Key pair not generated.');
     }
 
-    const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) =>
+    const encryptedBytes = Uint8Array.from(atob(encryptedData), c =>
       c.charCodeAt(0)
     );
     return from(
@@ -61,7 +61,7 @@ export class ClientCryptoService {
         encryptedBytes
       )
     ).pipe(
-      map((decryptedBytes) => {
+      map(decryptedBytes => {
         return new TextDecoder().decode(decryptedBytes);
       })
     );
@@ -72,7 +72,7 @@ export class ClientCryptoService {
       throw new Error('Key pair not generated.');
     }
 
-    const encryptedBytes = Uint8Array.from(atob(encryptedData), (c) =>
+    const encryptedBytes = Uint8Array.from(atob(encryptedData), c =>
       c.charCodeAt(0)
     );
     var decryptedBytes = await window.crypto.subtle.decrypt(

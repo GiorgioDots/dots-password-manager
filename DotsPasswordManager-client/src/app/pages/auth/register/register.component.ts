@@ -24,7 +24,7 @@ import { of } from 'rxjs';
     RouterModule,
     LogoComponent,
     LucideAngularModule,
-    DotsButtonDirective
+    DotsButtonDirective,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -53,7 +53,7 @@ export class RegisterComponent {
       .get('Username')
       ?.addValidators([Validators.required, Validators.minLength(4)]);
     form.get('Username')?.addAsyncValidators([
-      (ctrl) => {
+      ctrl => {
         return of(null);
       },
     ]);
@@ -79,12 +79,12 @@ export class RegisterComponent {
         body: data,
       })
       .subscribe({
-        next: (res) => {
+        next: res => {
           this.form().enable();
           this.authService.setTokens(res.Token, res.RefreshToken);
           this.router.navigate(['/', 'saved-passwords']);
         },
-        error: (err) => {
+        error: err => {
           this.form().enable();
           console.error('Login failed', err);
         },

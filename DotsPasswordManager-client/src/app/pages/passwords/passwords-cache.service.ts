@@ -16,33 +16,33 @@ export class PasswordsCacheService {
   private _passwords = signal<UserSavedPasswordDtOsSavedPasswordDto[]>([]);
 
   public sorted = computed(() => {
-    const sorted = sortBy(this._passwords(), (k) =>
+    const sorted = sortBy(this._passwords(), k =>
       k.IsFavourite ? 1 + k.Name?.toLowerCase() : 2 + k.Name?.toLowerCase()
     );
     return sorted;
   });
   public filteredPasswords = computed(() => {
-    return filter(this.sorted(), (k) => {
+    return filter(this.sorted(), k => {
       let filter = this._filter() ?? '';
       if (filter == '') return true;
       return k.Name.toLowerCase().includes(filter.toLowerCase());
     });
   });
   public favourites = computed(() =>
-    this.filteredPasswords().filter((k) => k.IsFavourite)
+    this.filteredPasswords().filter(k => k.IsFavourite)
   );
   public notFavourites = computed(() => {
-    return this.filteredPasswords().filter((k) => !k.IsFavourite);
+    return this.filteredPasswords().filter(k => !k.IsFavourite);
   });
 
   getAll(force = false) {
     if (!force && this._passwords().length > 0) return of();
     return this.passwordsApi.userSavedPasswordGetPasswordsEndpoint().pipe(
-      switchMap((res) => {
-        const promises = res.map(async (k) => this.decryptPwd(k));
+      switchMap(res => {
+        const promises = res.map(async k => this.decryptPwd(k));
         return from(Promise.all(promises));
       }),
-      tap((res) => {
+      tap(res => {
         this._passwords.set(res);
       })
     );
@@ -52,7 +52,7 @@ export class PasswordsCacheService {
     if (forceRefresh) {
       return this._get(id);
     }
-    const cached = this._passwords().find((k) => k.PasswordId == id);
+    const cached = this._passwords().find(k => k.PasswordId == id);
     if (!cached) {
       return this._get(id);
     } else {
@@ -66,12 +66,12 @@ export class PasswordsCacheService {
         Id: id,
       })
       .pipe(
-        switchMap((res) => {
+        switchMap(res => {
           return from(this.decryptPwd(res));
         }),
-        tap((pwd) => {
-          this._passwords.update((k) => {
-            const tmp = k.filter((p) => p.PasswordId != pwd.PasswordId);
+        tap(pwd => {
+          this._passwords.update(k => {
+            const tmp = k.filter(p => p.PasswordId != pwd.PasswordId);
             tmp.push(pwd);
             return tmp;
           });
@@ -85,11 +85,11 @@ export class PasswordsCacheService {
         body: data,
       })
       .pipe(
-        switchMap((ret) => {
+        switchMap(ret => {
           return from(this.decryptPwd(ret));
         }),
-        tap((pwd) => {
-          this._passwords.update((k) => [pwd, ...k]);
+        tap(pwd => {
+          this._passwords.update(k => [pwd, ...k]);
         })
       );
   }
@@ -100,12 +100,12 @@ export class PasswordsCacheService {
         body: data,
       })
       .pipe(
-        switchMap((ret) => {
+        switchMap(ret => {
           return from(this.decryptPwd(ret));
         }),
-        tap((pwd) => {
-          this._passwords.update((k) => {
-            const tmp = k.filter((p) => p.PasswordId != pwd.PasswordId);
+        tap(pwd => {
+          this._passwords.update(k => {
+            const tmp = k.filter(p => p.PasswordId != pwd.PasswordId);
             tmp.push(pwd);
             return tmp;
           });
@@ -120,9 +120,7 @@ export class PasswordsCacheService {
       })
       .pipe(
         tap(() => {
-          this._passwords.update((pwds) =>
-            pwds.filter((k) => k.PasswordId != id)
-          );
+          this._passwords.update(pwds => pwds.filter(k => k.PasswordId != id));
         })
       );
   }
@@ -133,9 +131,9 @@ export class PasswordsCacheService {
         Id: password.PasswordId!,
       })
       .pipe(
-        tap((res) => {
+        tap(res => {
           const pwd = this._passwords().find(
-            (k) => k.PasswordId == res.PasswordId
+            k => k.PasswordId == res.PasswordId
           );
           if (pwd) pwd.IsFavourite = res.IsFavourite;
           this._passwords.set([...this._passwords()]);

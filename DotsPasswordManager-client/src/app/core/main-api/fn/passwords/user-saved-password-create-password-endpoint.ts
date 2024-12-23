@@ -11,23 +11,34 @@ import { RequestBuilder } from '../../request-builder';
 import { UserSavedPasswordDtOsSavedPasswordDto } from '../../models/user-saved-password-dt-os-saved-password-dto';
 
 export interface UserSavedPasswordCreatePasswordEndpoint$Params {
-      body: UserSavedPasswordDtOsSavedPasswordDto
+  body: UserSavedPasswordDtOsSavedPasswordDto;
 }
 
-export function userSavedPasswordCreatePasswordEndpoint(http: HttpClient, rootUrl: string, params: UserSavedPasswordCreatePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
-  const rb = new RequestBuilder(rootUrl, userSavedPasswordCreatePasswordEndpoint.PATH, 'post');
+export function userSavedPasswordCreatePasswordEndpoint(
+  http: HttpClient,
+  rootUrl: string,
+  params: UserSavedPasswordCreatePasswordEndpoint$Params,
+  context?: HttpContext
+): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
+  const rb = new RequestBuilder(
+    rootUrl,
+    userSavedPasswordCreatePasswordEndpoint.PATH,
+    'post'
+  );
   if (params) {
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>;
-    })
-  );
+  return http
+    .request(
+      rb.build({ responseType: 'json', accept: 'application/json', context })
+    )
+    .pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>;
+      })
+    );
 }
 
 userSavedPasswordCreatePasswordEndpoint.PATH = '/passwords/create';

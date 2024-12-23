@@ -1,8 +1,8 @@
 <div class="container">
   <ng-content></ng-content>
   <div class="messages-container">
-    @for(message of messages$ | async; track message){
-    <app-message [message]="message"></app-message>
+    @for (message of messages$ | async; track message) {
+      <app-message [message]="message"></app-message>
     }
   </div>
 </div>

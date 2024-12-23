@@ -4,9 +4,6 @@ import { Component, Input } from '@angular/core';
   selector: 'app-logo',
   imports: [],
   templateUrl: './logo.component.html',
-  styleUrl: './logo.component.scss'
+  styleUrl: './logo.component.scss',
 })
-export class LogoComponent {
-
-
-}
+export class LogoComponent {}

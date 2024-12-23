@@ -19,4 +19,3 @@ export const notAuthGuard: CanActivateFn = (route, state) => {
   }
   return !clientAuth.isLoggedIn();
 };
-

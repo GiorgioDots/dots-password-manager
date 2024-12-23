@@ -12,23 +12,30 @@ import { UserAuthRegisterRequest } from '../../models/user-auth-register-request
 import { UserAuthRegisterResponse } from '../../models/user-auth-register-response';
 
 export interface UserAuthRegisterEndpoint$Params {
-      body: UserAuthRegisterRequest
+  body: UserAuthRegisterRequest;
 }
 
-export function userAuthRegisterEndpoint(http: HttpClient, rootUrl: string, params: UserAuthRegisterEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthRegisterResponse>> {
+export function userAuthRegisterEndpoint(
+  http: HttpClient,
+  rootUrl: string,
+  params: UserAuthRegisterEndpoint$Params,
+  context?: HttpContext
+): Observable<StrictHttpResponse<UserAuthRegisterResponse>> {
   const rb = new RequestBuilder(rootUrl, userAuthRegisterEndpoint.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserAuthRegisterResponse>;
-    })
-  );
+  return http
+    .request(
+      rb.build({ responseType: 'json', accept: 'application/json', context })
+    )
+    .pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<UserAuthRegisterResponse>;
+      })
+    );
 }
 
 userAuthRegisterEndpoint.PATH = '/auth/register';

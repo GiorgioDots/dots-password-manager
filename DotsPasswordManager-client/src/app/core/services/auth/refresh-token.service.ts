@@ -6,7 +6,9 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class RefreshTokenService {
   public isRefreshing = false;
-  public refreshTokenSubject = new BehaviorSubject<string | undefined>(undefined);
+  public refreshTokenSubject = new BehaviorSubject<string | undefined>(
+    undefined
+  );
 
   constructor() {}
 }

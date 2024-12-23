@@ -23,7 +23,7 @@ export class MessagesService {
 
   removeMessage(message: MessageModel) {
     this._messages.next([
-      ...this._messages.getValue().filter((k) => k != message),
+      ...this._messages.getValue().filter(k => k != message),
     ]);
   }
 

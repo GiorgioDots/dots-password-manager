@@ -16,7 +16,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
     });
   }
   return clientCrypto.exportPublicKey().pipe(
-    switchMap((publickey) => {
+    switchMap(publickey => {
       req = req.clone({
         setHeaders: {
           'x-public-key': publickey,

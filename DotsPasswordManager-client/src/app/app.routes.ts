@@ -8,7 +8,7 @@ export const routes: Routes = [
     canActivate: [notAuthGuard],
     loadComponent: () =>
       import('@/app/pages/auth/login/login.component').then(
-        (k) => k.LoginComponent
+        k => k.LoginComponent
       ),
   },
   {
@@ -17,7 +17,7 @@ export const routes: Routes = [
     canActivate: [notAuthGuard],
     loadComponent: () =>
       import('@/app/pages/auth/register/register.component').then(
-        (k) => k.RegisterComponent
+        k => k.RegisterComponent
       ),
   },
   {
@@ -26,7 +26,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('@/app/pages/passwords/passwords.component').then(
-        (k) => k.PasswordsComponent
+        k => k.PasswordsComponent
       ),
     children: [
       {
@@ -35,21 +35,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import(
             '@/app/pages/passwords/password/no-selection/no-selection.component'
-          ).then((k) => k.NoSelectionComponent),
+          ).then(k => k.NoSelectionComponent),
       },
       {
         path: 'settings',
         title: 'User settings',
         loadComponent: () =>
           import('@/app/pages/settings/settings.component').then(
-            (k) => k.SettingsComponent
+            k => k.SettingsComponent
           ),
       },
       {
         path: ':id',
         loadComponent: () =>
           import('@/app/pages/passwords/password/password.component').then(
-            (k) => k.PasswordComponent
+            k => k.PasswordComponent
           ),
       },
     ],

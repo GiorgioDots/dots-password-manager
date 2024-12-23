@@ -8,23 +8,32 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+export interface UserSavedPasswordExportEndpoint$Params {}
 
-export interface UserSavedPasswordExportEndpoint$Params {
-}
-
-export function userSavedPasswordExportEndpoint(http: HttpClient, rootUrl: string, params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, userSavedPasswordExportEndpoint.PATH, 'get');
+export function userSavedPasswordExportEndpoint(
+  http: HttpClient,
+  rootUrl: string,
+  params?: UserSavedPasswordExportEndpoint$Params,
+  context?: HttpContext
+): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(
+    rootUrl,
+    userSavedPasswordExportEndpoint.PATH,
+    'get'
+  );
   if (params) {
   }
 
-  return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
-    })
-  );
+  return http
+    .request(rb.build({ responseType: 'text', accept: '*/*', context }))
+    .pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return (r as HttpResponse<any>).clone({
+          body: undefined,
+        }) as StrictHttpResponse<void>;
+      })
+    );
 }
 
 userSavedPasswordExportEndpoint.PATH = '/passwords-export';
