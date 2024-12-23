@@ -1,14 +1,17 @@
 .container {
   height: 100%;
-  display: grid;
-  place-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-width: 360px;
+  width: 100%;
+  max-width: 360px;
   label + label {
     margin-top: 0.5rem;
   }
