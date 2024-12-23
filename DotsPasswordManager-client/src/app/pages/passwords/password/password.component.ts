@@ -8,7 +8,7 @@ import PasswordGenerator from '@/app/core/utils/password-generator';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
 import {
   FormControl,
   FormsModule,
@@ -74,14 +74,16 @@ export class PasswordComponent {
   readonly TagIcon = Tag;
   readonly TrashIcon = Trash;
 
-  form = signal<
-    TypedFormGroup<UserSavedPasswordDtOsSavedPasswordDto> | undefined
-  >(undefined);
+  form = signal<TypedFormGroup<NoAutocompleteSavedPasswordDTO> | undefined>(
+    undefined
+  );
 
   tagInput = '';
 
   isNew = signal(false);
   id = signal<string | null>(null);
+
+  @ViewChild('passwordInput') passwordInput: ElementRef<HTMLInputElement> | undefined;
 
   constructor(route: ActivatedRoute) {
     route.paramMap.subscribe((params) => {
@@ -97,6 +99,10 @@ export class PasswordComponent {
         this.init(paramId);
       } else {
         this.router.navigate(['/saved-passwords', this.id()]);
+      }
+      
+      if(this.passwordInput){
+        this.passwordInput.nativeElement.type = 'password'
       }
     });
   }
@@ -134,26 +140,26 @@ export class PasswordComponent {
 
   initForm(pwd: UserSavedPasswordDtOsSavedPasswordDto) {
     this.form.set(
-      new TypedFormGroup<UserSavedPasswordDtOsSavedPasswordDto>({
-        Name: new FormControl(),
-        Login: new FormControl(),
+      new TypedFormGroup<NoAutocompleteSavedPasswordDTO>({
+        NotAName: new FormControl(),
+        NotALogin: new FormControl(),
         SecondLogin: new FormControl(),
-        Password: new FormControl(),
+        NotAPwd: new FormControl(),
         Notes: new FormControl(),
         Url: new FormControl(),
         Tags: new FormControl(),
       })
     );
 
-    this.form()!.get('Name')?.addValidators([Validators.required]);
-    this.form()!.get('Login')?.addValidators([Validators.required]);
-    this.form()!.get('Password')?.addValidators([Validators.required]);
+    this.form()!.get('NotAName')?.addValidators([Validators.required]);
+    this.form()!.get('NotALogin')?.addValidators([Validators.required]);
+    this.form()!.get('NotAPwd')?.addValidators([Validators.required]);
 
     this.form()!.setValue({
-      Name: pwd.Name,
-      Login: pwd.Login,
+      NotAName: pwd.Name,
+      NotALogin: pwd.Login,
       SecondLogin: pwd.SecondLogin,
-      Password: pwd.Password,
+      NotAPwd: pwd.Password,
       Notes: pwd.Notes,
       Url: pwd.Url,
       Tags: pwd.Tags,
@@ -189,14 +195,27 @@ export class PasswordComponent {
 
   onSave() {
     const form = this.form();
-    this.form()?.markAllAsTouched();
     if (!form || form.invalid) return;
 
-    this.form()?.disable();
+    form.markAllAsTouched();
+    form.disable();
 
+    const data = form.value as NoAutocompleteSavedPasswordDTO;
+    const body = {
+      Login: data.NotALogin,
+      Name: data.NotAName,
+      Password: data.NotAPwd,
+      CreatedAt: data.CreatedAt,
+      IsFavourite: data.IsFavourite,
+      Notes: data.Notes,
+      PasswordId: data.PasswordId,
+      SecondLogin: data.SecondLogin,
+      Tags: data.Tags,
+      UpdatedAt: data.UpdatedAt,
+      Url: data.Url,
+    };
     if (this.isNew()) {
-      const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
-      this.pwdCache.create(data).subscribe({
+      this.pwdCache.create(body).subscribe({
         next: (res) => {
           this.id.set(res.PasswordId!);
           this.isNew.set(false);
@@ -208,9 +227,8 @@ export class PasswordComponent {
         },
       });
     } else {
-      const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
-      data.PasswordId = this.id()!;
-      this.pwdCache.update(data).subscribe({
+      body.PasswordId = this.id()!;
+      this.pwdCache.update(body).subscribe({
         next: (res) => {
           this.initForm(res);
         },
@@ -236,7 +254,7 @@ export class PasswordComponent {
 
   generatePassword() {
     const generated = PasswordGenerator.strongPassword();
-    this.form()?.get('Password')?.setValue(generated);
+    this.form()?.get('NotAPwd')?.setValue(generated);
   }
 
   onRefresh() {
@@ -246,4 +264,18 @@ export class PasswordComponent {
   onBack() {
     this.router.navigate(['/saved-password']);
   }
+}
+
+export interface NoAutocompleteSavedPasswordDTO {
+  CreatedAt?: string;
+  IsFavourite?: boolean;
+  NotALogin: string;
+  NotAName: string;
+  Notes?: string;
+  NotAPwd: string;
+  PasswordId?: string;
+  SecondLogin?: string | null;
+  Tags?: Array<string>;
+  UpdatedAt?: string;
+  Url?: string;
 }
