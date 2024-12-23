@@ -3,7 +3,7 @@ import {
   importProvidersFrom,
   inject,
   provideAppInitializer,
-  provideZoneChangeDetection,
+  provideZoneChangeDetection, isDevMode,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
@@ -14,6 +14,7 @@ import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { refreshTokenInterceptor } from './core/interceptors/refresh-token.interceptor';
 import { ApiModule } from './core/main-api/api.module';
 import { ClientCryptoService } from './core/services/e2e-encryption/client-crypto.service';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,6 +43,9 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([jwtInterceptor, refreshTokenInterceptor])
     ),
     provideAnimations(),
-    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.rootUrl })),
+    importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.rootUrl })), provideServiceWorker('ngsw-worker.js', {
+            enabled: !isDevMode(),
+            registrationStrategy: 'registerWhenStable:30000'
+          }),
   ],
 };

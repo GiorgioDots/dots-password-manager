@@ -30,15 +30,19 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   const handleErrors = (error: any) => {
     const errors = error.error.Errors;
     if (errors && Object.keys(errors).length > 0) {
-      for(let key in errors){
-        for(let errorMsg of errors[key]){
-          msgSvc.addError(error.error.Message, errorMsg);
+      for (let key in errors) {
+        for (let errorMsg of errors[key]) {
+          msgSvc.addError(error.error.Message, errorMsg, errorDuration);
         }
       }
     } else if (error.error.Message) {
-      msgSvc.addError(error.error.Message, 'An unexpected error occured');
+      msgSvc.addError(
+        error.error.Message,
+        'An unexpected error occured',
+        errorDuration
+      );
     } else {
-      msgSvc.addError("Error", 'An unexpected error occured');
+      msgSvc.addError('Error', 'An unexpected error occured', errorDuration);
     }
   };
 
