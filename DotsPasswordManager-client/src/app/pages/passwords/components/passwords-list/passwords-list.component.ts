@@ -4,6 +4,7 @@ import {
   ElementRef,
   inject,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +31,8 @@ export class PasswordsListComponent implements OnInit {
     | undefined;
 
   searchCtrl = new FormControl('');
+  loading = signal(false);
+  skeletons = Array(17).fill(0).map((_, i) => i);
 
   constructor() {
     this.searchCtrl.valueChanges.pipe(debounceTime(500)).subscribe((k) => {
@@ -38,7 +41,15 @@ export class PasswordsListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.pwdCache.getAll();
+    this.loading.set(true);
+    this.pwdCache.getAll().subscribe({
+      complete: () => {
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      },
+    });
   }
 
   focusSearch() {

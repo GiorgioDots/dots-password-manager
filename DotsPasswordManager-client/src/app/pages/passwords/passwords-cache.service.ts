@@ -36,20 +36,16 @@ export class PasswordsCacheService {
   });
 
   getAll(force = false) {
-    if (!force && this._passwords().length > 0) return;
-    this.passwordsApi
-      .userSavedPasswordGetPasswordsEndpoint()
-      .pipe(
-        switchMap((res) => {
-          const promises = res.map(async (k) => this.decryptPwd(k));
-          return from(Promise.all(promises));
-        })
-      )
-      .subscribe({
-        next: (res) => {
-          this._passwords.set(res);
-        },
-      });
+    if (!force && this._passwords().length > 0) return of();
+    return this.passwordsApi.userSavedPasswordGetPasswordsEndpoint().pipe(
+      switchMap((res) => {
+        const promises = res.map(async (k) => this.decryptPwd(k));
+        return from(Promise.all(promises));
+      }),
+      tap((res) => {
+        this._passwords.set(res);
+      })
+    );
   }
 
   get(id: string, forceRefresh: boolean = false) {
