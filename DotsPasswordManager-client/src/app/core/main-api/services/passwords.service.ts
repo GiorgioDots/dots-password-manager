@@ -11,16 +11,22 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { UserSavedPasswordDtOsImportExportDto } from '../models/user-saved-password-dt-os-import-export-dto';
 import { UserSavedPasswordDtOsSavedPasswordDto } from '../models/user-saved-password-dt-os-saved-password-dto';
 import { userSavedPasswordCreatePasswordEndpoint } from '../fn/passwords/user-saved-password-create-password-endpoint';
 import { UserSavedPasswordCreatePasswordEndpoint$Params } from '../fn/passwords/user-saved-password-create-password-endpoint';
 import { UserSavedPasswordDeletePasswordDeletePasswordResponse } from '../models/user-saved-password-delete-password-delete-password-response';
 import { userSavedPasswordDeletePasswordEndpoint } from '../fn/passwords/user-saved-password-delete-password-endpoint';
 import { UserSavedPasswordDeletePasswordEndpoint$Params } from '../fn/passwords/user-saved-password-delete-password-endpoint';
+import { userSavedPasswordExportEndpoint } from '../fn/passwords/user-saved-password-export-endpoint';
+import { UserSavedPasswordExportEndpoint$Params } from '../fn/passwords/user-saved-password-export-endpoint';
 import { userSavedPasswordGetPasswordEndpoint } from '../fn/passwords/user-saved-password-get-password-endpoint';
 import { UserSavedPasswordGetPasswordEndpoint$Params } from '../fn/passwords/user-saved-password-get-password-endpoint';
 import { userSavedPasswordGetPasswordsEndpoint } from '../fn/passwords/user-saved-password-get-passwords-endpoint';
 import { UserSavedPasswordGetPasswordsEndpoint$Params } from '../fn/passwords/user-saved-password-get-passwords-endpoint';
+import { userSavedPasswordImportEndpoint } from '../fn/passwords/user-saved-password-import-endpoint';
+import { UserSavedPasswordImportEndpoint$Params } from '../fn/passwords/user-saved-password-import-endpoint';
+import { UserSavedPasswordImportResponse } from '../models/user-saved-password-import-response';
 import { userSavedPasswordToggleFavouriteEndpoint } from '../fn/passwords/user-saved-password-toggle-favourite-endpoint';
 import { UserSavedPasswordToggleFavouriteEndpoint$Params } from '../fn/passwords/user-saved-password-toggle-favourite-endpoint';
 import { userSavedPasswordUpdatePasswordEndpoint } from '../fn/passwords/user-saved-password-update-password-endpoint';
@@ -79,6 +85,31 @@ export class PasswordsService extends BaseService {
   userSavedPasswordToggleFavouriteEndpoint(params: UserSavedPasswordToggleFavouriteEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsSavedPasswordDto> {
     return this.userSavedPasswordToggleFavouriteEndpoint$Response(params, context).pipe(
       map((r: StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>): UserSavedPasswordDtOsSavedPasswordDto => r.body)
+    );
+  }
+
+  /** Path part for operation `userSavedPasswordImportEndpoint()` */
+  static readonly UserSavedPasswordImportEndpointPath = '/passwords/import';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `userSavedPasswordImportEndpoint()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  userSavedPasswordImportEndpoint$Response(params: UserSavedPasswordImportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordImportResponse>> {
+    return userSavedPasswordImportEndpoint(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `userSavedPasswordImportEndpoint$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  userSavedPasswordImportEndpoint(params: UserSavedPasswordImportEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordImportResponse> {
+    return this.userSavedPasswordImportEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UserSavedPasswordImportResponse>): UserSavedPasswordImportResponse => r.body)
     );
   }
 
@@ -154,6 +185,31 @@ export class PasswordsService extends BaseService {
   userSavedPasswordGetPasswordsEndpoint(params?: UserSavedPasswordGetPasswordsEndpoint$Params, context?: HttpContext): Observable<Array<UserSavedPasswordDtOsSavedPasswordDto>> {
     return this.userSavedPasswordGetPasswordsEndpoint$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<UserSavedPasswordDtOsSavedPasswordDto>>): Array<UserSavedPasswordDtOsSavedPasswordDto> => r.body)
+    );
+  }
+
+  /** Path part for operation `userSavedPasswordExportEndpoint()` */
+  static readonly UserSavedPasswordExportEndpointPath = '/passwords/export';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `userSavedPasswordExportEndpoint()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  userSavedPasswordExportEndpoint$Response(params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>> {
+    return userSavedPasswordExportEndpoint(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `userSavedPasswordExportEndpoint$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  userSavedPasswordExportEndpoint(params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<UserSavedPasswordDtOsImportExportDto> {
+    return this.userSavedPasswordExportEndpoint$Response(params, context).pipe(
+      map((r: StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>): UserSavedPasswordDtOsImportExportDto => r.body)
     );
   }
 

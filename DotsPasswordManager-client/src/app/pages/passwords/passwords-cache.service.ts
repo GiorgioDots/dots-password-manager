@@ -35,8 +35,8 @@ export class PasswordsCacheService {
     return this.filteredPasswords().filter((k) => !k.IsFavourite);
   });
 
-  getAll() {
-    if (this._passwords().length > 0) return;
+  getAll(force = false) {
+    if (!force && this._passwords().length > 0) return;
     this.passwordsApi
       .userSavedPasswordGetPasswordsEndpoint()
       .pipe(
@@ -48,7 +48,6 @@ export class PasswordsCacheService {
       .subscribe({
         next: (res) => {
           this._passwords.set(res);
-          // this.sort(res);
         },
       });
   }

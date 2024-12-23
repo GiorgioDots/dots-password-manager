@@ -4,3 +4,4 @@
 
 export { PasswordsService } from './services/passwords.service';
 export { AuthService } from './services/auth.service';
+export { DevService } from './services/dev.service';

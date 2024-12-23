@@ -1,1 +1,28 @@
 <!--TODO: add delete user, change password, import / export passwords-->
+<app-setting-block title="Account"> Available soon... </app-setting-block>
+<app-setting-block title="Passwords">
+  <div style="display: flex; gap: 0.5rem; width: 100%; max-width: 360px">
+    <button
+      dotsButton
+      dotsColor="primary"
+      style="flex-grow: 1"
+      [icon]="DownloadIcon"
+      (click)="onExport()"
+      [isLoading]="exportLoading"
+      [disabled]="exportLoading()"
+    >
+      <span style="margin-left: 0.5rem">Export</span>
+    </button>
+    <button
+      dotsButton
+      dotsColor="primary"
+      style="flex-grow: 1"
+      [icon]="UploadIcon"
+      (click)="importInput.click()"
+      [isLoading]="importLoading"
+    >
+      <span style="margin-left: 0.5rem">Import</span>
+      <input style="display: none;" #importInput type="file" accept="application/json"  (change)="importInputChanged(importInput)">
+    </button>
+  </div>
+</app-setting-block>

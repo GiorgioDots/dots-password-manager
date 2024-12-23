@@ -190,7 +190,6 @@ export class PasswordComponent {
   onSave() {
     const form = this.form();
     this.form()?.markAllAsTouched();
-    console.log(this.form());
     if (!form || form.invalid) return;
 
     this.form()?.disable();
@@ -210,7 +209,6 @@ export class PasswordComponent {
       });
     } else {
       const data = form.getRawValue() as UserSavedPasswordDtOsSavedPasswordDto;
-      console.log(data);
       data.PasswordId = this.id()!;
       this.pwdCache.update(data).subscribe({
         next: (res) => {

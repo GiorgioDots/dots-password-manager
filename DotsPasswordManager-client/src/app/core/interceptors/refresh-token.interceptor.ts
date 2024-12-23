@@ -67,7 +67,10 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
           );
         }),
         catchError((err) => {
-          console.log(err.status);
+          if(err.status == 400){
+            handleErrors(err);
+            return throwError(() => err);;
+          }
           refreshTokenService.isRefreshing = false;
           authService.logout();
           msgSvc.addError(

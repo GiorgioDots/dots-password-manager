@@ -19,7 +19,6 @@ export class MessageComponent implements AfterViewInit {
   colorClass = signal('')
 
   ngAfterViewInit(): void {
-    console.log(this.message);
     if (this.message && this.message?.closeIn) {
       setTimeout(() => {
         this.msgSvc.removeMessage(this.message!);

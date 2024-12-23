@@ -1,4 +1,17 @@
-import { Directive, ElementRef, Input, Renderer2 } from '@angular/core';
+import {
+  ComponentFactoryResolver,
+  computed,
+  Directive,
+  effect,
+  ElementRef,
+  Input,
+  Renderer2,
+  ViewContainerRef,
+  WritableSignal,
+} from '@angular/core';
+import { LittleLoaderComponent } from './little-loader/little-loader.component';
+import { LucideIconData } from 'node_modules/lucide-angular/icons/types';
+import { LoaderCircle } from 'lucide-angular';
 
 @Directive({
   selector: '[dotsButton]',
@@ -6,9 +19,34 @@ import { Directive, ElementRef, Input, Renderer2 } from '@angular/core';
 export class DotsButtonDirective {
   @Input() dotsSize: dotsButtonSizes | undefined;
   @Input() dotsColor: dotsButtonColors | undefined;
+  @Input() isLoading: WritableSignal<boolean> | undefined;
+  @Input() icon: LucideIconData | undefined;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {
+  constructor(
+    private el: ElementRef<HTMLButtonElement>,
+    private renderer: Renderer2,
+    private viewContainerRef: ViewContainerRef
+  ) {
     this.renderer.addClass(this.el.nativeElement, 'btn');
+
+    const littleLoaderComponent = this.viewContainerRef.createComponent(
+      LittleLoaderComponent
+    );
+
+    const host = this.el.nativeElement;
+    host.insertBefore(
+      littleLoaderComponent.location.nativeElement,
+      host.firstChild
+    );
+
+    effect(() => {
+      littleLoaderComponent.instance.icon = this.icon;
+      if (this.isLoading != undefined) {
+        const isLoading = this.isLoading();
+        littleLoaderComponent.instance.setLoading(isLoading);
+        littleLoaderComponent.changeDetectorRef.detectChanges();
+      }
+    });
   }
 
   ngAfterViewInit(): void {

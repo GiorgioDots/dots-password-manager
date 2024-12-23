@@ -1,0 +1,7 @@
+@if (loading() || icon) {
+<lucide-angular
+  [img]="loading() ? LoaderCircleIcon : icon"
+  style="display: flex; align-items: center"
+  [ngClass]="{ spin: loading() }"
+/>
+}
