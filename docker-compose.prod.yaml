@@ -49,6 +49,12 @@ services:
       - JWT_EXP_MINUTES=${JWT_EXP_MINUTES}
       - JWT_REFRESH_TOKEN_EXP_DAYS=${JWT_REFRESH_TOKEN_EXP_DAYS}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - FROM_ADDRESS=${FROM_ADDRESS}
+      - WEBAPP_HOST=http://localhost:4200 #used to send the links inside the emails
       - DB_CONNECTION_STRING_FILE=/run/secrets/db_connection_string
       - JWT_SECRET_FILE=/run/secrets/jwt_secret
       - CRYPTO_BASE_64_KEY_FILE=/run/secrets/crypto_key

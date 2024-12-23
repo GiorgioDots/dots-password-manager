@@ -1,9 +1,9 @@
 using DotsPasswordManager.Web.Api.Features.User.SavedPassword._Services;
 using DotsPasswordManager.Web.Api.Services.Auth;
 using DotsPasswordManager.Web.Api.Services.Crypto;
+using DotsPasswordManager.Web.Api.Services.Email;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 
@@ -25,6 +25,7 @@ builder.Services.AddDbContextPool<DPMDbContext>(o => o.UseNpgsql(connStr));
 
 builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.AddSingleton<ClientCryptoService>();
+builder.Services.AddSingleton<EmailService>();
 builder.Services.AddScoped<CryptoService>();
 builder.Services.AddScoped<OptimizedCryptoService>();
 builder.Services.AddScoped<SavedPasswordMapper>();

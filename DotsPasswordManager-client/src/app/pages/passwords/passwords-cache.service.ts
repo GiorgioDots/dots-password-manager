@@ -152,6 +152,11 @@ export class PasswordsCacheService {
     this._filter.set(k ?? '');
   }
 
+  clear() {
+    this._passwords.set([]);
+    this._filter.set('');
+  }
+
   private async decryptPwd(pwd: UserSavedPasswordDtOsSavedPasswordDto) {
     pwd.Login = await this.clientCrypto.decryptDataAsync(pwd.Login!);
     pwd.Password = await this.clientCrypto.decryptDataAsync(pwd.Password!);

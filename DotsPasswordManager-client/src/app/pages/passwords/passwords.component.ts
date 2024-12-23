@@ -13,11 +13,13 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
+  Settings,
   Sun,
 } from 'lucide-angular';
 import { DrawerComponent } from '../../core/components/containers/drawer/drawer.component';
 import { PasswordsListComponent } from './components/passwords-list/passwords-list.component';
 import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
+import { PasswordsCacheService } from './passwords-cache.service';
 
 @Component({
   selector: 'app-passwords',
@@ -38,6 +40,7 @@ import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.direct
 export class PasswordsComponent implements OnInit {
   private router = inject(Router);
   private clientAuth = inject(ClientAuthService);
+  private pwdCache = inject(PasswordsCacheService);
 
   readonly PanelLeftCloseIcon = PanelLeftClose;
   readonly PanelLeftOpenIcon = PanelLeftOpen;
@@ -45,6 +48,7 @@ export class PasswordsComponent implements OnInit {
   readonly SunIcon = Sun;
   readonly MoonIcon = Moon;
   readonly LogOutIcon = LogOut;
+  readonly SettingsIcon = Settings;
 
   sideClosed = signal(document.body.clientWidth < 576);
 
@@ -59,6 +63,7 @@ export class PasswordsComponent implements OnInit {
   logout() {
     this.clientAuth.logout();
     this.router.navigate(['login']);
+    this.pwdCache.clear();
   }
 
   isDarkMode = signal(

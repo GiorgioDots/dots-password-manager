@@ -38,6 +38,14 @@ export const routes: Routes = [
           ).then((k) => k.NoSelectionComponent),
       },
       {
+        path: 'settings',
+        title: 'User settings',
+        loadComponent: () =>
+          import('@/app/pages/settings/settings.component').then(
+            (k) => k.SettingsComponent
+          ),
+      },
+      {
         path: ':id',
         loadComponent: () =>
           import('@/app/pages/passwords/password/password.component').then(
@@ -46,6 +54,7 @@ export const routes: Routes = [
       },
     ],
   },
+
   {
     path: '**',
     redirectTo: 'saved-passwords',
