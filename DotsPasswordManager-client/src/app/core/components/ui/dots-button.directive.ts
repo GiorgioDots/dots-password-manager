@@ -62,12 +62,10 @@ export class DotsButtonDirective {
   }
 
   getColorClass() {
-    if (this.dotsColor == 'primary') return 'btn-primary';
-    if (this.dotsColor == 'error') return 'btn-error';
-    if (this.dotsColor == 'crust') return 'btn-crust';
+    if (this.dotsColor) return `btn-${this.dotsColor}`;
     return undefined;
   }
 }
 
 export type dotsButtonSizes = 'sm';
-export type dotsButtonColors = 'primary' | 'crust' | 'error';
+export type dotsButtonColors = 'primary' | 'crust' | 'error' | 'mantle';
