@@ -1,6 +1,6 @@
 import { AuthService } from '@/api/services';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { UserAuthLoginRequest } from '../../main-api/models';
 
 @Injectable({
