@@ -9,6 +9,10 @@ export { type UserAuthRefreshTokenRequest } from './models/user-auth-refresh-tok
 export { type UserAuthRefreshTokenResponse } from './models/user-auth-refresh-token-response';
 export { type UserAuthRegisterRequest } from './models/user-auth-register-request';
 export { type UserAuthRegisterResponse } from './models/user-auth-register-response';
+export { type UserAuthResetPasswordRequest } from './models/user-auth-reset-password-request';
+export { type UserAuthResetPasswordRequestRequest } from './models/user-auth-reset-password-request-request';
+export { type UserAuthResetPasswordRequestResponse } from './models/user-auth-reset-password-request-response';
+export { type UserAuthResetPasswordResponse } from './models/user-auth-reset-password-response';
 export { type UserSavedPasswordDtOsImportExportDto } from './models/user-saved-password-dt-os-import-export-dto';
 export { type UserSavedPasswordDtOsImportExportPasswordDto } from './models/user-saved-password-dt-os-import-export-password-dto';
 export { type UserSavedPasswordDtOsSavedPasswordDto } from './models/user-saved-password-dt-os-saved-password-dto';

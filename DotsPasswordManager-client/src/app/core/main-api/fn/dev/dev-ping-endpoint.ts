@@ -8,28 +8,23 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-export interface DevPingEndpoint$Params {}
 
-export function devPingEndpoint(
-  http: HttpClient,
-  rootUrl: string,
-  params?: DevPingEndpoint$Params,
-  context?: HttpContext
-): Observable<StrictHttpResponse<string>> {
+export interface DevPingEndpoint$Params {
+}
+
+export function devPingEndpoint(http: HttpClient, rootUrl: string, params?: DevPingEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
   const rb = new RequestBuilder(rootUrl, devPingEndpoint.PATH, 'get');
   if (params) {
   }
 
-  return http
-    .request(
-      rb.build({ responseType: 'json', accept: 'application/json', context })
-    )
-    .pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<string>;
-      })
-    );
+  return http.request(
+    rb.build({ responseType: 'json', accept: 'application/json', context })
+  ).pipe(
+    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+    map((r: HttpResponse<any>) => {
+      return r as StrictHttpResponse<string>;
+    })
+  );
 }
 
 devPingEndpoint.PATH = '/dev/ping';

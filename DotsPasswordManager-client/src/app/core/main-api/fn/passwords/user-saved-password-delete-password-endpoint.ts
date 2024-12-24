@@ -14,33 +14,20 @@ export interface UserSavedPasswordDeletePasswordEndpoint$Params {
   Id: string;
 }
 
-export function userSavedPasswordDeletePasswordEndpoint(
-  http: HttpClient,
-  rootUrl: string,
-  params: UserSavedPasswordDeletePasswordEndpoint$Params,
-  context?: HttpContext
-): Observable<
-  StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>
-> {
-  const rb = new RequestBuilder(
-    rootUrl,
-    userSavedPasswordDeletePasswordEndpoint.PATH,
-    'delete'
-  );
+export function userSavedPasswordDeletePasswordEndpoint(http: HttpClient, rootUrl: string, params: UserSavedPasswordDeletePasswordEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>> {
+  const rb = new RequestBuilder(rootUrl, userSavedPasswordDeletePasswordEndpoint.PATH, 'delete');
   if (params) {
     rb.path('Id', params.Id, {});
   }
 
-  return http
-    .request(
-      rb.build({ responseType: 'json', accept: 'application/json', context })
-    )
-    .pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>;
-      })
-    );
+  return http.request(
+    rb.build({ responseType: 'json', accept: 'application/json', context })
+  ).pipe(
+    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+    map((r: HttpResponse<any>) => {
+      return r as StrictHttpResponse<UserSavedPasswordDeletePasswordDeletePasswordResponse>;
+    })
+  );
 }
 
 userSavedPasswordDeletePasswordEndpoint.PATH = '/passwords/{Id}';

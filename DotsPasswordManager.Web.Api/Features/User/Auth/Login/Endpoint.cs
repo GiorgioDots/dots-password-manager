@@ -20,9 +20,11 @@ internal sealed class Endpoint : Endpoint<Request, Response>
     public override async Task HandleAsync(Request r, CancellationToken c)
     {
         var uq = _db.Users
-            .Where(k => k.Email == r.Login.ToLower() || k.Username == r.Login.ToLower());
+            .Where(k => 
+                k.Email == r.Login.ToLower() || k.Username == r.Login.ToLower()
+            );
         var user = await uq.FirstOrDefaultAsync();
-        if (user == null || BCrypt.Net.BCrypt.Verify(user.PasswordHash, user.PasswordHash))
+        if (user == null || BCrypt.Net.BCrypt.HashPassword(r.Password, user.PasswordSalt) != user.PasswordHash)
         {
             ThrowError("Invalid credentials.");
         }

@@ -36,8 +36,12 @@
           pwdInput.type == 'password' ? EyeOffIcon : EyeIcon
         "></lucide-angular>
     </label>
+    
+    <a [routerLink]="['/reset-password-request']" class="link" style="margin-left: auto;">
+      Forgot password?
+    </a>
     <button
-      style="margin-top: 1rem"
+      style="margin-top: .5rem"
       [disabled]="form().disabled"
       dotsButton
       dotsColor="primary">

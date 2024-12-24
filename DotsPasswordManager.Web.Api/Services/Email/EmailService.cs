@@ -1,5 +1,6 @@
 ﻿using MimeKit;
 using MailKit.Net.Smtp;
+using System.ComponentModel;
 
 namespace DotsPasswordManager.Web.Api.Services.Email;
 
@@ -15,6 +16,9 @@ public class EmailService
         ?? throw new ArgumentNullException("FROM_ADDRESS env is not defined");
     private readonly int port = 587;
 
+    private readonly string basePath = Directory.GetCurrentDirectory();
+
+
     public EmailService()
     {
         var port = Environment.GetEnvironmentVariable("SMTP_PORT")
@@ -26,11 +30,8 @@ public class EmailService
     {
         try
         {
-            var basePath = Directory.GetCurrentDirectory();
-            string templatePath = Path.Combine(basePath, "EmailTemplates", "welcome.html");
-            string template = File.ReadAllText(templatePath);
+            string template = GetEmailTemplate(eEmailTemplates.WELCOME);
 
-            string imagePath = Path.Combine(basePath, "Media", "PWA.png");
             template = template.Replace("[USER-EMAIL]", user.Email);
             template = template.Replace("[URL]", Environment.GetEnvironmentVariable("WEBAPP_HOST"));
 
@@ -41,18 +42,72 @@ public class EmailService
 
             var builder = new BodyBuilder();
 
-            var image = builder.LinkedResources.Add(imagePath);
+            var image = builder.LinkedResources.Add(GetLogoPath());
             image.ContentId = "logo";
 
             builder.HtmlBody = template;
 
             message.Body = builder.ToMessageBody();
 
-            using var client = new SmtpClient();
-            await client.ConnectAsync(smtpServer, port, false);
-            await client.AuthenticateAsync(smtpUser, smtpPassword);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+            await SendMessage(message);
         } catch { }
+    }
+
+    public async Task SendPasswordResetRequestEmail(DB.User user, string requestId)
+    {
+        string template = GetEmailTemplate(eEmailTemplates.PASSWORD_RESET_REQUEST);
+
+        template = template.Replace("[USER-EMAIL]", user.Email);
+        var requestUrl = $"{Environment.GetEnvironmentVariable("WEBAPP_HOST")}/reset-password?r={requestId}";
+        template = template.Replace("[REQUEST_URL]", requestUrl);
+
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress("Dots Password Manager", this.senderEmail));
+        message.To.Add(new MailboxAddress(user.OriginalUsername, user.Email));
+        message.Subject = "Welcome to Better Dots Password Manger!";
+
+        var builder = new BodyBuilder();
+
+        var image = builder.LinkedResources.Add(GetLogoPath());
+        image.ContentId = "logo";
+
+        builder.HtmlBody = template;
+
+        message.Body = builder.ToMessageBody();
+
+        await SendMessage(message);
+    }
+
+    private string GetEmailTemplate(eEmailTemplates template)
+    {
+        var filename = template switch
+        {
+            eEmailTemplates.WELCOME => "welcome.html",
+            eEmailTemplates.PASSWORD_RESET_REQUEST => "password-reset-request.html",
+            _ => throw new Exception("Email template does not exists"),
+        };
+        string templatePath = Path.Combine(basePath, "EmailTemplates", filename);
+        return File.ReadAllText(templatePath);
+    }
+
+    private string GetLogoPath()
+    {
+        return Path.Combine(basePath, "Media", "PWA.png");
+    }
+
+    private async Task SendMessage(MimeMessage message)
+    {
+        using var client = new SmtpClient();
+        await client.ConnectAsync(smtpServer, port, false);
+        await client.AuthenticateAsync(smtpUser, smtpPassword);
+        await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+    }
+
+
+    private enum eEmailTemplates 
+    {
+        WELCOME,
+        PASSWORD_RESET_REQUEST
     }
 }

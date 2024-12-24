@@ -10,32 +10,22 @@ import { RequestBuilder } from '../../request-builder';
 
 import { UserSavedPasswordDtOsImportExportDto } from '../../models/user-saved-password-dt-os-import-export-dto';
 
-export interface UserSavedPasswordExportEndpoint$Params {}
+export interface UserSavedPasswordExportEndpoint$Params {
+}
 
-export function userSavedPasswordExportEndpoint(
-  http: HttpClient,
-  rootUrl: string,
-  params?: UserSavedPasswordExportEndpoint$Params,
-  context?: HttpContext
-): Observable<StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>> {
-  const rb = new RequestBuilder(
-    rootUrl,
-    userSavedPasswordExportEndpoint.PATH,
-    'get'
-  );
+export function userSavedPasswordExportEndpoint(http: HttpClient, rootUrl: string, params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>> {
+  const rb = new RequestBuilder(rootUrl, userSavedPasswordExportEndpoint.PATH, 'get');
   if (params) {
   }
 
-  return http
-    .request(
-      rb.build({ responseType: 'json', accept: 'application/json', context })
-    )
-    .pipe(
-      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>;
-      })
-    );
+  return http.request(
+    rb.build({ responseType: 'json', accept: 'application/json', context })
+  ).pipe(
+    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+    map((r: HttpResponse<any>) => {
+      return r as StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>;
+    })
+  );
 }
 
 userSavedPasswordExportEndpoint.PATH = '/passwords/export';

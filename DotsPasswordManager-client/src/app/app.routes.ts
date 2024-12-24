@@ -21,6 +21,22 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'reset-password-request',
+    title: 'Reset password request',
+    loadComponent: () =>
+      import('@/app/pages/auth/reset-password-request/reset-password-request.component').then(
+        k => k.ResetPasswordRequestComponent
+      ),
+  },
+  {
+    path: 'reset-password',
+    title: 'Reset password',
+    loadComponent: () =>
+      import('@/app/pages/auth/reset-password/reset-password.component').then(
+        k => k.ResetPasswordComponent
+      ),
+  },
+  {
     path: 'saved-passwords',
     title: 'Passwords',
     canActivate: [authGuard],

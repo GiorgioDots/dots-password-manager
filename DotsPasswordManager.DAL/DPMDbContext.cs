@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DB.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ public  class DPMDbContext(DbContextOptions<DPMDbContext> options) : DbContext(o
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<SavedPassword> SavedPasswords { get; set; }
+    public DbSet<UserRequests> UserRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,5 +42,12 @@ public  class DPMDbContext(DbContextOptions<DPMDbContext> options) : DbContext(o
                 index.SetDatabaseName(index.GetDatabaseName()?.ToLower());
             }
         }
+
+
+        // Request type enum
+        var converter = new EnumToStringConverter<eUserRequestTypes>();
+        modelBuilder
+            .Entity<UserRequests>()
+            .Property(e => e.RequestType).HasConversion(converter);
     }
 }

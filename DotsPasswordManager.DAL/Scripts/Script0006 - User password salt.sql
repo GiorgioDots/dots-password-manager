@@ -1,0 +1,2 @@
+﻿ALTER TABLE Users 
+ADD COLUMN PasswordSalt text NOT NULL
