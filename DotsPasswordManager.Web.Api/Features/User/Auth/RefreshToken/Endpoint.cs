@@ -22,11 +22,11 @@ internal sealed class Endpoint : Endpoint<Request, Response>
             .FirstOrDefaultAsync(k => k.Token == r.Token && k.RevokedAt == null);
 
         if (token == null || token.ExpiresAt <= DateTime.UtcNow)
-            ThrowError("Invalid or expired refresh token.");
+            ThrowError("Invalid or expired refresh token.", StatusCodes.Status422UnprocessableEntity);
 
         var user = await _db.Users.FirstOrDefaultAsync(k => k.Id == token.UserId);
         if (user == null)
-            ThrowError("User not found.");
+            ThrowError("User not found.", StatusCodes.Status422UnprocessableEntity);
 
         var newJwt = _jwtService.GenerateJwt(user);
         var newRefreshToken = _jwtService.GenerateRefreshToken();
@@ -36,7 +36,7 @@ internal sealed class Endpoint : Endpoint<Request, Response>
         var refreshTokenExpEnv = Environment.GetEnvironmentVariable("JWT_REFRESH_TOKEN_EXP_DAYS");
         if (refreshTokenExpEnv == null)
         {
-            ThrowError("JWT_REFRESH_TOKEN_EXP_DAYS is not defined.");
+            ThrowError("JWT_REFRESH_TOKEN_EXP_DAYS is not defined.", StatusCodes.Status422UnprocessableEntity);
         }
         var refreshTokenExp = int.Parse(refreshTokenExpEnv);
 
