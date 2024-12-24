@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DB;
 
-[Table("RefreshTokens")]
 public class RefreshToken
 {
     [Key]

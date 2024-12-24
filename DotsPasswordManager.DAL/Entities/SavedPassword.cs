@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DB;
 
-[Table("SavedPasswords")]
 public class SavedPassword
 {
     [Key]

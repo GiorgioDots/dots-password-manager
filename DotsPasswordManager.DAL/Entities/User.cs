@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DB;
 
-[Table("Users")]
 public class User
 {
     [Key]
