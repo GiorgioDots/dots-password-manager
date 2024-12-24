@@ -150,9 +150,9 @@ export class PasswordComponent {
     this.form.set(
       new TypedFormGroup<NoAutocompleteSavedPasswordDTO>({
         NotAName: new FormControl(),
-        NotALogin: new FormControl(),
+        fu1: new FormControl(),
         SecondLogin: new FormControl(),
-        NotAPwd: new FormControl(),
+        fu2: new FormControl(),
         Notes: new FormControl(),
         Url: new FormControl(),
         Tags: new FormControl(),
@@ -160,14 +160,14 @@ export class PasswordComponent {
     );
 
     this.form()!.get('NotAName')?.addValidators([Validators.required]);
-    this.form()!.get('NotALogin')?.addValidators([Validators.required]);
-    this.form()!.get('NotAPwd')?.addValidators([Validators.required]);
+    this.form()!.get('fu1')?.addValidators([Validators.required]);
+    this.form()!.get('fu2')?.addValidators([Validators.required]);
 
     this.form()!.setValue({
       NotAName: pwd.Name,
-      NotALogin: pwd.Login,
+      fu1: pwd.Login,
       SecondLogin: pwd.SecondLogin,
-      NotAPwd: pwd.Password,
+      fu2: pwd.Password,
       Notes: pwd.Notes,
       Url: pwd.Url,
       Tags: pwd.Tags,
@@ -210,9 +210,9 @@ export class PasswordComponent {
 
     const data = form.value as NoAutocompleteSavedPasswordDTO;
     const body = {
-      Login: data.NotALogin,
+      Login: data.fu1,
       Name: data.NotAName,
-      Password: data.NotAPwd,
+      Password: data.fu2,
       CreatedAt: data.CreatedAt,
       IsFavourite: data.IsFavourite,
       Notes: data.Notes,
@@ -262,7 +262,7 @@ export class PasswordComponent {
 
   generatePassword() {
     const generated = PasswordGenerator.strongPassword();
-    this.form()?.get('NotAPwd')?.setValue(generated);
+    this.form()?.get('fu2')?.setValue(generated);
   }
 
   onRefresh() {
@@ -277,10 +277,10 @@ export class PasswordComponent {
 export interface NoAutocompleteSavedPasswordDTO {
   CreatedAt?: string;
   IsFavourite?: boolean;
-  NotALogin: string;
+  fu1: string;
   NotAName: string;
   Notes?: string;
-  NotAPwd: string;
+  fu2: string;
   PasswordId?: string;
   SecondLogin?: string | null;
   Tags?: Array<string>;
