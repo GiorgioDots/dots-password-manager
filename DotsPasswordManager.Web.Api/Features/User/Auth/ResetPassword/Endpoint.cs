@@ -36,6 +36,8 @@ internal sealed class Endpoint : Endpoint<Request, Response>
         request.ExpiresAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
 
+        await _emailService.SendPasswordResettedEmail(user);
+
         await SendOkAsync(new Response()
         {
             Message = "Your password has been resetted, please login again"

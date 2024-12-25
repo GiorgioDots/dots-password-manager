@@ -41,6 +41,7 @@ import {
   UserPlus,
 } from 'lucide-angular';
 import { PasswordsCacheService } from '../passwords-cache.service';
+import { isGuid } from '@/app/core/utils/regex';
 
 @Component({
   selector: 'app-password',
@@ -120,7 +121,7 @@ export class PasswordComponent {
     if (
       pwdId &&
       // check if GUID
-      /^(?:\{{0,1}(?:[0-9a-fA-F]){8}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){4}-(?:[0-9a-fA-F]){12}\}{0,1})$/.exec(
+      isGuid(
         pwdId
       )
     ) {

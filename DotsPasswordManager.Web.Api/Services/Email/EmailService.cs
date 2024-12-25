@@ -78,12 +78,43 @@ public class EmailService
         await SendMessage(message);
     }
 
+    public async Task SendPasswordResettedEmail(DB.User user)
+    {
+        try
+        {
+            string template = GetEmailTemplate(eEmailTemplates.PASSWORD_RESETTED);
+
+            template = template.Replace("[USER-EMAIL]", user.Email);
+            template = template.Replace("[URL]", Environment.GetEnvironmentVariable("WEBAPP_HOST"));
+            template = template.Replace("[Date]", DateTime.UtcNow.ToString("dd/MM/yyyy"));
+            template = template.Replace("[Time]", DateTime.UtcNow.ToString("HH:mm:ss"));
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress("Dots Password Manager", this.senderEmail));
+            message.To.Add(new MailboxAddress(user.OriginalUsername, user.Email));
+            message.Subject = "Welcome to Better Dots Password Manger!";
+
+            var builder = new BodyBuilder();
+
+            var image = builder.LinkedResources.Add(GetLogoPath());
+            image.ContentId = "logo";
+
+            builder.HtmlBody = template;
+
+            message.Body = builder.ToMessageBody();
+
+            await SendMessage(message);
+        }
+        catch { }
+    }
+
     private string GetEmailTemplate(eEmailTemplates template)
     {
         var filename = template switch
         {
             eEmailTemplates.WELCOME => "welcome.html",
             eEmailTemplates.PASSWORD_RESET_REQUEST => "password-reset-request.html",
+            eEmailTemplates.PASSWORD_RESETTED => "password-resetted.html",
             _ => throw new Exception("Email template does not exists"),
         };
         string templatePath = Path.Combine(basePath, "EmailTemplates", filename);
@@ -108,6 +139,7 @@ public class EmailService
     private enum eEmailTemplates 
     {
         WELCOME,
-        PASSWORD_RESET_REQUEST
+        PASSWORD_RESET_REQUEST,
+        PASSWORD_RESETTED
     }
 }
