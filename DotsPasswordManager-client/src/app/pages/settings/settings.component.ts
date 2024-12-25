@@ -7,7 +7,7 @@ import {
   LucideAngularModule,
   Upload,
 } from 'lucide-angular';
-import { PasswordsService } from '@/app/core/main-api/services';
+import { ApiService } from '@/app/core/main-api/services';
 import { UserSavedPasswordDtOsImportExportDto } from '@/app/core/main-api/models';
 import { UserSavedPasswordImportEndpoint$Params } from '@/app/core/main-api/fn/passwords/user-saved-password-import-endpoint';
 import { PasswordsCacheService } from '../passwords/passwords-cache.service';
@@ -20,7 +20,7 @@ import { MessagesService } from '@/app/core/components/messages-wrapper/messages
   styleUrl: './settings.component.scss',
 })
 export class SettingsComponent {
-  private passwordsApi = inject(PasswordsService);
+  private passwordsApi = inject(ApiService);
   private pwdCache = inject(PasswordsCacheService);
   private msgsSvc = inject(MessagesService);
 

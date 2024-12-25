@@ -1,9 +1,10 @@
 import { LogoComponent } from '@/app/core/components/logo/logo.component';
 import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 import { UserAuthRegisterRequest } from '@/app/core/main-api/models';
-import { AuthService } from '@/app/core/main-api/services';
+import { ApiService } from '@/app/core/main-api/services';
 import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
+import { LoadableComponent } from '@/app/core/utils/loadable-component';
 import { Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -29,7 +30,7 @@ import { of } from 'rxjs';
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
-export class RegisterComponent {
+export class RegisterComponent extends LoadableComponent {
   readonly UserIcon = User;
   readonly LockKeyholeIcon = LockKeyhole;
   readonly EyeIcon = Eye;
@@ -39,10 +40,11 @@ export class RegisterComponent {
   form: WritableSignal<TypedFormGroup<UserAuthRegisterRequest>>;
 
   constructor(
-    private authApi: AuthService,
+    private authApi: ApiService,
     private router: Router,
     private authService: ClientAuthService
   ) {
+    super();
     const form = new TypedFormGroup<UserAuthRegisterRequest>({
       Email: new FormControl(),
       Username: new FormControl(),
@@ -72,7 +74,8 @@ export class RegisterComponent {
 
     const data = this.form().getRawValue() as UserAuthRegisterRequest;
 
-    this.form().isLoading.set(true);
+    this.setLoading('form', true);
+    this.form().disable();
 
     this.authApi
       .userAuthRegisterEndpoint({
@@ -80,12 +83,14 @@ export class RegisterComponent {
       })
       .subscribe({
         next: res => {
-          this.form().isLoading.set(false);
+          this.setLoading('form', false);
+          this.form().enable();
           this.authService.setTokens(res.Token, res.RefreshToken);
           this.router.navigate(['/', 'saved-passwords']);
         },
         error: err => {
-          this.form().isLoading.set(false);
+          this.setLoading('form', false);
+          this.form().enable();
           console.error('Login failed', err);
         },
       });

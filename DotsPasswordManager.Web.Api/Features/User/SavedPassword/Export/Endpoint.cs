@@ -11,7 +11,7 @@ internal sealed class Endpoint : EndpointWithoutRequest<ImportExportDTO>
 
     public override void Configure()
     {
-        Get("/passwords/export");
+        Get("/api/passwords/export");
         Roles("User");
     }
 

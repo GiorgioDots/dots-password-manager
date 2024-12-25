@@ -4,8 +4,8 @@
 
 export interface FastEndpointsErrorResponse {
   Errors?: {
-    [key: string]: Array<string>;
-  };
+[key: string]: Array<string>;
+};
   Message?: string;
   StatusCode?: number;
 }

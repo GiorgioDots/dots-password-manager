@@ -14,7 +14,7 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
 
     public override void Configure()
     {
-        Post("/passwords/edit");
+        Post("/api/passwords/edit");
         Roles("User");
         Validator<SavedPasswordDTO.Validator>();
     }

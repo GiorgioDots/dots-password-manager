@@ -1,4 +1,4 @@
-import { AuthService } from '@/api/services';
+import { ApiService } from '@/api/services';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { UserAuthLoginRequest } from '../../main-api/models';
@@ -11,7 +11,7 @@ export class ClientAuthService {
     string | null
   >(null);
 
-  constructor(private authApi: AuthService) {}
+  constructor(private authApi: ApiService) {}
 
   login(data: UserAuthLoginRequest): Observable<any> {
     return this.authApi

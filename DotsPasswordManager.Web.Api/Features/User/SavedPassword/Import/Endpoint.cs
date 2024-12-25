@@ -14,7 +14,7 @@ internal sealed class Endpoint : Endpoint<ImportExportDTO, Response>
 
     public override void Configure()
     {
-        Post("/passwords/import");
+        Post("/api/passwords/import");
         Roles("User");
         Validator<ImportExportDTO.Validator>();
     }

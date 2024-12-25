@@ -12,7 +12,7 @@ internal sealed class Endpoint : Endpoint<ToggleFavouriteRequest, SavedPasswordD
 
     public override void Configure()
     {
-        Get("/passwords/{Id}/toggle-favourite");
+        Get("/api/passwords/{Id}/toggle-favourite");
         Roles("User");
     }
 

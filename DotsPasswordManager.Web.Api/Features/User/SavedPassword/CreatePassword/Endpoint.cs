@@ -13,7 +13,7 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
 
     public override void Configure()
     {
-        Post("/passwords/create");
+        Post("/api/passwords/create");
         Roles("User");
         Validator<SavedPasswordDTO.Validator>();
     }

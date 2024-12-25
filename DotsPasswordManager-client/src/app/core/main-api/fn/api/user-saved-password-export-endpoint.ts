@@ -8,12 +8,13 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { UserSavedPasswordDtOsImportExportDto } from '../../models/user-saved-password-dt-os-import-export-dto';
 
-export interface DevPingEndpoint$Params {
+export interface UserSavedPasswordExportEndpoint$Params {
 }
 
-export function devPingEndpoint(http: HttpClient, rootUrl: string, params?: DevPingEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
-  const rb = new RequestBuilder(rootUrl, devPingEndpoint.PATH, 'get');
+export function userSavedPasswordExportEndpoint(http: HttpClient, rootUrl: string, params?: UserSavedPasswordExportEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>> {
+  const rb = new RequestBuilder(rootUrl, userSavedPasswordExportEndpoint.PATH, 'get');
   if (params) {
   }
 
@@ -22,9 +23,9 @@ export function devPingEndpoint(http: HttpClient, rootUrl: string, params?: DevP
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<string>;
+      return r as StrictHttpResponse<UserSavedPasswordDtOsImportExportDto>;
     })
   );
 }
 
-devPingEndpoint.PATH = '/dev/ping';
+userSavedPasswordExportEndpoint.PATH = '/api/passwords/export';

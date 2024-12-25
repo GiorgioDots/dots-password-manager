@@ -2,6 +2,7 @@ import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.direct
 import { UserAuthLoginRequest } from '@/app/core/main-api/models';
 import { ClientAuthService } from '@/app/core/services/auth/client-auth.service';
 import { TypedFormGroup } from '@/app/core/utils/forms';
+import { LoadableComponent } from '@/app/core/utils/loadable-component';
 import { LogoComponent } from '@/cmp/logo/logo.component';
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, WritableSignal } from '@angular/core';
@@ -28,7 +29,7 @@ import {
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent extends LoadableComponent {
   private authService = inject(ClientAuthService);
   private router = inject(Router);
 
@@ -40,6 +41,7 @@ export class LoginComponent {
   form: WritableSignal<TypedFormGroup<UserAuthLoginRequest>>;
 
   constructor() {
+    super();
     const form = new TypedFormGroup<UserAuthLoginRequest>({
       Login: new FormControl(),
       Password: new FormControl(),
@@ -69,15 +71,18 @@ export class LoginComponent {
       return;
     }
 
-    this.form().isLoading.set(true);
+    this.setLoading('form', true);
+    this.form().disable();
     const data = this.form().getRawValue() as UserAuthLoginRequest;
     this.authService.login(data).subscribe({
       next: () => {
-        this.form().isLoading.set(false);
+        this.setLoading('form', false);
+        this.form().enable();
         this.router.navigate(['/', 'saved-passwords']);
       },
       error: err => {
-        this.form().isLoading.set(false);
+        this.setLoading('form', false);
+        this.form().enable();
         console.error('Login failed', err);
       },
     });

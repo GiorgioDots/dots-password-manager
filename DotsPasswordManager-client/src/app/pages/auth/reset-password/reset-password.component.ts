@@ -2,8 +2,9 @@ import { LogoComponent } from '@/app/core/components/logo/logo.component';
 import { MessagesService } from '@/app/core/components/messages-wrapper/messages.service';
 import { DotsButtonDirective } from '@/app/core/components/ui/dots-button.directive';
 import { UserAuthResetPasswordRequest } from '@/app/core/main-api/models';
-import { AuthService } from '@/app/core/main-api/services';
+import { ApiService } from '@/app/core/main-api/services';
 import { TypedFormGroup } from '@/app/core/utils/forms';
+import { LoadableComponent } from '@/app/core/utils/loadable-component';
 import { isGuid } from '@/app/core/utils/regex';
 import { Component, inject, signal, WritableSignal } from '@angular/core';
 import {
@@ -29,8 +30,8 @@ import { Eye, EyeOff, LockKeyhole, LucideAngularModule } from 'lucide-angular';
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
 })
-export class ResetPasswordComponent {
-  private authApi = inject(AuthService);
+export class ResetPasswordComponent extends LoadableComponent {
+  private authApi = inject(ApiService);
   private router = inject(Router);
   private messagesSvc = inject(MessagesService);
   private route = inject(ActivatedRoute);
@@ -42,6 +43,7 @@ export class ResetPasswordComponent {
   form: WritableSignal<TypedFormGroup<UserAuthResetPasswordRequestExt>>;
 
   constructor() {
+    super();
     const form = new TypedFormGroup<UserAuthResetPasswordRequestExt>({
       NewPassword: new FormControl(),
       RepeatPassword: new FormControl(),
@@ -75,7 +77,8 @@ export class ResetPasswordComponent {
       return;
     }
 
-    this.form().isLoading.set(true);
+    this.setLoading('form', true);
+    this.form().disable();
     const data = this.form().getRawValue() as UserAuthResetPasswordRequest;
     this.authApi
       .userAuthResetPasswordEndpoint({
@@ -83,24 +86,25 @@ export class ResetPasswordComponent {
       })
       .subscribe({
         next: res => {
-          this.form().isLoading.set(false);
+          this.setLoading('form', false);
+          this.form().enable();
           this.router.navigate(['/auth', 'login']);
           this.messagesSvc.addInfo(
             'Password resetted successfully',
-            res.Message ??
-              'Please login with the new password!',
+            res.Message ?? 'Please login with the new password!',
             10000
           );
         },
         error: err => {
-          this.form().isLoading.set(false);
+          this.setLoading('form', false);
+          this.form().enable();
         },
       });
   }
 
-  hasError(ctrlName: keyof UserAuthResetPasswordRequestExt, errorKey: string){
+  hasError(ctrlName: keyof UserAuthResetPasswordRequestExt, errorKey: string) {
     const ctrl = this.form().get(ctrlName);
-    if(!ctrl || !ctrl.errors || !ctrl.touched) return false;
+    if (!ctrl || !ctrl.errors || !ctrl.touched) return false;
     // console.log(ctrlName, ctrl.errors)
 
     return ctrl.errors[errorKey] != null;
@@ -117,10 +121,13 @@ export const passwordMatchValidator: ValidatorFn = (
   const password = control.get('NewPassword');
   const repeatPassword = control.get('RepeatPassword');
 
-  console.log()
+  console.log();
 
   if (password && repeatPassword && password.value !== repeatPassword.value) {
-    repeatPassword.setErrors({ ...repeatPassword.errors, passwordMismatch: true });
+    repeatPassword.setErrors({
+      ...repeatPassword.errors,
+      passwordMismatch: true,
+    });
     return { passwordMismatch: true };
   }
 

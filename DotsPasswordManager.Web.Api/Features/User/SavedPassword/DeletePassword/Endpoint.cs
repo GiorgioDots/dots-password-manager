@@ -12,7 +12,7 @@ internal sealed class Endpoint : Endpoint<DeletePasswordRequest, DeletePasswordR
 
     public override void Configure()
     {
-        Delete("/passwords/{Id}");
+        Delete("/api/passwords/{Id}");
         Roles("User");
     }
 

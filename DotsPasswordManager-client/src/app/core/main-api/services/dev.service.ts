@@ -29,10 +29,7 @@ export class DevService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  devPingEndpoint$Response(
-    params?: DevPingEndpoint$Params,
-    context?: HttpContext
-  ): Observable<StrictHttpResponse<string>> {
+  devPingEndpoint$Response(params?: DevPingEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
     return devPingEndpoint(this.http, this.rootUrl, params, context);
   }
 
@@ -42,12 +39,10 @@ export class DevService extends BaseService {
    *
    * This method doesn't expect any request body.
    */
-  devPingEndpoint(
-    params?: DevPingEndpoint$Params,
-    context?: HttpContext
-  ): Observable<string> {
+  devPingEndpoint(params?: DevPingEndpoint$Params, context?: HttpContext): Observable<string> {
     return this.devPingEndpoint$Response(params, context).pipe(
       map((r: StrictHttpResponse<string>): string => r.body)
     );
   }
+
 }

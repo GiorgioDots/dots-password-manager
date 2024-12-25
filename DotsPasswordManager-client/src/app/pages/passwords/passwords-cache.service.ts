@@ -1,5 +1,5 @@
 import { UserSavedPasswordDtOsSavedPasswordDto } from '@/app/core/main-api/models';
-import { PasswordsService } from '@/app/core/main-api/services';
+import { ApiService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { from, of, switchMap, tap } from 'rxjs';
@@ -9,7 +9,7 @@ import { filter, sortBy } from 'underscore';
   providedIn: 'root',
 })
 export class PasswordsCacheService {
-  private passwordsApi = inject(PasswordsService);
+  private passwordsApi = inject(ApiService);
   private clientCrypto = inject(ClientCryptoService);
 
   private _filter = signal<string>('');

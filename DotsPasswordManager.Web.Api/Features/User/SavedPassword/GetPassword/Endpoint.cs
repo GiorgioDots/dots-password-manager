@@ -12,7 +12,7 @@ internal sealed class Endpoint : Endpoint<GetPasswordRequest, SavedPasswordDTO>
 
     public override void Configure()
     {
-        Get("/passwords/{Id}");
+        Get("/api/passwords/{Id}");
         Roles("User");
     }
 

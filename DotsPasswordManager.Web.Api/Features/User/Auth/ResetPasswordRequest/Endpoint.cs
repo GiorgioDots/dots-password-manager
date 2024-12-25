@@ -10,7 +10,7 @@ internal sealed class Endpoint : Endpoint<Request, Response>
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("/auth/reset-password-request");
+        Routes("/api/auth/reset-password-request");
         AllowAnonymous();
         Validator<Request.Validator>();
     }

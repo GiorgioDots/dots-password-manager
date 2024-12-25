@@ -12,7 +12,7 @@ internal sealed class Endpoint : Endpoint<Request, Response, Mapper>
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("/auth/register");
+        Routes("/api/auth/register");
         AllowAnonymous();
         Validator<Request.Validator>();
     }

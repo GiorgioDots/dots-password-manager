@@ -2,6 +2,7 @@ using DotsPasswordManager.Web.Api.Features.User.SavedPassword._Services;
 using DotsPasswordManager.Web.Api.Services.Auth;
 using DotsPasswordManager.Web.Api.Services.Crypto;
 using DotsPasswordManager.Web.Api.Services.Email;
+using DotsPasswordManager.Web.Api.Utils;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
 using System.Security.Claims;
@@ -11,24 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Load secrets
 var appSettings = new AppSettings();
-
 // Add AppSettings as a singleton service
 builder.Services.AddSingleton(appSettings);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-//var connStr = builder.Configuration.GetConnectionString("DPMConnectionString")!;
-var connStr = appSettings.DbConnectionString;
-builder.Services.AddSingleton(_ => new DatabaseInitializer(connStr));
-builder.Services.AddDbContextPool<DPMDbContext>(o => o.UseNpgsql(connStr));
-
-builder.Services.AddSingleton<IJwtService, JwtService>();
-builder.Services.AddSingleton<ClientCryptoService>();
-builder.Services.AddSingleton<EmailService>();
-builder.Services.AddScoped<CryptoService>();
-builder.Services.AddScoped<OptimizedCryptoService>();
-builder.Services.AddScoped<SavedPasswordMapper>();
+builder.Services.AddServices(appSettings);
 
 builder.Services.AddHttpContextAccessor();
 
