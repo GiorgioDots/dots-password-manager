@@ -72,7 +72,7 @@ export class RegisterComponent {
 
     const data = this.form().getRawValue() as UserAuthRegisterRequest;
 
-    this.form().disable();
+    this.form().isLoading.set(true);
 
     this.authApi
       .userAuthRegisterEndpoint({
@@ -80,12 +80,12 @@ export class RegisterComponent {
       })
       .subscribe({
         next: res => {
-          this.form().enable();
+          this.form().isLoading.set(false);
           this.authService.setTokens(res.Token, res.RefreshToken);
           this.router.navigate(['/', 'saved-passwords']);
         },
         error: err => {
-          this.form().enable();
+          this.form().isLoading.set(false);
           console.error('Login failed', err);
         },
       });

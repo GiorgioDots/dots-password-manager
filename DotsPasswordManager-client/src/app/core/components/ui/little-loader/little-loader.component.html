@@ -1,6 +1,6 @@
 @if (loading() || icon) {
   <lucide-angular
     [img]="loading() ? LoaderCircleIcon : icon"
-    style="display: flex; align-items: center"
+    style="display: flex; align-items: center; {{ customStyle }}"
     [ngClass]="{ spin: loading() }" />
 }

@@ -14,20 +14,32 @@ export interface UserSavedPasswordToggleFavouriteEndpoint$Params {
   Id: string;
 }
 
-export function userSavedPasswordToggleFavouriteEndpoint(http: HttpClient, rootUrl: string, params: UserSavedPasswordToggleFavouriteEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
-  const rb = new RequestBuilder(rootUrl, userSavedPasswordToggleFavouriteEndpoint.PATH, 'get');
+export function userSavedPasswordToggleFavouriteEndpoint(
+  http: HttpClient,
+  rootUrl: string,
+  params: UserSavedPasswordToggleFavouriteEndpoint$Params,
+  context?: HttpContext
+): Observable<StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>> {
+  const rb = new RequestBuilder(
+    rootUrl,
+    userSavedPasswordToggleFavouriteEndpoint.PATH,
+    'get'
+  );
   if (params) {
     rb.path('Id', params.Id, {});
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>;
-    })
-  );
+  return http
+    .request(
+      rb.build({ responseType: 'json', accept: 'application/json', context })
+    )
+    .pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<UserSavedPasswordDtOsSavedPasswordDto>;
+      })
+    );
 }
 
-userSavedPasswordToggleFavouriteEndpoint.PATH = '/passwords/{Id}/toggle-favourite';
+userSavedPasswordToggleFavouriteEndpoint.PATH =
+  '/passwords/{Id}/toggle-favourite';

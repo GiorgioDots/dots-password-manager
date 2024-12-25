@@ -3,38 +3,49 @@ import { authGuard, notAuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'login',
-    title: 'Login',
-    canActivate: [notAuthGuard],
+    path: 'auth',
     loadComponent: () =>
-      import('@/app/pages/auth/login/login.component').then(
-        k => k.LoginComponent
-      ),
-  },
-  {
-    path: 'register',
-    title: 'Register',
-    canActivate: [notAuthGuard],
-    loadComponent: () =>
-      import('@/app/pages/auth/register/register.component').then(
-        k => k.RegisterComponent
-      ),
-  },
-  {
-    path: 'reset-password-request',
-    title: 'Reset password request',
-    loadComponent: () =>
-      import('@/app/pages/auth/reset-password-request/reset-password-request.component').then(
-        k => k.ResetPasswordRequestComponent
-      ),
-  },
-  {
-    path: 'reset-password',
-    title: 'Reset password',
-    loadComponent: () =>
-      import('@/app/pages/auth/reset-password/reset-password.component').then(
-        k => k.ResetPasswordComponent
-      ),
+      import('@/app/pages/auth/auth.component').then(m => m.AuthComponent),
+    children: [
+      {
+        path: 'login',
+        title: 'Login',
+        canActivate: [notAuthGuard],
+        loadComponent: () =>
+          import('@/app/pages/auth/login/login.component').then(
+            k => k.LoginComponent
+          ),
+      },
+      {
+        path: 'register',
+        title: 'Register',
+        canActivate: [notAuthGuard],
+        loadComponent: () =>
+          import('@/app/pages/auth/register/register.component').then(
+            k => k.RegisterComponent
+          ),
+      },
+      {
+        path: 'reset-password-request',
+        title: 'Reset password request',
+        loadComponent: () =>
+          import(
+            '@/app/pages/auth/reset-password-request/reset-password-request.component'
+          ).then(k => k.ResetPasswordRequestComponent),
+      },
+      {
+        path: 'reset-password',
+        title: 'Reset password',
+        loadComponent: () =>
+          import(
+            '@/app/pages/auth/reset-password/reset-password.component'
+          ).then(k => k.ResetPasswordComponent),
+      },
+      {
+        path: '**',
+        redirectTo: 'login',
+      },
+    ],
   },
   {
     path: 'saved-passwords',

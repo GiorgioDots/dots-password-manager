@@ -1,64 +1,61 @@
-<main class="container">
-  <form
-    [formGroup]="form()"
-    (ngSubmit)="onSubmit()"
-    class="card form-container">
-    <div style="display: flex; justify-content: center">
-      <div style="min-width: 60px">
-        <app-logo></app-logo>
-      </div>
+<form [formGroup]="form()" (ngSubmit)="onSubmit()" class="form-container">
+  <div style="display: flex; justify-content: center">
+    <div style="min-width: 60px">
+      <app-logo></app-logo>
     </div>
-    <span style="text-align: center; margin-bottom: 1rem">
-      <h2 style="margin-top: 0; margin-bottom: 0">Hello!</h2>
-      <small>Insert your information to sign up</small>
-    </span>
-    <label class="input">
-      <lucide-angular [img]="MailIcon"></lucide-angular>
-      <input
-        formControlName="Email"
-        type="email"
-        name="email"
-        placeholder="Your email" />
-    </label>
-    <label class="input">
-      <lucide-angular [img]="UserIcon"></lucide-angular>
-      <input
-        formControlName="Username"
-        name="username"
-        placeholder="Your username" />
-    </label>
-    <label class="input">
-      <lucide-angular [img]="LockKeyholeIcon"></lucide-angular>
-      <input
-        #pwdInput
-        type="password"
-        formControlName="Password"
-        name="password"
-        placeholder="Password" />
-      <lucide-angular
-        (click)="
-          pwdInput.type = pwdInput.type == 'password' ? 'text' : 'password'
-        "
-        class="cursor-pointer"
-        [img]="
-          pwdInput.type == 'password' ? EyeOffIcon : EyeIcon
-        "></lucide-angular>
-    </label>
-    <button
-      style="margin-top: 1rem"
-      [disabled]="form().disabled"
-      dotsButton
-      dotsColor="primary">
-      SIGN UP
-    </button>
-    <span class="with-account">
-      Already have an account?
-      <a
-        [routerLink]="['/login']"
-        routerLinkActive="router-link-active"
-        class="link">
-        Log In!
-      </a>
-    </span>
-  </form>
-</main>
+  </div>
+  <span style="text-align: center; margin-bottom: 1rem">
+    <h2 style="margin-top: 0; margin-bottom: 0">Hello!</h2>
+    <small>Insert your information to sign up</small>
+  </span>
+  <label class="input">
+    <lucide-angular [img]="MailIcon"></lucide-angular>
+    <input
+      formControlName="Email"
+      type="email"
+      name="email"
+      placeholder="Your email" />
+  </label>
+  <label class="input">
+    <lucide-angular [img]="UserIcon"></lucide-angular>
+    <input
+      formControlName="Username"
+      name="username"
+      placeholder="Your username" />
+  </label>
+  <label class="input">
+    <lucide-angular [img]="LockKeyholeIcon"></lucide-angular>
+    <input
+      #pwdInput
+      type="password"
+      formControlName="Password"
+      name="password"
+      placeholder="Password" />
+    <lucide-angular
+      (click)="
+        pwdInput.type = pwdInput.type == 'password' ? 'text' : 'password'
+      "
+      class="cursor-pointer"
+      [img]="
+        pwdInput.type == 'password' ? EyeOffIcon : EyeIcon
+      "></lucide-angular>
+  </label>
+  <button
+    style="margin-top: 1rem"
+    [disabled]="form().disabled"
+    dotsButton
+    [isLoading]="form().isLoading"
+    iconPosition="after"
+    dotsColor="primary">
+    SIGN UP
+  </button>
+  <span class="with-account">
+    Already have an account?
+    <a
+      [routerLink]="['/auth', 'login']"
+      routerLinkActive="router-link-active"
+      class="link">
+      Log In!
+    </a>
+  </span>
+</form>

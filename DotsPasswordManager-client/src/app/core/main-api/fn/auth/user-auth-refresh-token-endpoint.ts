@@ -12,23 +12,34 @@ import { UserAuthRefreshTokenRequest } from '../../models/user-auth-refresh-toke
 import { UserAuthRefreshTokenResponse } from '../../models/user-auth-refresh-token-response';
 
 export interface UserAuthRefreshTokenEndpoint$Params {
-      body: UserAuthRefreshTokenRequest
+  body: UserAuthRefreshTokenRequest;
 }
 
-export function userAuthRefreshTokenEndpoint(http: HttpClient, rootUrl: string, params: UserAuthRefreshTokenEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthRefreshTokenResponse>> {
-  const rb = new RequestBuilder(rootUrl, userAuthRefreshTokenEndpoint.PATH, 'post');
+export function userAuthRefreshTokenEndpoint(
+  http: HttpClient,
+  rootUrl: string,
+  params: UserAuthRefreshTokenEndpoint$Params,
+  context?: HttpContext
+): Observable<StrictHttpResponse<UserAuthRefreshTokenResponse>> {
+  const rb = new RequestBuilder(
+    rootUrl,
+    userAuthRefreshTokenEndpoint.PATH,
+    'post'
+  );
   if (params) {
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserAuthRefreshTokenResponse>;
-    })
-  );
+  return http
+    .request(
+      rb.build({ responseType: 'json', accept: 'application/json', context })
+    )
+    .pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<UserAuthRefreshTokenResponse>;
+      })
+    );
 }
 
 userAuthRefreshTokenEndpoint.PATH = '/auth/refresh-token';

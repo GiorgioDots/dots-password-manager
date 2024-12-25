@@ -1,5 +1,6 @@
 import {
   ComponentFactoryResolver,
+  ComponentRef,
   computed,
   Directive,
   effect,
@@ -21,6 +22,9 @@ export class DotsButtonDirective {
   @Input() dotsColor: dotsButtonColors | undefined;
   @Input() isLoading: WritableSignal<boolean> | undefined;
   @Input() icon: LucideIconData | undefined;
+  @Input() iconPosition: 'before' | 'after' = 'before';
+
+  private littleLoaderComponent: ComponentRef<LittleLoaderComponent>;
 
   constructor(
     private el: ElementRef<HTMLButtonElement>,
@@ -29,27 +33,33 @@ export class DotsButtonDirective {
   ) {
     this.renderer.addClass(this.el.nativeElement, 'btn');
 
-    const littleLoaderComponent = this.viewContainerRef.createComponent(
+    this.littleLoaderComponent = this.viewContainerRef.createComponent(
       LittleLoaderComponent
     );
 
-    const host = this.el.nativeElement;
-    host.insertBefore(
-      littleLoaderComponent.location.nativeElement,
-      host.firstChild
-    );
-
     effect(() => {
-      littleLoaderComponent.instance.icon = this.icon;
+      this.littleLoaderComponent.instance.icon = this.icon;
       if (this.isLoading != undefined) {
         const isLoading = this.isLoading();
-        littleLoaderComponent.instance.setLoading(isLoading);
-        littleLoaderComponent.changeDetectorRef.detectChanges();
+        this.littleLoaderComponent.instance.setLoading(isLoading);
+        this.littleLoaderComponent.changeDetectorRef.detectChanges();
       }
     });
   }
 
   ngAfterViewInit(): void {
+    const host = this.el.nativeElement;
+    if (this.iconPosition == 'before') {
+      this.littleLoaderComponent.instance.customStyle = 'margin-right: .25rem';
+      host.insertBefore(
+        this.littleLoaderComponent.location.nativeElement,
+        host.firstChild
+      );
+    } else {
+      this.littleLoaderComponent.instance.customStyle = 'margin-left: .25rem';
+      host.appendChild(this.littleLoaderComponent.location.nativeElement);
+    }
+
     const sizeClass = this.getSizeClass();
     if (sizeClass) this.renderer.addClass(this.el.nativeElement, sizeClass);
     const colorClass = this.getColorClass();

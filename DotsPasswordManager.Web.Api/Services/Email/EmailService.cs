@@ -58,7 +58,7 @@ public class EmailService
         string template = GetEmailTemplate(eEmailTemplates.PASSWORD_RESET_REQUEST);
 
         template = template.Replace("[USER-EMAIL]", user.Email);
-        var requestUrl = $"{Environment.GetEnvironmentVariable("WEBAPP_HOST")}/reset-password?r={requestId}";
+        var requestUrl = $"{Environment.GetEnvironmentVariable("WEBAPP_HOST")}/auth/reset-password?r={requestId}";
         template = template.Replace("[REQUEST_URL]", requestUrl);
 
         var message = new MimeMessage();

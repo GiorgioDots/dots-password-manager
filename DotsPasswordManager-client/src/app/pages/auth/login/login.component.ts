@@ -4,7 +4,7 @@ import { ClientAuthService } from '@/app/core/services/auth/client-auth.service'
 import { TypedFormGroup } from '@/app/core/utils/forms';
 import { LogoComponent } from '@/cmp/logo/logo.component';
 import { CommonModule } from '@angular/common';
-import { Component, signal, WritableSignal } from '@angular/core';
+import { Component, inject, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {
@@ -29,6 +29,9 @@ import {
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
+  private authService = inject(ClientAuthService);
+  private router = inject(Router);
+
   readonly UserIcon = User;
   readonly LockKeyholeIcon = LockKeyhole;
   readonly EyeIcon = Eye;
@@ -36,10 +39,7 @@ export class LoginComponent {
 
   form: WritableSignal<TypedFormGroup<UserAuthLoginRequest>>;
 
-  constructor(
-    private authService: ClientAuthService,
-    private router: Router
-  ) {
+  constructor() {
     const form = new TypedFormGroup<UserAuthLoginRequest>({
       Login: new FormControl(),
       Password: new FormControl(),
@@ -69,15 +69,15 @@ export class LoginComponent {
       return;
     }
 
-    this.form().disable();
+    this.form().isLoading.set(true);
     const data = this.form().getRawValue() as UserAuthLoginRequest;
     this.authService.login(data).subscribe({
       next: () => {
-        this.form().enable();
+        this.form().isLoading.set(false);
         this.router.navigate(['/', 'saved-passwords']);
       },
       error: err => {
-        this.form().enable();
+        this.form().isLoading.set(false);
         console.error('Login failed', err);
       },
     });

@@ -66,7 +66,7 @@ export class PasswordsComponent implements OnInit {
 
   logout() {
     this.clientAuth.logout();
-    this.router.navigate(['login']);
+    this.router.navigate(['/auth', 'login']);
     this.pwdCache.clear();
   }
 

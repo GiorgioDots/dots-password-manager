@@ -1,5 +1,5 @@
 import { NgClass, NgStyle } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, Input, signal } from '@angular/core';
 import { LoaderCircle, LucideAngularModule } from 'lucide-angular';
 import { LucideIconData } from 'node_modules/lucide-angular/icons/types';
 
@@ -12,6 +12,8 @@ import { LucideIconData } from 'node_modules/lucide-angular/icons/types';
 export class LittleLoaderComponent {
   icon: LucideIconData | undefined;
   readonly LoaderCircleIcon = LoaderCircle;
+
+  @Input() customStyle: string = '';
 
   loading = signal(false);
 

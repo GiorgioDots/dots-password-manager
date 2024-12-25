@@ -12,23 +12,34 @@ import { UserAuthResetPasswordRequestRequest } from '../../models/user-auth-rese
 import { UserAuthResetPasswordRequestResponse } from '../../models/user-auth-reset-password-request-response';
 
 export interface UserAuthResetPasswordRequestEndpoint$Params {
-      body: UserAuthResetPasswordRequestRequest
+  body: UserAuthResetPasswordRequestRequest;
 }
 
-export function userAuthResetPasswordRequestEndpoint(http: HttpClient, rootUrl: string, params: UserAuthResetPasswordRequestEndpoint$Params, context?: HttpContext): Observable<StrictHttpResponse<UserAuthResetPasswordRequestResponse>> {
-  const rb = new RequestBuilder(rootUrl, userAuthResetPasswordRequestEndpoint.PATH, 'post');
+export function userAuthResetPasswordRequestEndpoint(
+  http: HttpClient,
+  rootUrl: string,
+  params: UserAuthResetPasswordRequestEndpoint$Params,
+  context?: HttpContext
+): Observable<StrictHttpResponse<UserAuthResetPasswordRequestResponse>> {
+  const rb = new RequestBuilder(
+    rootUrl,
+    userAuthResetPasswordRequestEndpoint.PATH,
+    'post'
+  );
   if (params) {
     rb.body(params.body, 'application/json');
   }
 
-  return http.request(
-    rb.build({ responseType: 'json', accept: 'application/json', context })
-  ).pipe(
-    filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
-    map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserAuthResetPasswordRequestResponse>;
-    })
-  );
+  return http
+    .request(
+      rb.build({ responseType: 'json', accept: 'application/json', context })
+    )
+    .pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<UserAuthResetPasswordRequestResponse>;
+      })
+    );
 }
 
 userAuthResetPasswordRequestEndpoint.PATH = '/auth/reset-password-request';

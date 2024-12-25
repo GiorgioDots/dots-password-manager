@@ -78,7 +78,7 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
             'Your session has expired, please login again',
             errorDuration
           );
-          router.navigate(['login']);
+          router.navigate(['/auth', 'login']);
           return throwError(() => err);
         })
       );
