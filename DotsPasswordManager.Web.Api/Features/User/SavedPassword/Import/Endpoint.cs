@@ -48,6 +48,8 @@ internal sealed class Endpoint : Endpoint<ImportExportDTO, Response>
             { 
                 var mapped = _mapper.ToEntity(k, user); 
                 mapped.UserId = user.Id;
+                mapped.UpdatedAt = DateTime.UtcNow;
+                mapped.CreatedAt = DateTime.UtcNow;
                 return mapped; 
             });
 

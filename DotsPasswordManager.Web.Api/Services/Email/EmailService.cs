@@ -64,7 +64,7 @@ public class EmailService
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress("Dots Password Manager", this.senderEmail));
         message.To.Add(new MailboxAddress(user.OriginalUsername, user.Email));
-        message.Subject = "Welcome to Better Dots Password Manger!";
+        message.Subject = "Dots Password Manger - Password Reset";
 
         var builder = new BodyBuilder();
 
@@ -92,7 +92,7 @@ public class EmailService
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress("Dots Password Manager", this.senderEmail));
             message.To.Add(new MailboxAddress(user.OriginalUsername, user.Email));
-            message.Subject = "Welcome to Better Dots Password Manger!";
+            message.Subject = "Better Dots Password Manger - Password resetted";
 
             var builder = new BodyBuilder();
 

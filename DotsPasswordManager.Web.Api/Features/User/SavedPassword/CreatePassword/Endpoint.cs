@@ -9,7 +9,6 @@ internal sealed class Endpoint : Endpoint<SavedPasswordDTO, SavedPasswordDTO>
 {
     public DPMDbContext _db{ get; set; }
     public SavedPasswordMapper _mapper { get; set; }
-    public CryptoService _cryptoService { get; set; }
 
     public override void Configure()
     {
