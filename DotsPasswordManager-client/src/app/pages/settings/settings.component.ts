@@ -67,7 +67,7 @@ export class SettingsComponent {
       .subscribe({
         next: response => {
           this.importLoading.set(false);
-          this.pwdCache.getAll(true);
+          this.pwdCache.getAll(true).subscribe();
           this.msgsSvc.addInfo(
             'Success!',
             'The passwords where imported successfully',

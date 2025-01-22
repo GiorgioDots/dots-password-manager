@@ -43,7 +43,7 @@ import { MatMenuModule } from '@angular/material/menu';
 export class PasswordsComponent implements OnInit {
   private router = inject(Router);
   private clientAuth = inject(ClientAuthService);
-  private pwdCache = inject(PasswordsCacheService);
+  public pwdCache = inject(PasswordsCacheService);
 
   readonly PanelLeftCloseIcon = PanelLeftClose;
   readonly PanelLeftOpenIcon = PanelLeftOpen;

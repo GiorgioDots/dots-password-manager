@@ -71,9 +71,9 @@ public class SavedPasswordMapper
         {
             PasswordId = entity.Id,
             Name = entity.Name,
-            Login = clientCrypto.Encrypt(entity.Login, publicKey),
-            SecondLogin = entity.SecondLogin == null ? null : clientCrypto.Encrypt(entity.SecondLogin, publicKey),
-            Password = clientCrypto.Encrypt(entity.PasswordHash, publicKey),
+            //Login = clientCrypto.Encrypt(entity.Login, publicKey),
+            //SecondLogin = entity.SecondLogin == null ? null : clientCrypto.Encrypt(entity.SecondLogin, publicKey),
+            //Password = clientCrypto.Encrypt(entity.PasswordHash, publicKey),
             Url = entity.Url,
             Notes = entity.Notes,
             Tags = entity.Tags,

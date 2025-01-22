@@ -2,7 +2,7 @@ import { UserSavedPasswordDtOsSavedPasswordDto } from '@/app/core/main-api/model
 import { ApiService } from '@/app/core/main-api/services';
 import { ClientCryptoService } from '@/app/core/services/e2e-encryption/client-crypto.service';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { from, of, switchMap, tap } from 'rxjs';
+import { catchError, from, of, switchMap, tap, throwError } from 'rxjs';
 import { filter, sortBy } from 'underscore';
 
 @Injectable({
@@ -13,7 +13,9 @@ export class PasswordsCacheService {
   private clientCrypto = inject(ClientCryptoService);
 
   private _filter = signal<string>('');
-  private _passwords = signal<UserSavedPasswordDtOsSavedPasswordDto[]>([]);
+  private _passwords = signal<LoadableSavedPassword[]>([]);
+
+  public loadingAll = signal(false);
 
   public sorted = computed(() => {
     const sorted = sortBy(this._passwords(), k =>
@@ -37,13 +39,22 @@ export class PasswordsCacheService {
 
   getAll(force = false) {
     if (!force && this._passwords().length > 0) return of();
+    if(!force){
+      this.loadingAll.set(true);
+    }
     return this.passwordsApi.userSavedPasswordGetPasswordsEndpoint().pipe(
-      switchMap(res => {
-        const promises = res.map(async k => this.decryptPwd(k));
-        return from(Promise.all(promises));
-      }),
+      // switchMap(res => {
+      //   const promises = res.map(async k => this.decryptPwd(k));
+      //   return from(Promise.all(promises));
+      // }),
       tap(res => {
-        this._passwords.set(res);
+        console.log(res);
+        this.loadingAll.set(false);
+        this._passwords.set(res.map(k => ({ ...k, isLoaded: false })));
+      }),
+      catchError(err => {
+        this.loadingAll.set(false);
+        return throwError(() => err);
       })
     );
   }
@@ -53,7 +64,7 @@ export class PasswordsCacheService {
       return this._get(id);
     }
     const cached = this._passwords().find(k => k.PasswordId == id);
-    if (!cached) {
+    if (!cached || !cached.isLoaded) {
       return this._get(id);
     } else {
       return of(cached);
@@ -72,7 +83,7 @@ export class PasswordsCacheService {
         tap(pwd => {
           this._passwords.update(k => {
             const tmp = k.filter(p => p.PasswordId != pwd.PasswordId);
-            tmp.push(pwd);
+            tmp.push({ ...pwd, isLoaded: true });
             return tmp;
           });
         })
@@ -89,7 +100,7 @@ export class PasswordsCacheService {
           return from(this.decryptPwd(ret));
         }),
         tap(pwd => {
-          this._passwords.update(k => [pwd, ...k]);
+          this._passwords.update(k => [{ ...pwd, isLoaded: true }, ...k]);
         })
       );
   }
@@ -106,7 +117,7 @@ export class PasswordsCacheService {
         tap(pwd => {
           this._passwords.update(k => {
             const tmp = k.filter(p => p.PasswordId != pwd.PasswordId);
-            tmp.push(pwd);
+            tmp.push({ ...pwd, isLoaded: true });
             return tmp;
           });
         })
@@ -160,4 +171,8 @@ export class PasswordsCacheService {
     }
     return pwd;
   }
+}
+
+interface LoadableSavedPassword extends UserSavedPasswordDtOsSavedPasswordDto {
+  isLoaded: boolean;
 }
