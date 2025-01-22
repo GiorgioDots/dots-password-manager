@@ -33,7 +33,7 @@ internal sealed class Endpoint : Endpoint<ImportExportDTO, Response>
             ThrowError("Invalid user id");
         }
 
-        var passwords = req.AUTHENTIFIANT
+        var passwordDtos = req.AUTHENTIFIANT
             .Select(k => new SavedPasswordDTO
             {
                 Name = k.title,
@@ -44,9 +44,11 @@ internal sealed class Endpoint : Endpoint<ImportExportDTO, Response>
                 Url = k.domain,
                 Tags = k.tags ?? []
             })
-            .Select(k => 
+            .ToList();
+
+        var passwords = _mapper.ToEntities(passwordDtos, user)
+            .Select(mapped => 
             { 
-                var mapped = _mapper.ToEntity(k, user); 
                 mapped.UserId = user.Id;
                 mapped.UpdatedAt = DateTime.UtcNow;
                 mapped.CreatedAt = DateTime.UtcNow;

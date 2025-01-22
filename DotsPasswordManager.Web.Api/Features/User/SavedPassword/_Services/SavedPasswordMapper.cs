@@ -58,6 +58,23 @@ public class SavedPasswordMapper
         };
     }
 
+    public List<DB.SavedPassword> ToEntities(List<SavedPasswordDTO> passwords, DB.User user)
+    {
+        return cryptoService.EncryptPasswords(passwords, user.Salt)
+            .Select(r => new DB.SavedPassword()
+            {
+                Name = r.Name,
+                Login = r.Login,
+                SecondLogin = r.SecondLogin,
+                PasswordHash = r.Password,
+                IsFavourite = r.IsFavourite,
+                Url = r.Url,
+                Notes = r.Notes,
+                Tags = r.Tags,
+            })
+            .ToList();
+    }
+
     internal List<SavedPasswordDTO> FromEntities(List<DB.SavedPassword> passwords, DB.User user)
     {
         if (httpContext.HttpContext == null) return [];

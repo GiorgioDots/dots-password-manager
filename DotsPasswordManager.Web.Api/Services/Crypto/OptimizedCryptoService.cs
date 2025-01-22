@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using User.SavedPassword._DTOs;
 
 namespace DotsPasswordManager.Web.Api.Services.Crypto;
 
@@ -27,6 +28,37 @@ public class OptimizedCryptoService
             // Combina salt e testo criptato in Base64
             return encryptedText;
         }
+    }
+
+    public List<SavedPasswordDTO> EncryptPasswords(List<SavedPasswordDTO> passwords, string userSalt)
+    {
+        byte[] salt = Convert.FromBase64String(userSalt);
+
+        using var deriveBytes = new Rfc2898DeriveBytes(password, salt, 100_000, HashAlgorithmName.SHA256);
+        byte[] key = deriveBytes.GetBytes(32);
+        byte[] iv = deriveBytes.GetBytes(16);
+
+        // Cripta il testo
+        using Aes aes = Aes.Create();
+        aes.Key = key;
+        aes.IV = iv;
+
+        foreach (var password in passwords)
+        {
+            using (var ms = new System.IO.MemoryStream())
+            {
+                using (var cryptoStream = new CryptoStream(ms, aes.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    using (var writer = new System.IO.StreamWriter(cryptoStream))
+                    {
+                        writer.Write(password.Password);
+                    }
+                }
+                password.Password = Convert.ToBase64String(ms.ToArray());
+            }
+        }
+
+        return passwords;
     }
 
     public string Decrypt(string encrypted, string userSalt)
