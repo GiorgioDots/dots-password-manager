@@ -7,5 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './setting-block.component.scss',
 })
 export class SettingBlockComponent {
-  @Input() title = '';
+  @Input() blockTitle = '';
 }
