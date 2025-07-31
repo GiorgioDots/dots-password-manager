@@ -1,2 +1,0 @@
-﻿ALTER TABLE Users 
-ADD COLUMN OriginalUsername VARCHAR(255) NOT NULL
