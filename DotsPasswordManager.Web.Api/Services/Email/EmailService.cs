@@ -129,7 +129,7 @@ public class EmailService
     private async Task SendMessage(MimeMessage message)
     {
         using var client = new SmtpClient();
-        await client.ConnectAsync(smtpServer, port, false);
+        await client.ConnectAsync(smtpServer, port, MailKit.Security.SecureSocketOptions.SslOnConnect);
         await client.AuthenticateAsync(smtpUser, smtpPassword);
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
