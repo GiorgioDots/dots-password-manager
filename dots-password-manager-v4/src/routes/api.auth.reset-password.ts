@@ -21,8 +21,10 @@ export const Route = createFileRoute('/api/auth/reset-password')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const url = new URL(request.url)
-        const requestId = url.searchParams.get('r')?.trim()
+        const queryString = request.url.includes('?')
+          ? request.url.slice(request.url.indexOf('?') + 1)
+          : ''
+        const requestId = new URLSearchParams(queryString).get('r')?.trim()
 
         if (!requestId) {
           return badRequest('Invalid request.')

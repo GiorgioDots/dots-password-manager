@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
-import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import {
   Card,
@@ -24,16 +24,12 @@ type ResetResponse = {
 
 function ResetPasswordRequestPage() {
   const [email, setEmail] = useState('')
-  const [message, setMessage] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const onSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = async (
     e,
   ) => {
     e.preventDefault()
-    setError(null)
-    setMessage(null)
     setLoading(true)
 
     try {
@@ -45,16 +41,16 @@ function ResetPasswordRequestPage() {
 
       const data = (await res.json()) as ResetResponse
       if (!res.ok) {
-        setError(data.Message ?? 'Unable to process request.')
+        toast.error(data.Message ?? 'Unable to process request.')
         return
       }
 
-      setMessage(
+      toast.success(
         data.Message ??
           'Check your emails and click the link to continue, the request will be valid for the next 10 minutes',
       )
     } catch {
-      setError('Unable to reach the server.')
+      toast.error('Unable to reach the server.')
     } finally {
       setLoading(false)
     }
@@ -82,18 +78,6 @@ function ResetPasswordRequestPage() {
                 required
               />
             </div>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {message && (
-              <Alert variant="success">
-                <AlertDescription>{message}</AlertDescription>
-              </Alert>
-            )}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Sending...' : 'Send reset email'}

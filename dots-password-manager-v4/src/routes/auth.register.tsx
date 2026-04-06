@@ -6,8 +6,8 @@ import {
   redirect,
   useNavigate,
 } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
-import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import {
   Card,
@@ -47,14 +47,12 @@ function RegisterPage() {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const onSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = async (
     e,
   ) => {
     e.preventDefault()
-    setError(null)
     setLoading(true)
 
     try {
@@ -70,14 +68,14 @@ function RegisterPage() {
 
       const data = (await res.json()) as RegisterResponse
       if (!res.ok || !data.Token || !data.RefreshToken) {
-        setError(data.Message ?? 'Registration failed.')
+        toast.error(data.Message ?? 'Registration failed.')
         return
       }
 
       setTokens(data.Token, data.RefreshToken)
       await navigate({ to: '/saved-passwords' })
     } catch {
-      setError('Unable to reach the server.')
+      toast.error('Unable to reach the server.')
     } finally {
       setLoading(false)
     }
@@ -126,12 +124,6 @@ function RegisterPage() {
                 required
               />
             </div>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Creating account...' : 'Create account'}

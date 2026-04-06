@@ -6,8 +6,8 @@ import {
   redirect,
   useNavigate,
 } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
-import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import {
   Card,
@@ -46,14 +46,12 @@ function LoginPage() {
 
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   const onSubmit: NonNullable<ComponentProps<'form'>['onSubmit']> = async (
     e,
   ) => {
     e.preventDefault()
-    setError(null)
     setLoading(true)
 
     try {
@@ -65,14 +63,14 @@ function LoginPage() {
 
       const data = (await res.json()) as LoginResponse
       if (!res.ok || !data.Token || !data.RefreshToken) {
-        setError(data.Message ?? 'Invalid credentials.')
+        toast.error(data.Message ?? 'Invalid credentials.')
         return
       }
 
       setTokens(data.Token, data.RefreshToken)
       await navigate({ to: '/saved-passwords' })
     } catch {
-      setError('Unable to reach the server.')
+      toast.error('Unable to reach the server.')
     } finally {
       setLoading(false)
     }
@@ -108,12 +106,6 @@ function LoginPage() {
                 required
               />
             </div>
-
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
 
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? 'Signing in...' : 'Sign in'}

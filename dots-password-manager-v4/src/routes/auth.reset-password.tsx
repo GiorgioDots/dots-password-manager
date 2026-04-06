@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import z from 'zod'
 
-import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import {
   Card,
@@ -36,7 +36,6 @@ function ResetPasswordPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -74,21 +73,19 @@ function ResetPasswordPage() {
     e,
   ) => {
     e.preventDefault()
-    setError(null)
-    setMessage(null)
 
     if (!requestId) {
-      setError('Invalid reset link.')
+      toast.error('Invalid reset link.')
       return
     }
 
     if (password.length < 6) {
-      setError('Password must have at least 6 characters.')
+      toast.error('Password must have at least 6 characters.')
       return
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.')
+      toast.error('Passwords do not match.')
       return
     }
 
@@ -103,6 +100,7 @@ function ResetPasswordPage() {
       const data = (await res.json()) as ResetResponse
       if (!res.ok) {
         const backendMessage = data.Message ?? 'Unable to reset password.'
+        toast.error(backendMessage)
         setError(backendMessage)
         if (backendMessage.includes('expired or not valid')) {
           setIsRequestValid(false)
@@ -110,14 +108,14 @@ function ResetPasswordPage() {
         return
       }
 
-      setMessage(
+      toast.success(
         data.Message ?? 'Your password has been resetted, please login again',
       )
       setPassword('')
       setConfirmPassword('')
       await navigate({ to: '/auth/login', replace: true })
     } catch {
-      setError('Unable to reach the server.')
+      toast.error('Unable to reach the server.')
     } finally {
       setLoading(false)
     }
@@ -135,9 +133,9 @@ function ResetPasswordPage() {
 
         <CardContent>
           {checkingRequest ? (
-            <Alert>
-              <AlertDescription>Validating reset link...</AlertDescription>
-            </Alert>
+            <p className="text-sm text-muted-foreground">
+              Validating reset link...
+            </p>
           ) : isRequestValid ? (
             <form className="space-y-4" onSubmit={onSubmit}>
               <div className="space-y-2">
@@ -166,28 +164,14 @@ function ResetPasswordPage() {
                 />
               </div>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              {message && (
-                <Alert variant="success">
-                  <AlertDescription>{message}</AlertDescription>
-                </Alert>
-              )}
-
               <Button type="submit" disabled={loading} className="w-full">
                 {loading ? 'Updating...' : 'Update password'}
               </Button>
             </form>
           ) : (
-            <Alert variant="destructive">
-              <AlertDescription>
-                {error ?? 'This reset link is invalid or expired.'}
-              </AlertDescription>
-            </Alert>
+            <p className="text-sm text-destructive">
+              {error ?? 'This reset link is invalid or expired.'}
+            </p>
           )}
 
           <div className="mt-5 text-sm">

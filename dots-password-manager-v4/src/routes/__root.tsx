@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { Toaster } from 'sonner'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
@@ -33,16 +35,49 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const [toasterTheme, setToasterTheme] = useState<'light' | 'dark'>('light')
+
+  useEffect(() => {
+    function syncTheme() {
+      const isDark = document.documentElement.classList.contains('dark')
+      setToasterTheme(isDark ? 'dark' : 'light')
+    }
+
+    syncTheme()
+
+    const observer = new MutationObserver(syncTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const onMediaChange = () => {
+      const isAuto = !document.documentElement.hasAttribute('data-theme')
+      if (isAuto) {
+        syncTheme()
+      }
+    }
+
+    media.addEventListener('change', onMediaChange)
+
+    return () => {
+      observer.disconnect()
+      media.removeEventListener('change', onMediaChange)
+    }
+  }, [])
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="h-full overflow-hidden">
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased [overflow-wrap:anywhere]">
+      <body className="font-sans antialiased [overflow-wrap:anywhere] flex h-dvh flex-col overflow-hidden">
         <Header />
-        {children}
+        <div className="grow min-h-0 overflow-auto">{children}</div>
         <Footer />
+        <Toaster richColors position="top-right" theme={toasterTheme} />
         <TanStackDevtools
           config={{
             position: 'bottom-right',
