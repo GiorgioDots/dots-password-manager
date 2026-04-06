@@ -20,6 +20,29 @@ function badRequest(message: string, status = 400): Response {
 export const Route = createFileRoute('/api/auth/reset-password')({
   server: {
     handlers: {
+      GET: async ({ request }) => {
+        const url = new URL(request.url)
+        const requestId = url.searchParams.get('r')?.trim()
+
+        if (!requestId) {
+          return badRequest('Invalid request.')
+        }
+
+        const requestRow = await db.query.userRequests.findFirst({
+          where: and(
+            eq(userRequests.id, requestId),
+            gt(userRequests.expiresAt, new Date()),
+            eq(userRequests.requestType, PASSWORD_RESET),
+          ),
+          columns: { id: true },
+        })
+
+        if (!requestRow) {
+          return badRequest(INVALID_REQUEST_MESSAGE)
+        }
+
+        return Response.json({ Message: 'Request is valid.' })
+      },
       POST: async ({ request }) => {
         const body = (await request.json()) as Partial<ResetPasswordRequest>
         const requestId = body.RequestId?.trim()

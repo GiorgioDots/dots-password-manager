@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { ComputerIcon, Moon02Icon, Sun01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
 
@@ -73,9 +75,22 @@ export default function ThemeToggle() {
       onClick={toggleMode}
       aria-label={label}
       title={label}
-      className="rounded-full border border-border bg-card/80 px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm transition hover:-translate-y-0.5"
+      className="inline-flex h-8 items-center gap-1 rounded-full border border-border bg-card/80 px-2 text-xs font-semibold text-foreground shadow-sm transition hover:-translate-y-0.5 sm:h-auto sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-sm"
     >
-      {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
+      <HugeiconsIcon
+        icon={
+          mode === 'auto'
+            ? ComputerIcon
+            : mode === 'dark'
+              ? Moon02Icon
+              : Sun01Icon
+        }
+        size={16}
+        strokeWidth={1.8}
+      />
+      <span className="hidden sm:inline">
+        {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
+      </span>
     </button>
   )
 }

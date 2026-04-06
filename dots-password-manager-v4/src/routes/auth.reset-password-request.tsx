@@ -61,13 +61,10 @@ function ResetPasswordRequestPage() {
   }
 
   return (
-    <main className="page-wrap px-4 pb-10 pt-12">
-      <Card className="island-shell rise-in mx-auto max-w-md rounded-3xl bg-card/70 shadow-xl">
+    <main className="mx-auto w-full max-w-md px-4 pb-10 pt-12">
+      <Card>
         <CardHeader>
-          <p className="island-kicker">Dots Password Manager</p>
-          <CardTitle className="display-title text-4xl text-foreground">
-            Reset password
-          </CardTitle>
+          <CardTitle>Reset password</CardTitle>
           <CardDescription>
             We will send you a secure reset link.
           </CardDescription>
@@ -87,7 +84,7 @@ function ResetPasswordRequestPage() {
             </div>
 
             {error && (
-              <Alert variant="destructive" className="bg-red-50 text-red-700">
+              <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -104,10 +101,7 @@ function ResetPasswordRequestPage() {
           </form>
 
           <div className="mt-5 text-sm">
-            <Link
-              to="/auth/login"
-              className="text-primary no-underline hover:underline"
-            >
+            <Link to="/auth/login" className="text-primary hover:underline">
               Back to sign in
             </Link>
           </div>

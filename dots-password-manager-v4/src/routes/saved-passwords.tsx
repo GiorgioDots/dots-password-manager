@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { ComponentProps } from 'react'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
 import { Input } from '#/components/ui/input'
-import { clearTokens, isLoggedIn } from '#/lib/client-auth'
+import { isLoggedIn } from '#/lib/client-auth'
 import {
   createPassword,
   deletePassword,
@@ -16,6 +16,10 @@ import type { SavedPasswordDto } from '#/lib/passwords/contracts'
 
 export const Route = createFileRoute('/saved-passwords')({
   beforeLoad: () => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
     if (!isLoggedIn()) {
       throw redirect({ to: '/auth/login' })
     }
@@ -24,8 +28,6 @@ export const Route = createFileRoute('/saved-passwords')({
 })
 
 function SavedPasswordsPage() {
-  const navigate = useNavigate()
-
   const [passwords, setPasswords] = useState<SavedPasswordDto[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -88,38 +90,17 @@ function SavedPasswordsPage() {
     }
   }
 
-  async function onLogout() {
-    clearTokens()
-    await navigate({ to: '/auth/login' })
-  }
-
   return (
-    <main className="page-wrap px-4 pb-10 pt-10">
-      <Card className="island-shell rise-in rounded-3xl bg-card/70 shadow-xl">
+    <main className="mx-auto w-full max-w-5xl px-4 pb-10 pt-10">
+      <Card>
         <CardHeader className="pb-4">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <div>
-              <p className="island-kicker mb-1">Vault</p>
-              <CardTitle className="display-title text-4xl text-foreground">
-                Saved passwords
-              </CardTitle>
-            </div>
-            <Button
-              type="button"
-              onClick={onLogout}
-              variant="outline"
-              className="border-border bg-card/70 text-foreground"
-            >
-              Logout
-            </Button>
+          <div className="mb-6">
+            <CardTitle>Saved passwords</CardTitle>
           </div>
         </CardHeader>
 
         <CardContent>
-          <form
-            onSubmit={onCreate}
-            className="mb-6 grid gap-3 rounded-2xl border border-border bg-card/60 p-4 sm:grid-cols-4"
-          >
+          <form onSubmit={onCreate} className="mb-6 grid gap-3 sm:grid-cols-4">
             <Input
               placeholder="Name"
               value={name}
@@ -165,7 +146,7 @@ function SavedPasswordsPage() {
               {passwords.map((item) => (
                 <li
                   key={item.PasswordId}
-                  className="flex items-center justify-between rounded-xl border border-border bg-card/70 px-4 py-3"
+                  className="flex items-center justify-between rounded-xl border border-border px-4 py-3"
                 >
                   <div>
                     <p className="font-semibold text-foreground">{item.Name}</p>
@@ -178,7 +159,6 @@ function SavedPasswordsPage() {
                     onClick={() => void onDelete(item.PasswordId)}
                     variant="destructive"
                     size="sm"
-                    className="border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
                   >
                     Delete
                   </Button>

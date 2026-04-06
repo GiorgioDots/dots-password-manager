@@ -1,4 +1,10 @@
 import nodemailer from 'nodemailer'
+import { existsSync } from 'node:fs'
+import path from 'node:path'
+
+import passwordResetRequestTemplateRaw from './templates/password-reset-request.html?raw'
+import passwordResettedTemplateRaw from './templates/password-resetted.html?raw'
+import welcomeTemplateRaw from './templates/welcome.html?raw'
 
 type MailUser = {
   email: string
@@ -51,16 +57,29 @@ async function sendMail(options: {
     },
   })
 
+  const logoPath = path.join(process.cwd(), 'public', 'dpm-logo.png')
+
   await transport.sendMail({
     from: `Dots Password Manager <${cfg.fromAddress}>`,
     to: `${options.toName} <${options.to}>`,
     subject: options.subject,
     html: options.html,
+    attachments: existsSync(logoPath)
+      ? [
+          {
+            filename: 'dpm-logo.png',
+            path: logoPath,
+            cid: 'logo',
+          },
+        ]
+      : undefined,
   })
 }
 
 function welcomeTemplate(user: MailUser, webappHost: string): string {
-  return `<p>Hello ${user.originalUsername},</p><p>Welcome to Dots Password Manager.</p><p>You can access your vault at <a href="${webappHost}">${webappHost}</a>.</p>`
+  return welcomeTemplateRaw
+    .replaceAll('[USER-EMAIL]', user.email)
+    .replaceAll('[URL]', webappHost)
 }
 
 function resetRequestTemplate(
@@ -69,15 +88,23 @@ function resetRequestTemplate(
   webappHost: string,
 ): string {
   const requestUrl = `${webappHost}/auth/reset-password?r=${requestId}`
-  return `<p>Hello ${user.originalUsername},</p><p>Click the following link to reset your password:</p><p><a href="${requestUrl}">${requestUrl}</a></p><p>This request expires in 10 minutes.</p>`
+  return passwordResetRequestTemplateRaw
+    .replaceAll('[USER-EMAIL]', user.email)
+    .replaceAll('[REQUEST_URL]', requestUrl)
 }
 
 function passwordResettedTemplate(user: MailUser, webappHost: string): string {
   const now = new Date()
-  const date = now.toISOString().slice(0, 10)
+  const date = now.toLocaleDateString('en-GB', {
+    timeZone: 'UTC',
+  })
   const time = now.toISOString().slice(11, 19)
 
-  return `<p>Hello ${user.originalUsername},</p><p>Your password has been changed on ${date} at ${time} (UTC).</p><p>If this was not you, visit <a href="${webappHost}">${webappHost}</a> immediately.</p>`
+  return passwordResettedTemplateRaw
+    .replaceAll('[USER-EMAIL]', user.email)
+    .replaceAll('[URL]', webappHost)
+    .replaceAll('[Date]', date)
+    .replaceAll('[Time]', time)
 }
 
 export async function sendWelcomeEmail(user: MailUser): Promise<void> {

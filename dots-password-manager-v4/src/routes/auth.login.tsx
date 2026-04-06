@@ -1,6 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ComponentProps } from 'react'
-import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router'
 
 import { Alert, AlertDescription } from '#/components/ui/alert'
 import { Button } from '#/components/ui/button'
@@ -13,7 +18,7 @@ import {
 } from '#/components/ui/card'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
-import { setTokens } from '#/lib/client-auth'
+import { isLoggedIn, setTokens } from '#/lib/client-auth'
 
 type LoginResponse = {
   Token?: string
@@ -22,11 +27,22 @@ type LoginResponse = {
 }
 
 export const Route = createFileRoute('/auth/login')({
+  beforeLoad: () => {
+    if (typeof window !== 'undefined' && isLoggedIn()) {
+      throw redirect({ to: '/saved-passwords' })
+    }
+  },
   component: LoginPage,
 })
 
 function LoginPage() {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isLoggedIn()) {
+      navigate({ to: '/saved-passwords', replace: true }).catch(() => {})
+    }
+  }, [navigate])
 
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
@@ -63,13 +79,10 @@ function LoginPage() {
   }
 
   return (
-    <main className="page-wrap px-4 pb-10 pt-12">
-      <Card className="island-shell rise-in mx-auto max-w-md rounded-3xl bg-card/70 shadow-xl">
+    <main className="mx-auto w-full max-w-md px-4 pb-10 pt-12">
+      <Card>
         <CardHeader>
-          <p className="island-kicker">Dots Password Manager</p>
-          <CardTitle className="display-title text-4xl text-foreground">
-            Sign in
-          </CardTitle>
+          <CardTitle>Sign in</CardTitle>
           <CardDescription>Access your encrypted vault.</CardDescription>
         </CardHeader>
 
@@ -97,7 +110,7 @@ function LoginPage() {
             </div>
 
             {error && (
-              <Alert variant="destructive" className="bg-red-50 text-red-700">
+              <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -108,15 +121,12 @@ function LoginPage() {
           </form>
 
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
-            <Link
-              to="/auth/register"
-              className="text-primary no-underline hover:underline"
-            >
+            <Link to="/auth/register" className="text-primary hover:underline">
               Create account
             </Link>
             <Link
               to="/auth/reset-password-request"
-              className="text-primary no-underline hover:underline"
+              className="text-primary hover:underline"
             >
               Forgot password?
             </Link>
