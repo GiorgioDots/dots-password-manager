@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
+import {
+  CheckIcon,
+  CopyIcon,
+  EyeIcon,
+  EyeOffIcon,
+  RefreshCwIcon,
+  XIcon,
+} from 'lucide-react'
 import { toast } from 'sonner'
 
+import { Badge } from '#/components/ui/badge'
 import { Button } from '#/components/ui/button'
 import {
   Dialog,
@@ -20,7 +28,9 @@ type PasswordEditFormProps = {
   draft: SavedPasswordDto
   selectedId: string | null
   canSave: boolean
+  canReset: boolean
   onChange: (patch: Partial<SavedPasswordDto>) => void
+  onReset: () => void
   onSave: () => Promise<void> | void
   onDelete: (id: string) => Promise<void> | void
 }
@@ -29,12 +39,15 @@ export default function PasswordEditForm({
   draft,
   selectedId,
   canSave,
+  canReset,
   onChange,
+  onReset,
   onSave,
   onDelete,
 }: PasswordEditFormProps) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
+  const [tagInput, setTagInput] = useState('')
   const [confirmAction, setConfirmAction] = useState<'save' | 'delete' | null>(
     null,
   )
@@ -43,6 +56,7 @@ export default function PasswordEditForm({
   useEffect(() => {
     setIsPasswordVisible(false)
     setCopiedField(null)
+    setTagInput('')
     if (copiedResetTimeoutRef.current) {
       window.clearTimeout(copiedResetTimeoutRef.current)
       copiedResetTimeoutRef.current = null
@@ -74,6 +88,68 @@ export default function PasswordEditForm({
   }
 
   const tagsString = (draft.Tags ?? []).join(', ')
+
+  function addTag(value: string) {
+    const next = value.trim()
+    if (!next) {
+      return
+    }
+
+    const current = draft.Tags ?? []
+    const exists = current.some(
+      (tag) => tag.trim().toLowerCase() === next.toLowerCase(),
+    )
+    if (exists) {
+      setTagInput('')
+      return
+    }
+
+    onChange({ Tags: [...current, next] })
+    setTagInput('')
+  }
+
+  function removeTag(tagToRemove: string) {
+    onChange({
+      Tags: (draft.Tags ?? []).filter((tag) => tag !== tagToRemove),
+    })
+  }
+
+  function generateSafePassword(length = 20): string {
+    const lower = 'abcdefghjkmnpqrstuvwxyz'
+    const upper = 'ABCDEFGHJKMNPQRSTUVWXYZ'
+    const digits = '23456789'
+    const symbols = '!@#$%^&*()-_=+[]{};:,.?'
+
+    const pick = (charset: string): string => {
+      const array = new Uint32Array(1)
+      window.crypto.getRandomValues(array)
+      return charset[array[0] % charset.length]
+    }
+
+    const required = [pick(lower), pick(upper), pick(digits), pick(symbols)]
+    const all = lower + upper + digits + symbols
+
+    const chars = [...required]
+    while (chars.length < length) {
+      chars.push(pick(all))
+    }
+
+    for (let i = chars.length - 1; i > 0; i--) {
+      const array = new Uint32Array(1)
+      window.crypto.getRandomValues(array)
+      const j = array[0] % (i + 1)
+      ;[chars[i], chars[j]] = [chars[j], chars[i]]
+    }
+
+    return chars.join('')
+  }
+
+  function onGeneratePassword() {
+    const generated = generateSafePassword()
+    onChange({ Password: generated })
+    setIsPasswordVisible(true)
+    toast.success('Random safe password generated.')
+  }
 
   async function handleConfirmAction() {
     if (confirmAction === 'save') {
@@ -172,7 +248,19 @@ export default function PasswordEditForm({
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-center justify-between gap-2">
+          <Label htmlFor="password">Password</Label>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onGeneratePassword}
+            className="h-8 px-2"
+          >
+            <RefreshCwIcon className="size-3.5" />
+            Generate
+          </Button>
+        </div>
         <div className="relative">
           <Input
             id="password"
@@ -241,33 +329,65 @@ export default function PasswordEditForm({
 
       <div className="grid gap-2">
         <Label htmlFor="tags">Tags</Label>
-        <div className="relative">
-          <Input
-            id="tags"
-            value={tagsString}
-            onChange={(e) =>
-              onChange({
-                Tags: e.target.value
-                  .split(',')
-                  .map((tag) => tag.trim())
-                  .filter(Boolean),
-              })
-            }
-            placeholder="work, personal, otp"
-            className="pr-10"
-          />
-          <button
-            type="button"
-            aria-label="Copy tags"
-            onClick={() => void copyValue(tagsString, 'Tags', 'tags')}
-            className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-          >
-            {copiedField === 'tags' ? (
-              <CheckIcon className="size-4 text-emerald-600" />
-            ) : (
-              <CopyIcon className="size-4" />
-            )}
-          </button>
+        <div className="space-y-2">
+          {(draft.Tags ?? []).length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {(draft.Tags ?? []).map((tag) => (
+                <Badge key={tag} variant="secondary" className="gap-1 pr-1">
+                  {tag}
+                  <button
+                    type="button"
+                    aria-label={`Remove ${tag} tag`}
+                    onClick={() => removeTag(tag)}
+                    className="inline-flex size-4 items-center justify-center rounded-sm hover:bg-accent"
+                  >
+                    <XIcon className="size-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="relative">
+            <Input
+              id="tags"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                  e.preventDefault()
+                  addTag(tagInput)
+                  return
+                }
+
+                if (
+                  e.key === 'Backspace' &&
+                  !tagInput &&
+                  (draft.Tags ?? []).length
+                ) {
+                  const last = draft.Tags?.[draft.Tags.length - 1]
+                  if (last) {
+                    removeTag(last)
+                  }
+                }
+              }}
+              onBlur={() => addTag(tagInput)}
+              placeholder="Type a tag and press Enter"
+              className="pr-10"
+            />
+            <button
+              type="button"
+              aria-label="Copy tags"
+              onClick={() => void copyValue(tagsString, 'Tags', 'tags')}
+              className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
+            >
+              {copiedField === 'tags' ? (
+                <CheckIcon className="size-4 text-emerald-600" />
+              ) : (
+                <CopyIcon className="size-4" />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -279,7 +399,7 @@ export default function PasswordEditForm({
             value={draft.Notes ?? ''}
             onChange={(e) => onChange({ Notes: e.target.value || null })}
             placeholder="Additional notes"
-            className="pr-10"
+            className="pr-10 !bg-background"
           />
           <button
             type="button"
@@ -297,6 +417,16 @@ export default function PasswordEditForm({
       </div>
 
       <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-end">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onReset}
+          disabled={!canReset}
+          className="w-full sm:w-auto"
+        >
+          Reset
+        </Button>
+
         <Button
           type="button"
           onClick={() => setConfirmAction('save')}

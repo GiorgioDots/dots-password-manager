@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, StarIcon } from 'lucide-react'
 import { toast } from 'sonner'
+import z from 'zod'
 
 import PasswordEditForm from '#/components/PasswordEditForm'
 import { Button } from '#/components/ui/button'
@@ -26,6 +27,9 @@ import {
 import type { SavedPasswordDto } from '#/lib/passwords/contracts'
 
 export const Route = createFileRoute('/saved-passwords')({
+  validateSearch: z.object({
+    id: z.string().optional(),
+  }),
   beforeLoad: () => {
     if (typeof window === 'undefined') {
       return
@@ -39,6 +43,9 @@ export const Route = createFileRoute('/saved-passwords')({
 })
 
 function SavedPasswordsPage() {
+  const navigate = useNavigate({ from: '/saved-passwords' })
+  const search = Route.useSearch()
+
   const [passwords, setPasswords] = useState<SavedPasswordDto[]>([])
   const [loading, setLoading] = useState(true)
   const [loadingSelected, setLoadingSelected] = useState(false)
@@ -83,7 +90,17 @@ function SavedPasswordsPage() {
     })
   }
 
-  async function selectPassword(id: string) {
+  function syncSelectedIdToSearch(id: string | null) {
+    navigate({
+      search: id ? { id } : {},
+      replace: true,
+    }).catch(() => undefined)
+  }
+
+  async function selectPassword(
+    id: string,
+    opts?: { syncUrl?: boolean; silent?: boolean },
+  ) {
     setSelectedId(id)
     setLoadingSelected(true)
 
@@ -92,8 +109,17 @@ function SavedPasswordsPage() {
       const nextDraft = normalize(item)
       setDraft(nextDraft)
       setInitialDraft(nextDraft)
+      if (opts?.syncUrl !== false) {
+        syncSelectedIdToSearch(id)
+      }
     } catch {
-      toast.error('Unable to load selected password.')
+      if (!opts?.silent) {
+        toast.error('Unable to load selected password.')
+      }
+      setSelectedId(null)
+      setDraft(null)
+      setInitialDraft(null)
+      syncSelectedIdToSearch(null)
     } finally {
       setLoadingSelected(false)
     }
@@ -105,9 +131,13 @@ function SavedPasswordsPage() {
       const items = await getPasswords()
       setPasswords(items)
 
-      setSelectedId(null)
-      setDraft(null)
-      setInitialDraft(null)
+      if (search.id) {
+        await selectPassword(search.id, { syncUrl: false, silent: true })
+      } else {
+        setSelectedId(null)
+        setDraft(null)
+        setInitialDraft(null)
+      }
     } catch {
       toast.error('Unable to load passwords.')
     } finally {
@@ -116,12 +146,12 @@ function SavedPasswordsPage() {
   }
 
   useEffect(() => {
-    void loadPasswords()
+    loadPasswords().catch(() => undefined)
   }, [])
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      const key = event.key?.toLowerCase()
+      const key = event.key.toLowerCase()
       if ((event.ctrlKey || event.metaKey) && key === 'k') {
         event.preventDefault()
         setCommandOpen((open) => !open)
@@ -144,6 +174,8 @@ function SavedPasswordsPage() {
     !!draft.Login.trim() &&
     !!draft.Password.trim() &&
     isDirty
+
+  const canReset = !!draft && isDirty
 
   async function onSave() {
     if (!draft || !canSave) {
@@ -171,6 +203,7 @@ function SavedPasswordsPage() {
       setSelectedId(created.PasswordId ?? null)
       setDraft(nextDraft)
       setInitialDraft(nextDraft)
+      syncSelectedIdToSearch(created.PasswordId ?? null)
       toast.success('Password created.')
     } catch {
       toast.error('Unable to save password.')
@@ -187,6 +220,7 @@ function SavedPasswordsPage() {
         setSelectedId(null)
         setDraft(null)
         setInitialDraft(null)
+        syncSelectedIdToSearch(null)
       }
     } catch {
       toast.error('Unable to delete password.')
@@ -233,6 +267,7 @@ function SavedPasswordsPage() {
     setSelectedId(null)
     setDraft(empty)
     setInitialDraft(empty)
+    syncSelectedIdToSearch(null)
   }
 
   function updateDraft(patch: Partial<SavedPasswordDto>) {
@@ -245,6 +280,15 @@ function SavedPasswordsPage() {
         ...patch,
       }
     })
+  }
+
+  function onResetDraft() {
+    if (!initialDraft) {
+      return
+    }
+
+    const nextDraft = normalize(initialDraft)
+    setDraft(nextDraft)
   }
 
   const orderedPasswords = useMemo(() => {
@@ -317,7 +361,7 @@ function SavedPasswordsPage() {
                     }
 
                     setCommandOpen(false)
-                    void selectPassword(item.PasswordId)
+                    selectPassword(item.PasswordId).catch(() => undefined)
                   }}
                 >
                   <div className="flex w-full items-center justify-between gap-2">
@@ -340,7 +384,9 @@ function SavedPasswordsPage() {
                         event.preventDefault()
                         event.stopPropagation()
                         if (item.PasswordId) {
-                          void onToggleFavourite(item.PasswordId)
+                          onToggleFavourite(item.PasswordId).catch(
+                            () => undefined,
+                          )
                         }
                       }}
                       className="inline-flex size-7 items-center justify-center rounded-md text-yellow-500 hover:bg-accent"
@@ -364,7 +410,7 @@ function SavedPasswordsPage() {
                   }
 
                   setCommandOpen(false)
-                  void selectPassword(item.PasswordId)
+                  selectPassword(item.PasswordId).catch(() => undefined)
                 }}
               >
                 <div className="flex w-full items-center justify-between gap-2">
@@ -387,7 +433,9 @@ function SavedPasswordsPage() {
                       event.preventDefault()
                       event.stopPropagation()
                       if (item.PasswordId) {
-                        void onToggleFavourite(item.PasswordId)
+                        onToggleFavourite(item.PasswordId).catch(
+                          () => undefined,
+                        )
                       }
                     }}
                     className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
@@ -439,9 +487,11 @@ function SavedPasswordsPage() {
               draft={draft}
               selectedId={selectedId}
               canSave={canSave}
+              canReset={canReset}
               onChange={updateDraft}
-              onSave={() => void onSave()}
-              onDelete={(id) => void onDelete(id)}
+              onReset={onResetDraft}
+              onSave={() => onSave()}
+              onDelete={(id) => onDelete(id)}
             />
           )}
         </CardContent>
