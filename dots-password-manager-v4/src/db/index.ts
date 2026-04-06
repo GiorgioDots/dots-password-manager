@@ -28,7 +28,4 @@ const buildDatabaseUrl = () => {
   return `${protocol}://${encodedUser}:${encodedPassword}@${host}:${port}/${database}${query}`
 }
 
-const url = buildDatabaseUrl()
-console.log(`Connecting to DB with URL: ${url}`)
-
 export const db = drizzle(buildDatabaseUrl(), { schema })

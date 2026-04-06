@@ -4,9 +4,11 @@ import { authConfig } from '#/lib/auth/config'
 
 const CLAIM_NAME_ID =
   'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-const CLAIM_EMAIL = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+const CLAIM_EMAIL =
+  'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
 const CLAIM_NAME = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
-const CLAIM_ROLE = 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+const CLAIM_ROLE =
+  'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
 
 export type AuthUserClaims = {
   userId: string

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { createCipheriv, pbkdf2Sync } from 'node:crypto'
 
 beforeEach(() => {
   vi.resetModules()
@@ -31,5 +32,31 @@ describe('vault crypto compatibility', () => {
     )
 
     expect(plain).toBe('P@ssw0rd-legacy')
+  })
+
+  it('decrypts values encrypted with newline-terminated key material', async () => {
+    const { decryptWithUserSalt } = await import('#/lib/auth/vault-crypto')
+
+    const legacyKeyWithNewline = `${process.env.CRYPTO_BASE_64_KEY}\n`
+    const saltBase64 = 'MDEyMzQ1Njc4OWFiY2RlZg=='
+    const salt = Buffer.from(saltBase64, 'base64')
+    const derived = pbkdf2Sync(
+      legacyKeyWithNewline,
+      salt,
+      100_000,
+      48,
+      'sha256',
+    )
+    const key = derived.subarray(0, 32)
+    const iv = derived.subarray(32, 48)
+    const cipher = createCipheriv('aes-256-cbc', key, iv)
+    const encrypted = Buffer.concat([
+      cipher.update('legacy-newline-key', 'utf8'),
+      cipher.final(),
+    ]).toString('base64')
+
+    const plain = decryptWithUserSalt(encrypted, saltBase64)
+
+    expect(plain).toBe('legacy-newline-key')
   })
 })
