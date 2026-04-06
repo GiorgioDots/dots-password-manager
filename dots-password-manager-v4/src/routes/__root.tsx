@@ -73,7 +73,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased [overflow-wrap:anywhere] flex h-dvh flex-col overflow-hidden">
+      <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
         <Header />
         <div className="grow min-h-0 overflow-auto">{children}</div>
         <Footer />
