@@ -71,13 +71,22 @@ export default function Header() {
 
         <div className="mt-2 px-2 flex w-full flex-wrap items-center gap-x-3 gap-y-1 pb-1 text-xs font-semibold sm:flex-nowrap sm:gap-x-4 sm:pb-0 sm:text-sm">
           {loggedIn == true ? (
-            <Link
-              to="/saved-passwords"
-              className={navLinkClass}
-              activeProps={{ className: 'text-primary' }}
-            >
-              Vault
-            </Link>
+            <>
+              <Link
+                to="/saved-passwords"
+                className={navLinkClass}
+                activeProps={{ className: 'text-primary' }}
+              >
+                Vault
+              </Link>
+              <Link
+                to="/settings"
+                className={navLinkClass}
+                activeProps={{ className: 'text-primary' }}
+              >
+                Settings
+              </Link>
+            </>
           ) : loggedIn == false ? (
             <>
               <Link

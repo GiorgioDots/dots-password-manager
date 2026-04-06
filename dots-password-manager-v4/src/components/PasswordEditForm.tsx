@@ -296,7 +296,7 @@ export default function PasswordEditForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center sm:justify-end">
         <Button
           type="button"
           onClick={() => setConfirmAction('save')}

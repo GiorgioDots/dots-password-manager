@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SavedPasswordsRouteImport } from './routes/saved-passwords'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ import { Route as ApiAuthRefreshTokenRouteImport } from './routes/api.auth.refre
 import { Route as ApiAuthLoginRouteImport } from './routes/api.auth.login'
 import { Route as ApiPasswordsIdToggleFavouriteRouteImport } from './routes/api.passwords.$id.toggle-favourite'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SavedPasswordsRoute = SavedPasswordsRouteImport.update({
   id: '/saved-passwords',
   path: '/saved-passwords',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/mcp': typeof McpRoute
   '/saved-passwords': typeof SavedPasswordsRoute
+  '/settings': typeof SettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/mcp': typeof McpRoute
   '/saved-passwords': typeof SavedPasswordsRoute
+  '/settings': typeof SettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/mcp': typeof McpRoute
   '/saved-passwords': typeof SavedPasswordsRoute
+  '/settings': typeof SettingsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
@@ -198,6 +207,7 @@ export interface FileRouteTypes {
     | '/'
     | '/mcp'
     | '/saved-passwords'
+    | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/'
     | '/mcp'
     | '/saved-passwords'
+    | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/'
     | '/mcp'
     | '/saved-passwords'
+    | '/settings'
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
@@ -262,6 +274,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   McpRoute: typeof McpRoute
   SavedPasswordsRoute: typeof SavedPasswordsRoute
+  SettingsRoute: typeof SettingsRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
@@ -281,6 +294,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/saved-passwords': {
       id: '/saved-passwords'
       path: '/saved-passwords'
@@ -433,6 +453,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   McpRoute: McpRoute,
   SavedPasswordsRoute: SavedPasswordsRoute,
+  SettingsRoute: SettingsRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,

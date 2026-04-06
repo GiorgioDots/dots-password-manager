@@ -1,5 +1,8 @@
 import { authFetch } from '#/lib/client-auth'
-import type { SavedPasswordDto } from '#/lib/passwords/contracts'
+import type {
+  ImportExportDto,
+  SavedPasswordDto,
+} from '#/lib/passwords/contracts'
 
 export async function getPasswords(): Promise<SavedPasswordDto[]> {
   const res = await authFetch('/api/passwords')
@@ -61,4 +64,24 @@ export async function togglePasswordFavourite(
   }
 
   return (await res.json()) as { PasswordId: string; IsFavourite: boolean }
+}
+
+export async function exportPasswords(): Promise<ImportExportDto> {
+  const res = await authFetch('/api/passwords/export')
+  if (!res.ok) {
+    throw new Error('Failed to export passwords')
+  }
+
+  return (await res.json()) as ImportExportDto
+}
+
+export async function importPasswords(payload: ImportExportDto): Promise<void> {
+  const res = await authFetch('/api/passwords/import', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  })
+
+  if (!res.ok) {
+    throw new Error('Failed to import passwords')
+  }
 }
