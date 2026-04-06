@@ -399,7 +399,7 @@ export default function PasswordEditForm({
             value={draft.Notes ?? ''}
             onChange={(e) => onChange({ Notes: e.target.value || null })}
             placeholder="Additional notes"
-            className="pr-10 !bg-background"
+            className="pr-10 bg-background!"
           />
           <button
             type="button"

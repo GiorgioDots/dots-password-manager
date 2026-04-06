@@ -27,12 +27,19 @@ export const Route = createFileRoute('/api/auth/login')({
 
         const loweredLogin = login.toLowerCase()
         const user = await db.query.users.findFirst({
-          where: or(eq(users.email, loweredLogin), eq(users.username, loweredLogin)),
+          where: or(
+            eq(users.email, loweredLogin),
+            eq(users.username, loweredLogin),
+          ),
         })
 
         if (
           !user ||
-          !verifyPasswordWithSalt(password, user.passwordSalt, user.passwordHash)
+          !verifyPasswordWithSalt(
+            password,
+            user.passwordSalt,
+            user.passwordHash,
+          )
         ) {
           return badRequest('Invalid credentials.')
         }
@@ -48,7 +55,8 @@ export const Route = createFileRoute('/api/auth/login')({
           userId: user.id,
           token: refreshToken,
           expiresAt: new Date(
-            Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
+            Date.now() +
+              authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
           ),
         })
 
