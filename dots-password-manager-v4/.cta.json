@@ -1,16 +1,25 @@
 {
-  "projectName": "start-app",
+  "projectName": "dots-password-manager-v4",
   "mode": "file-router",
   "typescript": true,
   "tailwind": true,
-  "packageManager": "pnpm",
-  "addOnOptions": {},
+  "packageManager": "npm",
   "git": true,
+  "install": true,
+  "addOnOptions": {
+    "drizzle": {
+      "database": "postgresql"
+    }
+  },
+  "includeExamples": true,
+  "envVarValues": {},
+  "routerOnly": false,
   "version": 1,
-  "framework": "react-cra",
+  "framework": "react",
   "chosenAddOns": [
+    "drizzle",
+    "mcp",
     "eslint",
-    "nitro",
-    "start"
+    "shadcn"
   ]
 }
