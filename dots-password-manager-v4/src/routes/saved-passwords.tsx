@@ -1,15 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import {
-  CheckIcon,
-  CopyIcon,
-  EyeIcon,
-  EyeOffIcon,
-  PlusIcon,
-  StarIcon,
-} from 'lucide-react'
+import { PlusIcon, StarIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
+import PasswordEditForm from '#/components/PasswordEditForm'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader } from '#/components/ui/card'
 import {
@@ -20,9 +14,6 @@ import {
   CommandItem,
   CommandList,
 } from '#/components/ui/command'
-import { Input } from '#/components/ui/input'
-import { Label } from '#/components/ui/label'
-import { Textarea } from '#/components/ui/textarea'
 import { isLoggedIn } from '#/lib/client-auth'
 import {
   createPassword,
@@ -53,13 +44,10 @@ function SavedPasswordsPage() {
   const [loadingSelected, setLoadingSelected] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-  const [copiedField, setCopiedField] = useState<string | null>(null)
   const [draft, setDraft] = useState<SavedPasswordDto | null>(null)
   const [initialDraft, setInitialDraft] = useState<SavedPasswordDto | null>(
     null,
   )
-  const copiedResetTimeoutRef = useRef<number | null>(null)
 
   function normalize(item: SavedPasswordDto): SavedPasswordDto {
     return {
@@ -133,7 +121,7 @@ function SavedPasswordsPage() {
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      const key = event.key.toLowerCase()
+      const key = event.key?.toLowerCase()
       if ((event.ctrlKey || event.metaKey) && key === 'k') {
         event.preventDefault()
         setCommandOpen((open) => !open)
@@ -143,14 +131,6 @@ function SavedPasswordsPage() {
     window.addEventListener('keydown', onKeyDown)
     return () => {
       window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (copiedResetTimeoutRef.current) {
-        window.clearTimeout(copiedResetTimeoutRef.current)
-      }
     }
   }, [])
 
@@ -251,7 +231,6 @@ function SavedPasswordsPage() {
     }
 
     setSelectedId(null)
-    setIsPasswordVisible(false)
     setDraft(empty)
     setInitialDraft(empty)
   }
@@ -266,24 +245,6 @@ function SavedPasswordsPage() {
         ...patch,
       }
     })
-  }
-
-  const tagsString = (draft?.Tags ?? []).join(', ')
-
-  async function copyValue(value: string, label: string, fieldKey: string) {
-    try {
-      await navigator.clipboard.writeText(value)
-      setCopiedField(fieldKey)
-      if (copiedResetTimeoutRef.current) {
-        window.clearTimeout(copiedResetTimeoutRef.current)
-      }
-      copiedResetTimeoutRef.current = window.setTimeout(() => {
-        setCopiedField((prev) => (prev === fieldKey ? null : prev))
-      }, 1200)
-      toast.success(`${label} copied.`)
-    } catch {
-      toast.error(`Unable to copy ${label.toLowerCase()}.`)
-    }
   }
 
   const orderedPasswords = useMemo(() => {
@@ -303,8 +264,8 @@ function SavedPasswordsPage() {
   const otherPasswords = orderedPasswords.filter((item) => !item.IsFavourite)
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 pb-8 pt-6 sm:pb-10 sm:pt-10">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+    <main className="mx-auto w-full max-w-5xl px-4 pb-8 sm:pb-10 pt-4">
+      <div className="mb-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <h1 className="min-h-7 text-xl font-semibold capitalize">
           {selectedId ? (draft?.Name ?? '') : ''}
         </h1>
@@ -361,7 +322,9 @@ function SavedPasswordsPage() {
                 >
                   <div className="flex w-full items-center justify-between gap-2">
                     <div className="flex min-w-0 flex-col">
-                      <span className="truncate font-medium capitalize">{item.Name}</span>
+                      <span className="truncate font-medium capitalize">
+                        {item.Name}
+                      </span>
                       <span className="truncate text-xs text-muted-foreground">
                         {item.Url || 'No url'}
                       </span>
@@ -406,7 +369,9 @@ function SavedPasswordsPage() {
               >
                 <div className="flex w-full items-center justify-between gap-2">
                   <div className="flex min-w-0 flex-col">
-                    <span className="truncate font-medium capitalize">{item.Name}</span>
+                    <span className="truncate font-medium capitalize">
+                      {item.Name}
+                    </span>
                     <span className="truncate text-xs text-muted-foreground">
                       {item.Url || 'No url'}
                     </span>
@@ -470,241 +435,14 @@ function SavedPasswordsPage() {
               </div>
             </div>
           ) : (
-            <>
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <div className="relative">
-                  <Input
-                    id="name"
-                    value={draft.Name}
-                    onChange={(e) => updateDraft({ Name: e.target.value })}
-                    placeholder="Example: Github"
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Copy name"
-                    onClick={() => void copyValue(draft.Name, 'Name', 'name')}
-                    className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                  >
-                    {copiedField === 'name' ? (
-                      <CheckIcon className="size-4 text-emerald-600" />
-                    ) : (
-                      <CopyIcon className="size-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="login">Login</Label>
-                <div className="relative">
-                  <Input
-                    id="login"
-                    value={draft.Login}
-                    onChange={(e) => updateDraft({ Login: e.target.value })}
-                    placeholder="username or email"
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Copy login"
-                    onClick={() => void copyValue(draft.Login, 'Login', 'login')}
-                    className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                  >
-                    {copiedField === 'login' ? (
-                      <CheckIcon className="size-4 text-emerald-600" />
-                    ) : (
-                      <CopyIcon className="size-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="second-login">Second login</Label>
-                <div className="relative">
-                  <Input
-                    id="second-login"
-                    value={draft.SecondLogin ?? ''}
-                    onChange={(e) =>
-                      updateDraft({ SecondLogin: e.target.value || null })
-                    }
-                    placeholder="optional"
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Copy second login"
-                    onClick={() =>
-                      void copyValue(
-                        draft.SecondLogin ?? '',
-                        'Second login',
-                        'second-login',
-                      )
-                    }
-                    className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                  >
-                    {copiedField === 'second-login' ? (
-                      <CheckIcon className="size-4 text-emerald-600" />
-                    ) : (
-                      <CopyIcon className="size-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={isPasswordVisible ? 'text' : 'password'}
-                    autoComplete="off"
-                    value={draft.Password}
-                    onChange={(e) => updateDraft({ Password: e.target.value })}
-                    placeholder="password"
-                    className="pr-16"
-                  />
-                  <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
-                    <button
-                      type="button"
-                      aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-                      onClick={() => setIsPasswordVisible((prev) => !prev)}
-                      className="inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                    >
-                      {isPasswordVisible ? (
-                        <EyeOffIcon className="size-4" />
-                      ) : (
-                        <EyeIcon className="size-4" />
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Copy password"
-                      onClick={() =>
-                        void copyValue(draft.Password, 'Password', 'password')
-                      }
-                      className="inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                    >
-                      {copiedField === 'password' ? (
-                        <CheckIcon className="size-4 text-emerald-600" />
-                      ) : (
-                        <CopyIcon className="size-4" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="url">Url</Label>
-                <div className="relative">
-                  <Input
-                    id="url"
-                    value={draft.Url ?? ''}
-                    onChange={(e) =>
-                      updateDraft({ Url: e.target.value || null })
-                    }
-                    placeholder="https://..."
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Copy url"
-                    onClick={() => void copyValue(draft.Url ?? '', 'Url', 'url')}
-                    className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                  >
-                    {copiedField === 'url' ? (
-                      <CheckIcon className="size-4 text-emerald-600" />
-                    ) : (
-                      <CopyIcon className="size-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="tags">Tags</Label>
-                <div className="relative">
-                  <Input
-                    id="tags"
-                    value={tagsString}
-                    onChange={(e) =>
-                      updateDraft({
-                        Tags: e.target.value
-                          .split(',')
-                          .map((tag) => tag.trim())
-                          .filter(Boolean),
-                      })
-                    }
-                    placeholder="work, personal, otp"
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Copy tags"
-                    onClick={() => void copyValue(tagsString, 'Tags', 'tags')}
-                    className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                  >
-                    {copiedField === 'tags' ? (
-                      <CheckIcon className="size-4 text-emerald-600" />
-                    ) : (
-                      <CopyIcon className="size-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="notes">Notes</Label>
-                <div className="relative">
-                  <Textarea
-                    id="notes"
-                    value={draft.Notes ?? ''}
-                    onChange={(e) =>
-                      updateDraft({ Notes: e.target.value || null })
-                    }
-                    placeholder="Additional notes"
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    aria-label="Copy notes"
-                    onClick={() => void copyValue(draft.Notes ?? '', 'Notes', 'notes')}
-                    className="absolute right-2 top-2 inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
-                  >
-                    {copiedField === 'notes' ? (
-                      <CheckIcon className="size-4 text-emerald-600" />
-                    ) : (
-                      <CopyIcon className="size-4" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:items-center">
-                <Button
-                  type="button"
-                  onClick={() => void onSave()}
-                  disabled={!canSave}
-                  className="w-full sm:w-auto"
-                >
-                  Save
-                </Button>
-
-                {selectedId ? (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => void onDelete(selectedId)}
-                    className="w-full sm:w-auto"
-                  >
-                    Delete
-                  </Button>
-                ) : null}
-              </div>
-            </>
+            <PasswordEditForm
+              draft={draft}
+              selectedId={selectedId}
+              canSave={canSave}
+              onChange={updateDraft}
+              onSave={() => void onSave()}
+              onDelete={(id) => void onDelete(id)}
+            />
           )}
         </CardContent>
       </Card>

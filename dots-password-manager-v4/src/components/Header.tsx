@@ -69,7 +69,7 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="mt-2 flex w-full flex-wrap items-center gap-x-3 gap-y-1 pb-1 text-xs font-semibold sm:flex-nowrap sm:gap-x-4 sm:pb-0 sm:text-sm">
+        <div className="mt-2 px-2 flex w-full flex-wrap items-center gap-x-3 gap-y-1 pb-1 text-xs font-semibold sm:flex-nowrap sm:gap-x-4 sm:pb-0 sm:text-sm">
           {loggedIn ? (
             <Link
               to="/saved-passwords"
