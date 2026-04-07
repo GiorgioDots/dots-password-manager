@@ -18,7 +18,7 @@ ENV PORT=3000
 COPY package*.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/.output ./.output
 
 EXPOSE 3000
-CMD ["node", "dist/server/server.js"]
+CMD ["npm", "start"]
