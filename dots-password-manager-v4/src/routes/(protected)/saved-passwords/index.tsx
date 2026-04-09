@@ -145,7 +145,7 @@ function SavedPasswordsPage() {
 
     useEffect(() => {
         function onKeyDown(event: KeyboardEvent) {
-            const key = event.key.toLowerCase()
+            const key = event.key?.toLowerCase()
             if ((event.ctrlKey || event.metaKey) && key === 'k') {
                 event.preventDefault()
                 setCommandOpen((open) => !open)
