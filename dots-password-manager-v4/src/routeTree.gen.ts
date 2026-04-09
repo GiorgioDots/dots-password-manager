@@ -14,22 +14,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password-request'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthonlyNoAuthRouteRouteImport } from './routes/auth/(only-no-auth)/route'
-import { Route as ApiPasswordsIndexRouteImport } from './routes/api/passwords/index'
 import { Route as protectedSettingsIndexRouteImport } from './routes/(protected)/settings/index'
 import { Route as protectedSavedPasswordsIndexRouteImport } from './routes/(protected)/saved-passwords/index'
 import { Route as AuthonlyNoAuthRegisterRouteImport } from './routes/auth/(only-no-auth)/register'
 import { Route as AuthonlyNoAuthLoginRouteImport } from './routes/auth/(only-no-auth)/login'
-import { Route as ApiPasswordsImportRouteImport } from './routes/api/passwords/import'
-import { Route as ApiPasswordsExportRouteImport } from './routes/api/passwords/export'
-import { Route as ApiPasswordsEditRouteImport } from './routes/api/passwords/edit'
-import { Route as ApiPasswordsCreateRouteImport } from './routes/api/passwords/create'
-import { Route as ApiPasswordsIdRouteImport } from './routes/api/passwords/$id'
-import { Route as ApiAuthResetPasswordRequestRouteImport } from './routes/api/auth/reset-password-request'
-import { Route as ApiAuthResetPasswordRouteImport } from './routes/api/auth/reset-password'
-import { Route as ApiAuthRegisterRouteImport } from './routes/api/auth/register'
-import { Route as ApiAuthRefreshTokenRouteImport } from './routes/api/auth/refresh-token'
-import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
-import { Route as ApiPasswordsIdToggleFavouriteRouteImport } from './routes/api/passwords/$id.toggle-favourite'
 
 const protectedRouteRoute = protectedRouteRouteImport.update({
   id: '/(protected)',
@@ -56,11 +44,6 @@ const AuthonlyNoAuthRouteRoute = AuthonlyNoAuthRouteRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPasswordsIndexRoute = ApiPasswordsIndexRouteImport.update({
-  id: '/api/passwords/',
-  path: '/api/passwords/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const protectedSettingsIndexRoute = protectedSettingsIndexRouteImport.update({
   id: '/settings/',
   path: '/settings/',
@@ -82,107 +65,26 @@ const AuthonlyNoAuthLoginRoute = AuthonlyNoAuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthonlyNoAuthRouteRoute,
 } as any)
-const ApiPasswordsImportRoute = ApiPasswordsImportRouteImport.update({
-  id: '/api/passwords/import',
-  path: '/api/passwords/import',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPasswordsExportRoute = ApiPasswordsExportRouteImport.update({
-  id: '/api/passwords/export',
-  path: '/api/passwords/export',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPasswordsEditRoute = ApiPasswordsEditRouteImport.update({
-  id: '/api/passwords/edit',
-  path: '/api/passwords/edit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPasswordsCreateRoute = ApiPasswordsCreateRouteImport.update({
-  id: '/api/passwords/create',
-  path: '/api/passwords/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPasswordsIdRoute = ApiPasswordsIdRouteImport.update({
-  id: '/api/passwords/$id',
-  path: '/api/passwords/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthResetPasswordRequestRoute =
-  ApiAuthResetPasswordRequestRouteImport.update({
-    id: '/api/auth/reset-password-request',
-    path: '/api/auth/reset-password-request',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiAuthResetPasswordRoute = ApiAuthResetPasswordRouteImport.update({
-  id: '/api/auth/reset-password',
-  path: '/api/auth/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthRegisterRoute = ApiAuthRegisterRouteImport.update({
-  id: '/api/auth/register',
-  path: '/api/auth/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthRefreshTokenRoute = ApiAuthRefreshTokenRouteImport.update({
-  id: '/api/auth/refresh-token',
-  path: '/api/auth/refresh-token',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
-  id: '/api/auth/login',
-  path: '/api/auth/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPasswordsIdToggleFavouriteRoute =
-  ApiPasswordsIdToggleFavouriteRouteImport.update({
-    id: '/toggle-favourite',
-    path: '/toggle-favourite',
-    getParentRoute: () => ApiPasswordsIdRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
-  '/api/auth/login': typeof ApiAuthLoginRoute
-  '/api/auth/refresh-token': typeof ApiAuthRefreshTokenRoute
-  '/api/auth/register': typeof ApiAuthRegisterRoute
-  '/api/auth/reset-password': typeof ApiAuthResetPasswordRoute
-  '/api/auth/reset-password-request': typeof ApiAuthResetPasswordRequestRoute
-  '/api/passwords/$id': typeof ApiPasswordsIdRouteWithChildren
-  '/api/passwords/create': typeof ApiPasswordsCreateRoute
-  '/api/passwords/edit': typeof ApiPasswordsEditRoute
-  '/api/passwords/export': typeof ApiPasswordsExportRoute
-  '/api/passwords/import': typeof ApiPasswordsImportRoute
   '/auth/login': typeof AuthonlyNoAuthLoginRoute
   '/auth/register': typeof AuthonlyNoAuthRegisterRoute
   '/saved-passwords/': typeof protectedSavedPasswordsIndexRoute
   '/settings/': typeof protectedSettingsIndexRoute
-  '/api/passwords/': typeof ApiPasswordsIndexRoute
-  '/api/passwords/$id/toggle-favourite': typeof ApiPasswordsIdToggleFavouriteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
-  '/api/auth/login': typeof ApiAuthLoginRoute
-  '/api/auth/refresh-token': typeof ApiAuthRefreshTokenRoute
-  '/api/auth/register': typeof ApiAuthRegisterRoute
-  '/api/auth/reset-password': typeof ApiAuthResetPasswordRoute
-  '/api/auth/reset-password-request': typeof ApiAuthResetPasswordRequestRoute
-  '/api/passwords/$id': typeof ApiPasswordsIdRouteWithChildren
-  '/api/passwords/create': typeof ApiPasswordsCreateRoute
-  '/api/passwords/edit': typeof ApiPasswordsEditRoute
-  '/api/passwords/export': typeof ApiPasswordsExportRoute
-  '/api/passwords/import': typeof ApiPasswordsImportRoute
   '/auth/login': typeof AuthonlyNoAuthLoginRoute
   '/auth/register': typeof AuthonlyNoAuthRegisterRoute
   '/saved-passwords': typeof protectedSavedPasswordsIndexRoute
   '/settings': typeof protectedSettingsIndexRoute
-  '/api/passwords': typeof ApiPasswordsIndexRoute
-  '/api/passwords/$id/toggle-favourite': typeof ApiPasswordsIdToggleFavouriteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -191,22 +93,10 @@ export interface FileRoutesById {
   '/auth/(only-no-auth)': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
-  '/api/auth/login': typeof ApiAuthLoginRoute
-  '/api/auth/refresh-token': typeof ApiAuthRefreshTokenRoute
-  '/api/auth/register': typeof ApiAuthRegisterRoute
-  '/api/auth/reset-password': typeof ApiAuthResetPasswordRoute
-  '/api/auth/reset-password-request': typeof ApiAuthResetPasswordRequestRoute
-  '/api/passwords/$id': typeof ApiPasswordsIdRouteWithChildren
-  '/api/passwords/create': typeof ApiPasswordsCreateRoute
-  '/api/passwords/edit': typeof ApiPasswordsEditRoute
-  '/api/passwords/export': typeof ApiPasswordsExportRoute
-  '/api/passwords/import': typeof ApiPasswordsImportRoute
   '/auth/(only-no-auth)/login': typeof AuthonlyNoAuthLoginRoute
   '/auth/(only-no-auth)/register': typeof AuthonlyNoAuthRegisterRoute
   '/(protected)/saved-passwords/': typeof protectedSavedPasswordsIndexRoute
   '/(protected)/settings/': typeof protectedSettingsIndexRoute
-  '/api/passwords/': typeof ApiPasswordsIndexRoute
-  '/api/passwords/$id/toggle-favourite': typeof ApiPasswordsIdToggleFavouriteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -215,44 +105,20 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
-    | '/api/auth/login'
-    | '/api/auth/refresh-token'
-    | '/api/auth/register'
-    | '/api/auth/reset-password'
-    | '/api/auth/reset-password-request'
-    | '/api/passwords/$id'
-    | '/api/passwords/create'
-    | '/api/passwords/edit'
-    | '/api/passwords/export'
-    | '/api/passwords/import'
     | '/auth/login'
     | '/auth/register'
     | '/saved-passwords/'
     | '/settings/'
-    | '/api/passwords/'
-    | '/api/passwords/$id/toggle-favourite'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
-    | '/api/auth/login'
-    | '/api/auth/refresh-token'
-    | '/api/auth/register'
-    | '/api/auth/reset-password'
-    | '/api/auth/reset-password-request'
-    | '/api/passwords/$id'
-    | '/api/passwords/create'
-    | '/api/passwords/edit'
-    | '/api/passwords/export'
-    | '/api/passwords/import'
     | '/auth/login'
     | '/auth/register'
     | '/saved-passwords'
     | '/settings'
-    | '/api/passwords'
-    | '/api/passwords/$id/toggle-favourite'
   id:
     | '__root__'
     | '/'
@@ -260,22 +126,10 @@ export interface FileRouteTypes {
     | '/auth/(only-no-auth)'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
-    | '/api/auth/login'
-    | '/api/auth/refresh-token'
-    | '/api/auth/register'
-    | '/api/auth/reset-password'
-    | '/api/auth/reset-password-request'
-    | '/api/passwords/$id'
-    | '/api/passwords/create'
-    | '/api/passwords/edit'
-    | '/api/passwords/export'
-    | '/api/passwords/import'
     | '/auth/(only-no-auth)/login'
     | '/auth/(only-no-auth)/register'
     | '/(protected)/saved-passwords/'
     | '/(protected)/settings/'
-    | '/api/passwords/'
-    | '/api/passwords/$id/toggle-favourite'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,17 +138,6 @@ export interface RootRouteChildren {
   AuthonlyNoAuthRouteRoute: typeof AuthonlyNoAuthRouteRouteWithChildren
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
-  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
-  ApiAuthRefreshTokenRoute: typeof ApiAuthRefreshTokenRoute
-  ApiAuthRegisterRoute: typeof ApiAuthRegisterRoute
-  ApiAuthResetPasswordRoute: typeof ApiAuthResetPasswordRoute
-  ApiAuthResetPasswordRequestRoute: typeof ApiAuthResetPasswordRequestRoute
-  ApiPasswordsIdRoute: typeof ApiPasswordsIdRouteWithChildren
-  ApiPasswordsCreateRoute: typeof ApiPasswordsCreateRoute
-  ApiPasswordsEditRoute: typeof ApiPasswordsEditRoute
-  ApiPasswordsExportRoute: typeof ApiPasswordsExportRoute
-  ApiPasswordsImportRoute: typeof ApiPasswordsImportRoute
-  ApiPasswordsIndexRoute: typeof ApiPasswordsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -334,13 +177,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthonlyNoAuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/passwords/': {
-      id: '/api/passwords/'
-      path: '/api/passwords'
-      fullPath: '/api/passwords/'
-      preLoaderRoute: typeof ApiPasswordsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(protected)/settings/': {
       id: '/(protected)/settings/'
       path: '/settings'
@@ -368,83 +204,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthonlyNoAuthLoginRouteImport
       parentRoute: typeof AuthonlyNoAuthRouteRoute
-    }
-    '/api/passwords/import': {
-      id: '/api/passwords/import'
-      path: '/api/passwords/import'
-      fullPath: '/api/passwords/import'
-      preLoaderRoute: typeof ApiPasswordsImportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/passwords/export': {
-      id: '/api/passwords/export'
-      path: '/api/passwords/export'
-      fullPath: '/api/passwords/export'
-      preLoaderRoute: typeof ApiPasswordsExportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/passwords/edit': {
-      id: '/api/passwords/edit'
-      path: '/api/passwords/edit'
-      fullPath: '/api/passwords/edit'
-      preLoaderRoute: typeof ApiPasswordsEditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/passwords/create': {
-      id: '/api/passwords/create'
-      path: '/api/passwords/create'
-      fullPath: '/api/passwords/create'
-      preLoaderRoute: typeof ApiPasswordsCreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/passwords/$id': {
-      id: '/api/passwords/$id'
-      path: '/api/passwords/$id'
-      fullPath: '/api/passwords/$id'
-      preLoaderRoute: typeof ApiPasswordsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/reset-password-request': {
-      id: '/api/auth/reset-password-request'
-      path: '/api/auth/reset-password-request'
-      fullPath: '/api/auth/reset-password-request'
-      preLoaderRoute: typeof ApiAuthResetPasswordRequestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/reset-password': {
-      id: '/api/auth/reset-password'
-      path: '/api/auth/reset-password'
-      fullPath: '/api/auth/reset-password'
-      preLoaderRoute: typeof ApiAuthResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/register': {
-      id: '/api/auth/register'
-      path: '/api/auth/register'
-      fullPath: '/api/auth/register'
-      preLoaderRoute: typeof ApiAuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/refresh-token': {
-      id: '/api/auth/refresh-token'
-      path: '/api/auth/refresh-token'
-      fullPath: '/api/auth/refresh-token'
-      preLoaderRoute: typeof ApiAuthRefreshTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/auth/login': {
-      id: '/api/auth/login'
-      path: '/api/auth/login'
-      fullPath: '/api/auth/login'
-      preLoaderRoute: typeof ApiAuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/passwords/$id/toggle-favourite': {
-      id: '/api/passwords/$id/toggle-favourite'
-      path: '/toggle-favourite'
-      fullPath: '/api/passwords/$id/toggle-favourite'
-      preLoaderRoute: typeof ApiPasswordsIdToggleFavouriteRouteImport
-      parentRoute: typeof ApiPasswordsIdRoute
     }
   }
 }
@@ -476,35 +235,12 @@ const AuthonlyNoAuthRouteRouteChildren: AuthonlyNoAuthRouteRouteChildren = {
 const AuthonlyNoAuthRouteRouteWithChildren =
   AuthonlyNoAuthRouteRoute._addFileChildren(AuthonlyNoAuthRouteRouteChildren)
 
-interface ApiPasswordsIdRouteChildren {
-  ApiPasswordsIdToggleFavouriteRoute: typeof ApiPasswordsIdToggleFavouriteRoute
-}
-
-const ApiPasswordsIdRouteChildren: ApiPasswordsIdRouteChildren = {
-  ApiPasswordsIdToggleFavouriteRoute: ApiPasswordsIdToggleFavouriteRoute,
-}
-
-const ApiPasswordsIdRouteWithChildren = ApiPasswordsIdRoute._addFileChildren(
-  ApiPasswordsIdRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   protectedRouteRoute: protectedRouteRouteWithChildren,
   AuthonlyNoAuthRouteRoute: AuthonlyNoAuthRouteRouteWithChildren,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
-  ApiAuthLoginRoute: ApiAuthLoginRoute,
-  ApiAuthRefreshTokenRoute: ApiAuthRefreshTokenRoute,
-  ApiAuthRegisterRoute: ApiAuthRegisterRoute,
-  ApiAuthResetPasswordRoute: ApiAuthResetPasswordRoute,
-  ApiAuthResetPasswordRequestRoute: ApiAuthResetPasswordRequestRoute,
-  ApiPasswordsIdRoute: ApiPasswordsIdRouteWithChildren,
-  ApiPasswordsCreateRoute: ApiPasswordsCreateRoute,
-  ApiPasswordsEditRoute: ApiPasswordsEditRoute,
-  ApiPasswordsExportRoute: ApiPasswordsExportRoute,
-  ApiPasswordsImportRoute: ApiPasswordsImportRoute,
-  ApiPasswordsIndexRoute: ApiPasswordsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

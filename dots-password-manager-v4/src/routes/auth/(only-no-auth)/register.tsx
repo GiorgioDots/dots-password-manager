@@ -14,12 +14,10 @@ import {
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { isLoggedIn, setTokens } from '#/lib/client/auth'
-
-type RegisterResponse = {
-    Token?: string
-    RefreshToken?: string
-    Message?: string
-}
+import {
+    getErrorMessage,
+    registerServerFn,
+} from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/(only-no-auth)/register')({
     component: RegisterPage,
@@ -46,26 +44,23 @@ function RegisterPage() {
         setLoading(true)
 
         try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+            const data = await registerServerFn({
+                data: {
                     Email: email,
                     Username: username,
                     Password: password,
-                }),
+                },
             })
 
-            const data = (await res.json()) as RegisterResponse
-            if (!res.ok || !data.Token || !data.RefreshToken) {
-                toast.error(data.Message ?? 'Registration failed.')
+            if (!data.Token || !data.RefreshToken) {
+                toast.error('Registration failed.')
                 return
             }
 
             setTokens(data.Token, data.RefreshToken)
             await navigate({ to: '/saved-passwords' })
-        } catch {
-            toast.error('Unable to reach the server.')
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'Unable to reach the server.'))
         } finally {
             setLoading(false)
         }

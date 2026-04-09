@@ -13,14 +13,14 @@ import {
 } from '#/components/ui/card'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
+import {
+    getErrorMessage,
+    requestPasswordResetServerFn,
+} from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/reset-password-request')({
     component: ResetPasswordRequestPage,
 })
-
-type ResetResponse = {
-    Message?: string
-}
 
 function ResetPasswordRequestPage() {
     const [email, setEmail] = useState('')
@@ -33,24 +33,13 @@ function ResetPasswordRequestPage() {
         setLoading(true)
 
         try {
-            const res = await fetch('/api/auth/reset-password-request', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ Email: email }),
+            const data = await requestPasswordResetServerFn({
+                data: { Email: email },
             })
 
-            const data = (await res.json()) as ResetResponse
-            if (!res.ok) {
-                toast.error(data.Message ?? 'Unable to process request.')
-                return
-            }
-
-            toast.success(
-                data.Message ??
-                    'Check your emails and click the link to continue, the request will be valid for the next 10 minutes',
-            )
-        } catch {
-            toast.error('Unable to reach the server.')
+            toast.success(data.Message)
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'Unable to reach the server.'))
         } finally {
             setLoading(false)
         }

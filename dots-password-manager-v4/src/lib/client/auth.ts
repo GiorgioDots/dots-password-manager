@@ -1,3 +1,5 @@
+import { refreshTokenServerFn } from '#/lib/shared/server-functions/auth'
+
 export const AUTH_STATE_CHANGED_EVENT = 'dpm:auth-state-changed'
 
 function emitAuthStateChanged(): void {
@@ -41,29 +43,20 @@ async function refreshAccessToken(): Promise<string | null> {
         return null
     }
 
-    const res = await fetch('/api/auth/refresh-token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ Token: refreshToken }),
-    })
+    try {
+        const data = await refreshTokenServerFn({
+            data: { Token: refreshToken },
+        })
 
-    if (!res.ok) {
+        if (!data.Token || !data.RefreshToken) {
+            return null
+        }
+
+        setTokens(data.Token, data.RefreshToken)
+        return data.Token
+    } catch {
         return null
     }
-
-    const data = (await res.json()) as {
-        Token?: string
-        RefreshToken?: string
-    }
-
-    if (!data.Token || !data.RefreshToken) {
-        return null
-    }
-
-    setTokens(data.Token, data.RefreshToken)
-    return data.Token
 }
 
 async function refreshAccessTokenOnce(): Promise<string | null> {
@@ -76,11 +69,15 @@ async function refreshAccessTokenOnce(): Promise<string | null> {
     return refreshInFlight
 }
 
-function forceLogout(): void {
+export function forceLogout(): void {
     clearTokens()
     if (typeof window !== 'undefined') {
         window.location.href = '/auth/login'
     }
+}
+
+export async function tryRefreshAccessToken(): Promise<string | null> {
+    return refreshAccessTokenOnce()
 }
 
 function withAuthHeaders(init?: RequestInit, token?: string | null): Headers {

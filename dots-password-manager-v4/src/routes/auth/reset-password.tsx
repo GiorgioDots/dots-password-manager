@@ -14,10 +14,11 @@ import {
 } from '#/components/ui/card'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
-
-type ResetResponse = {
-    Message?: string
-}
+import {
+    getErrorMessage,
+    resetPasswordServerFn,
+    validatePasswordResetRequestServerFn,
+} from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/reset-password')({
     validateSearch: z.object({
@@ -48,24 +49,19 @@ function ResetPasswordPage() {
 
         setCheckingRequest(true)
 
-        fetch(`/api/auth/reset-password?r=${encodeURIComponent(requestId)}`)
-            .then(async (res) => {
-                const data = (await res.json()) as ResetResponse
-                if (!res.ok) {
-                    setError(
-                        data.Message ??
-                            'This reset link is invalid or expired.',
-                    )
-                    setIsRequestValid(false)
-                    return
-                }
-
+        validatePasswordResetRequestServerFn({
+            data: { RequestId: requestId },
+        })
+            .then(() => {
                 setError(null)
                 setIsRequestValid(true)
             })
-            .catch(() => {
+            .catch((validationError) => {
                 setError(
-                    'Unable to validate reset link. Please try again later.',
+                    getErrorMessage(
+                        validationError,
+                        'Unable to validate reset link. Please try again later.',
+                    ),
                 )
                 setIsRequestValid(false)
             })
@@ -96,36 +92,27 @@ function ResetPasswordPage() {
 
         setLoading(true)
         try {
-            const res = await fetch('/api/auth/reset-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+            const data = await resetPasswordServerFn({
+                data: {
                     RequestId: requestId,
                     NewPassword: password,
-                }),
+                },
             })
 
-            const data = (await res.json()) as ResetResponse
-            if (!res.ok) {
-                const backendMessage =
-                    data.Message ?? 'Unable to reset password.'
-                toast.error(backendMessage)
-                setError(backendMessage)
-                if (backendMessage.includes('expired or not valid')) {
-                    setIsRequestValid(false)
-                }
-                return
-            }
-
-            toast.success(
-                data.Message ??
-                    'Your password has been resetted, please login again',
-            )
+            toast.success(data.Message)
             setPassword('')
             setConfirmPassword('')
             await navigate({ to: '/auth/login', replace: true })
-        } catch {
-            toast.error('Unable to reach the server.')
+        } catch (submitError) {
+            const backendMessage = getErrorMessage(
+                submitError,
+                'Unable to reach the server.',
+            )
+            toast.error(backendMessage)
+            setError(backendMessage)
+            if (backendMessage.includes('expired or not valid')) {
+                setIsRequestValid(false)
+            }
         } finally {
             setLoading(false)
         }

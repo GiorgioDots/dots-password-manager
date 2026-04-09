@@ -14,12 +14,10 @@ import {
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { isLoggedIn, setTokens } from '#/lib/client/auth'
-
-type LoginResponse = {
-    Token?: string
-    RefreshToken?: string
-    Message?: string
-}
+import {
+    getErrorMessage,
+    loginServerFn,
+} from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/(only-no-auth)/login')({
     component: LoginPage,
@@ -45,22 +43,19 @@ function LoginPage() {
         setLoading(true)
 
         try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ Login: login, Password: password }),
+            const data = await loginServerFn({
+                data: { Login: login, Password: password },
             })
 
-            const data = (await res.json()) as LoginResponse
-            if (!res.ok || !data.Token || !data.RefreshToken) {
-                toast.error(data.Message ?? 'Invalid credentials.')
+            if (!data.Token || !data.RefreshToken) {
+                toast.error('Invalid credentials.')
                 return
             }
 
             setTokens(data.Token, data.RefreshToken)
             await navigate({ to: '/saved-passwords' })
-        } catch {
-            toast.error('Unable to reach the server.')
+        } catch (error) {
+            toast.error(getErrorMessage(error, 'Unable to reach the server.'))
         } finally {
             setLoading(false)
         }

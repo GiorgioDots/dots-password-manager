@@ -1,56 +1,126 @@
-import { authFetch } from '#/lib/client/auth'
+import {
+    forceLogout,
+    getAccessToken,
+    tryRefreshAccessToken,
+} from '#/lib/client/auth'
 import type {
     ImportExportDto,
     SavedPasswordDto,
 } from '#/lib/shared/passwords/contracts'
+import {
+    createPasswordServerFn,
+    deletePasswordServerFn,
+    editPasswordServerFn,
+    exportPasswordsServerFn,
+    getPasswordByIdServerFn,
+    getPasswordsServerFn,
+    importPasswordsServerFn,
+    togglePasswordFavouriteServerFn,
+} from '#/lib/shared/server-functions/passwords'
+
+function errorMessage(error: unknown, fallback: string): string {
+    if (error instanceof Error && error.message) {
+        return error.message
+    }
+
+    return fallback
+}
+
+function isUnauthorized(error: unknown): boolean {
+    return errorMessage(error, '').toLowerCase().includes('unauthorized')
+}
+
+async function withAuth<T>(
+    fn: (accessToken: string) => Promise<T>,
+): Promise<T> {
+    const firstToken = getAccessToken()
+    if (!firstToken) {
+        forceLogout()
+        throw new Error('Unauthorized')
+    }
+
+    try {
+        return await fn(firstToken)
+    } catch (error) {
+        if (!isUnauthorized(error)) {
+            throw error
+        }
+
+        const refreshedToken = await tryRefreshAccessToken()
+        if (!refreshedToken) {
+            forceLogout()
+            throw new Error('Unauthorized')
+        }
+
+        try {
+            return await fn(refreshedToken)
+        } catch (retryError) {
+            if (isUnauthorized(retryError)) {
+                forceLogout()
+            }
+            throw retryError
+        }
+    }
+}
 
 export async function getPasswords(): Promise<SavedPasswordDto[]> {
-    const res = await authFetch('/api/passwords')
-    if (!res.ok) {
+    try {
+        return await withAuth((accessToken) =>
+            getPasswordsServerFn({ data: { AccessToken: accessToken } }),
+        )
+    } catch {
         throw new Error('Failed to load passwords')
     }
-    return (await res.json()) as SavedPasswordDto[]
 }
 
 export async function getPasswordById(id: string): Promise<SavedPasswordDto> {
-    const res = await authFetch(`/api/passwords/${id}`)
-    if (!res.ok) {
+    try {
+        return await withAuth((accessToken) =>
+            getPasswordByIdServerFn({
+                data: { AccessToken: accessToken, PasswordId: id },
+            }),
+        )
+    } catch {
         throw new Error('Failed to load password')
     }
-    return (await res.json()) as SavedPasswordDto
 }
 
 export async function createPassword(
     input: SavedPasswordDto,
 ): Promise<SavedPasswordDto> {
-    const res = await authFetch('/api/passwords/create', {
-        method: 'POST',
-        body: JSON.stringify(input),
-    })
-    if (!res.ok) {
+    try {
+        return await withAuth((accessToken) =>
+            createPasswordServerFn({
+                data: { AccessToken: accessToken, Password: input },
+            }),
+        )
+    } catch {
         throw new Error('Failed to create password')
     }
-    return (await res.json()) as SavedPasswordDto
 }
 
 export async function editPassword(
     input: SavedPasswordDto,
 ): Promise<SavedPasswordDto> {
-    const res = await authFetch('/api/passwords/edit', {
-        method: 'POST',
-        body: JSON.stringify(input),
-    })
-    if (!res.ok) {
+    try {
+        return await withAuth((accessToken) =>
+            editPasswordServerFn({
+                data: { AccessToken: accessToken, Password: input },
+            }),
+        )
+    } catch {
         throw new Error('Failed to update password')
     }
-    return (await res.json()) as SavedPasswordDto
 }
 
 export async function deletePassword(id: string): Promise<void> {
-    const res = await authFetch(`/api/passwords/${id}`, {
-        method: 'DELETE',
-    })
-    if (!res.ok) {
+    try {
+        await withAuth((accessToken) =>
+            deletePasswordServerFn({
+                data: { AccessToken: accessToken, PasswordId: id },
+            }),
+        )
+    } catch {
         throw new Error('Failed to delete password')
     }
 }
@@ -58,30 +128,35 @@ export async function deletePassword(id: string): Promise<void> {
 export async function togglePasswordFavourite(
     id: string,
 ): Promise<{ PasswordId: string; IsFavourite: boolean }> {
-    const res = await authFetch(`/api/passwords/${id}/toggle-favourite`)
-    if (!res.ok) {
+    try {
+        return await withAuth((accessToken) =>
+            togglePasswordFavouriteServerFn({
+                data: { AccessToken: accessToken, PasswordId: id },
+            }),
+        )
+    } catch {
         throw new Error('Failed to toggle favourite')
     }
-
-    return (await res.json()) as { PasswordId: string; IsFavourite: boolean }
 }
 
 export async function exportPasswords(): Promise<ImportExportDto> {
-    const res = await authFetch('/api/passwords/export')
-    if (!res.ok) {
+    try {
+        return await withAuth((accessToken) =>
+            exportPasswordsServerFn({ data: { AccessToken: accessToken } }),
+        )
+    } catch {
         throw new Error('Failed to export passwords')
     }
-
-    return (await res.json()) as ImportExportDto
 }
 
 export async function importPasswords(payload: ImportExportDto): Promise<void> {
-    const res = await authFetch('/api/passwords/import', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-    })
-
-    if (!res.ok) {
+    try {
+        await withAuth((accessToken) =>
+            importPasswordsServerFn({
+                data: { AccessToken: accessToken, Payload: payload },
+            }),
+        )
+    } catch {
         throw new Error('Failed to import passwords')
     }
 }
