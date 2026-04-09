@@ -1,24 +1,14 @@
-import { useRef } from 'react'
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { DownloadIcon, UploadIcon } from 'lucide-react'
+import { useRef } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
-import { isLoggedIn } from '#/lib/client-auth'
 import { exportPasswords, importPasswords } from '#/lib/passwords/client'
 import type { ImportExportDto } from '#/lib/passwords/contracts'
 
 export const Route = createFileRoute('/(protected)/settings/')({
-    beforeLoad: () => {
-        if (typeof window === 'undefined') {
-            return
-        }
-
-        if (!isLoggedIn()) {
-            throw redirect({ to: '/auth/login' })
-        }
-    },
     component: SettingsPage,
 })
 

@@ -9,15 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as McpRouteImport } from './routes/mcp'
+import { Route as protectedRouteRouteImport } from './routes/(protected)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthResetPasswordRequestRouteImport } from './routes/auth/reset-password-request'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
-import { Route as AuthRegisterRouteImport } from './routes/auth/register'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthonlyNoAuthRouteRouteImport } from './routes/auth/(only-no-auth)/route'
 import { Route as ApiPasswordsIndexRouteImport } from './routes/api/passwords/index'
 import { Route as protectedSettingsIndexRouteImport } from './routes/(protected)/settings/index'
 import { Route as protectedSavedPasswordsIndexRouteImport } from './routes/(protected)/saved-passwords/index'
+import { Route as AuthonlyNoAuthRegisterRouteImport } from './routes/auth/(only-no-auth)/register'
+import { Route as AuthonlyNoAuthLoginRouteImport } from './routes/auth/(only-no-auth)/login'
 import { Route as ApiPasswordsImportRouteImport } from './routes/api/passwords/import'
 import { Route as ApiPasswordsExportRouteImport } from './routes/api/passwords/export'
 import { Route as ApiPasswordsEditRouteImport } from './routes/api/passwords/edit'
@@ -30,9 +31,8 @@ import { Route as ApiAuthRefreshTokenRouteImport } from './routes/api/auth/refre
 import { Route as ApiAuthLoginRouteImport } from './routes/api/auth/login'
 import { Route as ApiPasswordsIdToggleFavouriteRouteImport } from './routes/api/passwords/$id.toggle-favourite'
 
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
+const protectedRouteRoute = protectedRouteRouteImport.update({
+  id: '/(protected)',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -51,14 +51,9 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/auth/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/auth/register',
-  path: '/auth/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/auth/login',
-  path: '/auth/login',
+const AuthonlyNoAuthRouteRoute = AuthonlyNoAuthRouteRouteImport.update({
+  id: '/auth/(only-no-auth)',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPasswordsIndexRoute = ApiPasswordsIndexRouteImport.update({
@@ -67,16 +62,26 @@ const ApiPasswordsIndexRoute = ApiPasswordsIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const protectedSettingsIndexRoute = protectedSettingsIndexRouteImport.update({
-  id: '/(protected)/settings/',
+  id: '/settings/',
   path: '/settings/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 const protectedSavedPasswordsIndexRoute =
   protectedSavedPasswordsIndexRouteImport.update({
-    id: '/(protected)/saved-passwords/',
+    id: '/saved-passwords/',
     path: '/saved-passwords/',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => protectedRouteRoute,
   } as any)
+const AuthonlyNoAuthRegisterRoute = AuthonlyNoAuthRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => AuthonlyNoAuthRouteRoute,
+} as any)
+const AuthonlyNoAuthLoginRoute = AuthonlyNoAuthLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => AuthonlyNoAuthRouteRoute,
+} as any)
 const ApiPasswordsImportRoute = ApiPasswordsImportRouteImport.update({
   id: '/api/passwords/import',
   path: '/api/passwords/import',
@@ -137,9 +142,7 @@ const ApiPasswordsIdToggleFavouriteRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/mcp': typeof McpRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
+  '/auth': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
@@ -152,6 +155,8 @@ export interface FileRoutesByFullPath {
   '/api/passwords/edit': typeof ApiPasswordsEditRoute
   '/api/passwords/export': typeof ApiPasswordsExportRoute
   '/api/passwords/import': typeof ApiPasswordsImportRoute
+  '/auth/login': typeof AuthonlyNoAuthLoginRoute
+  '/auth/register': typeof AuthonlyNoAuthRegisterRoute
   '/saved-passwords/': typeof protectedSavedPasswordsIndexRoute
   '/settings/': typeof protectedSettingsIndexRoute
   '/api/passwords/': typeof ApiPasswordsIndexRoute
@@ -159,9 +164,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/mcp': typeof McpRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
+  '/auth': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
@@ -174,6 +177,8 @@ export interface FileRoutesByTo {
   '/api/passwords/edit': typeof ApiPasswordsEditRoute
   '/api/passwords/export': typeof ApiPasswordsExportRoute
   '/api/passwords/import': typeof ApiPasswordsImportRoute
+  '/auth/login': typeof AuthonlyNoAuthLoginRoute
+  '/auth/register': typeof AuthonlyNoAuthRegisterRoute
   '/saved-passwords': typeof protectedSavedPasswordsIndexRoute
   '/settings': typeof protectedSettingsIndexRoute
   '/api/passwords': typeof ApiPasswordsIndexRoute
@@ -182,9 +187,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/mcp': typeof McpRoute
-  '/auth/login': typeof AuthLoginRoute
-  '/auth/register': typeof AuthRegisterRoute
+  '/(protected)': typeof protectedRouteRouteWithChildren
+  '/auth/(only-no-auth)': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
   '/api/auth/login': typeof ApiAuthLoginRoute
@@ -197,6 +201,8 @@ export interface FileRoutesById {
   '/api/passwords/edit': typeof ApiPasswordsEditRoute
   '/api/passwords/export': typeof ApiPasswordsExportRoute
   '/api/passwords/import': typeof ApiPasswordsImportRoute
+  '/auth/(only-no-auth)/login': typeof AuthonlyNoAuthLoginRoute
+  '/auth/(only-no-auth)/register': typeof AuthonlyNoAuthRegisterRoute
   '/(protected)/saved-passwords/': typeof protectedSavedPasswordsIndexRoute
   '/(protected)/settings/': typeof protectedSettingsIndexRoute
   '/api/passwords/': typeof ApiPasswordsIndexRoute
@@ -206,9 +212,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/mcp'
-    | '/auth/login'
-    | '/auth/register'
+    | '/auth'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
     | '/api/auth/login'
@@ -221,6 +225,8 @@ export interface FileRouteTypes {
     | '/api/passwords/edit'
     | '/api/passwords/export'
     | '/api/passwords/import'
+    | '/auth/login'
+    | '/auth/register'
     | '/saved-passwords/'
     | '/settings/'
     | '/api/passwords/'
@@ -228,9 +234,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/mcp'
-    | '/auth/login'
-    | '/auth/register'
+    | '/auth'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
     | '/api/auth/login'
@@ -243,6 +247,8 @@ export interface FileRouteTypes {
     | '/api/passwords/edit'
     | '/api/passwords/export'
     | '/api/passwords/import'
+    | '/auth/login'
+    | '/auth/register'
     | '/saved-passwords'
     | '/settings'
     | '/api/passwords'
@@ -250,9 +256,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/mcp'
-    | '/auth/login'
-    | '/auth/register'
+    | '/(protected)'
+    | '/auth/(only-no-auth)'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
     | '/api/auth/login'
@@ -265,6 +270,8 @@ export interface FileRouteTypes {
     | '/api/passwords/edit'
     | '/api/passwords/export'
     | '/api/passwords/import'
+    | '/auth/(only-no-auth)/login'
+    | '/auth/(only-no-auth)/register'
     | '/(protected)/saved-passwords/'
     | '/(protected)/settings/'
     | '/api/passwords/'
@@ -273,9 +280,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  McpRoute: typeof McpRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
+  protectedRouteRoute: typeof protectedRouteRouteWithChildren
+  AuthonlyNoAuthRouteRoute: typeof AuthonlyNoAuthRouteRouteWithChildren
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
   ApiAuthLoginRoute: typeof ApiAuthLoginRoute
@@ -288,18 +294,16 @@ export interface RootRouteChildren {
   ApiPasswordsEditRoute: typeof ApiPasswordsEditRoute
   ApiPasswordsExportRoute: typeof ApiPasswordsExportRoute
   ApiPasswordsImportRoute: typeof ApiPasswordsImportRoute
-  protectedSavedPasswordsIndexRoute: typeof protectedSavedPasswordsIndexRoute
-  protectedSettingsIndexRoute: typeof protectedSettingsIndexRoute
   ApiPasswordsIndexRoute: typeof ApiPasswordsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
+    '/(protected)': {
+      id: '/(protected)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof protectedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -323,18 +327,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth/register': {
-      id: '/auth/register'
-      path: '/auth/register'
-      fullPath: '/auth/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth/login': {
-      id: '/auth/login'
-      path: '/auth/login'
-      fullPath: '/auth/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
+    '/auth/(only-no-auth)': {
+      id: '/auth/(only-no-auth)'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthonlyNoAuthRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/passwords/': {
@@ -349,14 +346,28 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings/'
       preLoaderRoute: typeof protectedSettingsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/saved-passwords/': {
       id: '/(protected)/saved-passwords/'
       path: '/saved-passwords'
       fullPath: '/saved-passwords/'
       preLoaderRoute: typeof protectedSavedPasswordsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
+    '/auth/(only-no-auth)/register': {
+      id: '/auth/(only-no-auth)/register'
+      path: '/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthonlyNoAuthRegisterRouteImport
+      parentRoute: typeof AuthonlyNoAuthRouteRoute
+    }
+    '/auth/(only-no-auth)/login': {
+      id: '/auth/(only-no-auth)/login'
+      path: '/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthonlyNoAuthLoginRouteImport
+      parentRoute: typeof AuthonlyNoAuthRouteRoute
     }
     '/api/passwords/import': {
       id: '/api/passwords/import'
@@ -438,6 +449,33 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface protectedRouteRouteChildren {
+  protectedSavedPasswordsIndexRoute: typeof protectedSavedPasswordsIndexRoute
+  protectedSettingsIndexRoute: typeof protectedSettingsIndexRoute
+}
+
+const protectedRouteRouteChildren: protectedRouteRouteChildren = {
+  protectedSavedPasswordsIndexRoute: protectedSavedPasswordsIndexRoute,
+  protectedSettingsIndexRoute: protectedSettingsIndexRoute,
+}
+
+const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
+  protectedRouteRouteChildren,
+)
+
+interface AuthonlyNoAuthRouteRouteChildren {
+  AuthonlyNoAuthLoginRoute: typeof AuthonlyNoAuthLoginRoute
+  AuthonlyNoAuthRegisterRoute: typeof AuthonlyNoAuthRegisterRoute
+}
+
+const AuthonlyNoAuthRouteRouteChildren: AuthonlyNoAuthRouteRouteChildren = {
+  AuthonlyNoAuthLoginRoute: AuthonlyNoAuthLoginRoute,
+  AuthonlyNoAuthRegisterRoute: AuthonlyNoAuthRegisterRoute,
+}
+
+const AuthonlyNoAuthRouteRouteWithChildren =
+  AuthonlyNoAuthRouteRoute._addFileChildren(AuthonlyNoAuthRouteRouteChildren)
+
 interface ApiPasswordsIdRouteChildren {
   ApiPasswordsIdToggleFavouriteRoute: typeof ApiPasswordsIdToggleFavouriteRoute
 }
@@ -452,9 +490,8 @@ const ApiPasswordsIdRouteWithChildren = ApiPasswordsIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  McpRoute: McpRoute,
-  AuthLoginRoute: AuthLoginRoute,
-  AuthRegisterRoute: AuthRegisterRoute,
+  protectedRouteRoute: protectedRouteRouteWithChildren,
+  AuthonlyNoAuthRouteRoute: AuthonlyNoAuthRouteRouteWithChildren,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
   ApiAuthLoginRoute: ApiAuthLoginRoute,
@@ -467,8 +504,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPasswordsEditRoute: ApiPasswordsEditRoute,
   ApiPasswordsExportRoute: ApiPasswordsExportRoute,
   ApiPasswordsImportRoute: ApiPasswordsImportRoute,
-  protectedSavedPasswordsIndexRoute: protectedSavedPasswordsIndexRoute,
-  protectedSettingsIndexRoute: protectedSettingsIndexRoute,
   ApiPasswordsIndexRoute: ApiPasswordsIndexRoute,
 }
 export const routeTree = rootRouteImport

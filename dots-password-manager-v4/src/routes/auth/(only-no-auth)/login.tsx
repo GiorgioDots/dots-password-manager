@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import type { ComponentProps } from 'react'
-import {
-    Link,
-    createFileRoute,
-    redirect,
-    useNavigate,
-} from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
@@ -26,12 +21,7 @@ type LoginResponse = {
     Message?: string
 }
 
-export const Route = createFileRoute('/auth/login')({
-    beforeLoad: () => {
-        if (typeof window !== 'undefined' && isLoggedIn()) {
-            throw redirect({ to: '/saved-passwords' })
-        }
-    },
+export const Route = createFileRoute('/auth/(only-no-auth)/login')({
     component: LoginPage,
 })
 

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, StarIcon } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import z from 'zod'
 
@@ -16,7 +16,6 @@ import {
     CommandList,
 } from '#/components/ui/command'
 import { Skeleton } from '#/components/ui/skeleton'
-import { isLoggedIn } from '#/lib/client-auth'
 import {
     createPassword,
     deletePassword,
@@ -31,15 +30,6 @@ export const Route = createFileRoute('/(protected)/saved-passwords/')({
     validateSearch: z.object({
         id: z.string().optional(),
     }),
-    beforeLoad: () => {
-        if (typeof window === 'undefined') {
-            return
-        }
-
-        if (!isLoggedIn()) {
-            throw redirect({ to: '/auth/login' })
-        }
-    },
     component: SavedPasswordsPage,
 })
 

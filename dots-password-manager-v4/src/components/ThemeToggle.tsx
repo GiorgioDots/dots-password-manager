@@ -77,7 +77,7 @@ export default function ThemeToggle() {
             onClick={toggleMode}
             aria-label={label}
             title={label}
-            className="inline-flex h-8 items-center gap-1 rounded-full border border-border bg-card/80 px-2 text-xs font-semibold text-foreground shadow-sm transition hover:-translate-y-0.5 sm:h-auto sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-sm"
+            className="inline-flex shrink-0 h-8 items-center gap-1 rounded-full border border-border bg-card/80 px-2 text-xs font-semibold text-foreground shadow-sm transition hover:-translate-y-0.5 sm:h-auto sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-sm"
         >
             <HugeiconsIcon
                 icon={
