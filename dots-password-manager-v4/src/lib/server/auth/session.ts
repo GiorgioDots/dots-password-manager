@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 
-import { db } from '#/db'
-import { users } from '#/db/schema'
+import { db } from '#/lib/server/db'
+import { users } from '#/lib/server/db/schema'
 import { verifyJwt } from '#/lib/server/auth/jwt'
 
 const CLAIM_NAME_ID =

@@ -2,9 +2,12 @@ import { eq } from 'drizzle-orm'
 import { randomBytes } from 'node:crypto'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { db } from '#/db'
-import { refreshTokens, users } from '#/db/schema'
-import type { AuthTokenResponse, RegisterRequest } from '#/lib/shared/auth/contracts'
+import { db } from '#/lib/server/db'
+import { refreshTokens, users } from '#/lib/server/db/schema'
+import type {
+    AuthTokenResponse,
+    RegisterRequest,
+} from '#/lib/shared/auth/contracts'
 import { authConfig } from '#/lib/server/auth/config'
 import { generateJwt } from '#/lib/server/auth/jwt'
 import { sendWelcomeEmail } from '#/lib/server/email/service'

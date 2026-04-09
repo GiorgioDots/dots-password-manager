@@ -1,8 +1,8 @@
 import { and, eq } from 'drizzle-orm'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { db } from '#/db'
-import { savedPasswords } from '#/db/schema'
+import { db } from '#/lib/server/db'
+import { savedPasswords } from '#/lib/server/db/schema'
 import { getSessionUser, unauthorizedResponse } from '#/lib/server/auth/session'
 import { getPublicKeyHeader } from '#/lib/server/crypto/public-key'
 import type { SavedPasswordDto } from '#/lib/shared/passwords/contracts'

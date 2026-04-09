@@ -1,4 +1,4 @@
-import type { savedPasswords, users } from '#/db/schema'
+import type { savedPasswords, users } from '#/lib/server/db/schema'
 import { encryptForClient } from '#/lib/server/crypto/public-key'
 import type {
     ImportExportPasswordDto,

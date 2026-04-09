@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { db } from '#/db'
-import { userRequests, users } from '#/db/schema'
+import { db } from '#/lib/server/db'
+import { userRequests, users } from '#/lib/server/db/schema'
 import type {
     AuthMessageResponse,
     ResetPasswordRequestRequest,

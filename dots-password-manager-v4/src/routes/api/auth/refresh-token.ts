@@ -1,8 +1,8 @@
 import { and, eq, isNull } from 'drizzle-orm'
 import { createFileRoute } from '@tanstack/react-router'
 
-import { db } from '#/db'
-import { refreshTokens, users } from '#/db/schema'
+import { db } from '#/lib/server/db'
+import { refreshTokens, users } from '#/lib/server/db/schema'
 import type {
     AuthTokenResponse,
     RefreshTokenRequest,
