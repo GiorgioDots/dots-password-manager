@@ -2,7 +2,7 @@ import { constants, generateKeyPairSync, privateDecrypt } from 'node:crypto'
 import type { KeyObject } from 'node:crypto'
 import { describe, expect, it } from 'vitest'
 
-import { encryptForClient } from '#/lib/crypto/client-public-key'
+import { encryptForClient } from '#/lib/server/crypto/public-key'
 
 function exportSpkiBase64(publicKey: KeyObject): string {
     return publicKey.export({ format: 'der', type: 'spki' }).toString('base64')

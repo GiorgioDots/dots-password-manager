@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { db } from '#/db'
 import { savedPasswords } from '#/db/schema'
-import { getSessionUser, unauthorizedResponse } from '#/lib/auth/session'
+import { getSessionUser, unauthorizedResponse } from '#/lib/server/auth/session'
 
 function badRequest(message: string, status = 400): Response {
     return Response.json({ Message: message }, { status })

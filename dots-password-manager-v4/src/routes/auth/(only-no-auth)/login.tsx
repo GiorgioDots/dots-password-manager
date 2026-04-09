@@ -13,7 +13,7 @@ import {
 } from '#/components/ui/card'
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
-import { isLoggedIn, setTokens } from '#/lib/client-auth'
+import { isLoggedIn, setTokens } from '#/lib/client/auth'
 
 type LoginResponse = {
     Token?: string

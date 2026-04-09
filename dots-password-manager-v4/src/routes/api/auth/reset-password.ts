@@ -6,9 +6,9 @@ import { userRequests, users } from '#/db/schema'
 import type {
     AuthMessageResponse,
     ResetPasswordRequest,
-} from '#/lib/auth/contracts'
-import { sendPasswordResettedEmail } from '#/lib/email/service'
-import { hashPasswordWithSalt } from '#/lib/auth/password-hash'
+} from '#/lib/shared/auth/contracts'
+import { sendPasswordResettedEmail } from '#/lib/server/email/service'
+import { hashPasswordWithSalt } from '#/lib/server/auth/password-hash'
 
 const PASSWORD_RESET = 'PASSWORD_RESET'
 const INVALID_REQUEST_MESSAGE = 'The request is expired or not valid'

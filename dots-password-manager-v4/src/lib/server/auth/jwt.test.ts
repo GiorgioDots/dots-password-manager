@@ -12,7 +12,7 @@ beforeEach(() => {
 
 describe('jwt compatibility', () => {
     it('issues and verifies jwt with legacy claim URIs', async () => {
-        const { generateJwt, verifyJwt } = await import('#/lib/auth/jwt')
+        const { generateJwt, verifyJwt } = await import('#/lib/server/auth/jwt')
 
         const token = generateJwt({
             userId: '00000000-0000-0000-0000-000000000001',

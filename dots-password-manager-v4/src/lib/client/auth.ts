@@ -1,3 +1,10 @@
+export const AUTH_STATE_CHANGED_EVENT = 'dpm:auth-state-changed'
+
+function emitAuthStateChanged(): void {
+    if (typeof window === 'undefined') return
+    window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT))
+}
+
 export function getAccessToken(): string | null {
     if (typeof window === 'undefined') return null
     return window.localStorage.getItem('accessToken')
@@ -12,12 +19,14 @@ export function setTokens(token: string, refreshToken: string): void {
     if (typeof window === 'undefined') return
     window.localStorage.setItem('accessToken', token)
     window.localStorage.setItem('refreshToken', refreshToken)
+    emitAuthStateChanged()
 }
 
 export function clearTokens(): void {
     if (typeof window === 'undefined') return
     window.localStorage.removeItem('accessToken')
     window.localStorage.removeItem('refreshToken')
+    emitAuthStateChanged()
 }
 
 export function isLoggedIn(): boolean {

@@ -22,7 +22,7 @@ import {
 import { Input } from '#/components/ui/input'
 import { Label } from '#/components/ui/label'
 import { Textarea } from '#/components/ui/textarea'
-import type { SavedPasswordDto } from '#/lib/passwords/contracts'
+import type { SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 
 type PasswordEditFormProps = {
     draft: SavedPasswordDto

@@ -23,8 +23,8 @@ import {
     getPasswordById,
     getPasswords,
     togglePasswordFavourite,
-} from '#/lib/passwords/client'
-import type { SavedPasswordDto } from '#/lib/passwords/contracts'
+} from '#/lib/client/passwords'
+import type { SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 
 export const Route = createFileRoute('/(protected)/saved-passwords/')({
     validateSearch: z.object({

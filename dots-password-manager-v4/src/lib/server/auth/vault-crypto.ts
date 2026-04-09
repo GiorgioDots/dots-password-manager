@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, pbkdf2Sync } from 'node:crypto'
 
-import { authConfig } from '#/lib/auth/config'
+import { authConfig } from '#/lib/server/auth/config'
 
 function deriveKeyAndIv(
     passphrase: string,

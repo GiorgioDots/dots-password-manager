@@ -6,8 +6,8 @@ import { userRequests, users } from '#/db/schema'
 import type {
     AuthMessageResponse,
     ResetPasswordRequestRequest,
-} from '#/lib/auth/contracts'
-import { sendPasswordResetRequestEmail } from '#/lib/email/service'
+} from '#/lib/shared/auth/contracts'
+import { sendPasswordResetRequestEmail } from '#/lib/server/email/service'
 
 const PASSWORD_RESET = 'PASSWORD_RESET'
 const SUCCESS_MESSAGE =

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { verifyPasswordWithSalt } from '#/lib/auth/password-hash'
+import { verifyPasswordWithSalt } from '#/lib/server/auth/password-hash'
 
 describe('password hash compatibility', () => {
     it('verifies a known bcrypt salt/hash pair', () => {

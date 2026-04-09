@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm'
 
 import { db } from '#/db'
 import { users } from '#/db/schema'
-import { verifyJwt } from '#/lib/auth/jwt'
+import { verifyJwt } from '#/lib/server/auth/jwt'
 
 const CLAIM_NAME_ID =
     'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'

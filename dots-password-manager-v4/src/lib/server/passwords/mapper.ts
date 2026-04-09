@@ -1,13 +1,13 @@
 import type { savedPasswords, users } from '#/db/schema'
-import { encryptForClient } from '#/lib/crypto/client-public-key'
+import { encryptForClient } from '#/lib/server/crypto/public-key'
 import type {
     ImportExportPasswordDto,
     SavedPasswordDto,
-} from '#/lib/passwords/contracts'
+} from '#/lib/shared/passwords/contracts'
 import {
     decryptWithUserSalt,
     encryptWithUserSalt,
-} from '#/lib/auth/vault-crypto'
+} from '#/lib/server/auth/vault-crypto'
 
 type UserRow = Pick<
     typeof users.$inferSelect,

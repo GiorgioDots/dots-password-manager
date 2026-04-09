@@ -5,6 +5,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Toaster } from 'sonner'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
+import { ClientAuthProvider } from '#/lib/client/auth-context'
 
 import appCss from '../styles.css?url'
 
@@ -80,21 +81,27 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <HeadContent />
             </head>
             <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
-                <Header />
-                <div className="grow min-h-0 overflow-auto">{children}</div>
-                <Footer />
-                <Toaster richColors position="top-right" theme={toasterTheme} />
-                <TanStackDevtools
-                    config={{
-                        position: 'bottom-right',
-                    }}
-                    plugins={[
-                        {
-                            name: 'Tanstack Router',
-                            render: <TanStackRouterDevtoolsPanel />,
-                        },
-                    ]}
-                />
+                <ClientAuthProvider>
+                    <Header />
+                    <div className="grow min-h-0 overflow-auto">{children}</div>
+                    <Footer />
+                    <Toaster
+                        richColors
+                        position="top-right"
+                        theme={toasterTheme}
+                    />
+                    <TanStackDevtools
+                        config={{
+                            position: 'bottom-right',
+                        }}
+                        plugins={[
+                            {
+                                name: 'Tanstack Router',
+                                render: <TanStackRouterDevtoolsPanel />,
+                            },
+                        ]}
+                    />
+                </ClientAuthProvider>
                 <Scripts />
             </body>
         </html>

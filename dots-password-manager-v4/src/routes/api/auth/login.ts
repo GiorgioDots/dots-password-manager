@@ -3,11 +3,11 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { db } from '#/db'
 import { refreshTokens, users } from '#/db/schema'
-import type { AuthTokenResponse, LoginRequest } from '#/lib/auth/contracts'
-import { authConfig } from '#/lib/auth/config'
-import { generateJwt } from '#/lib/auth/jwt'
-import { verifyPasswordWithSalt } from '#/lib/auth/password-hash'
-import { generateRefreshToken } from '#/lib/auth/refresh-token'
+import type { AuthTokenResponse, LoginRequest } from '#/lib/shared/auth/contracts'
+import { authConfig } from '#/lib/server/auth/config'
+import { generateJwt } from '#/lib/server/auth/jwt'
+import { verifyPasswordWithSalt } from '#/lib/server/auth/password-hash'
+import { generateRefreshToken } from '#/lib/server/auth/refresh-token'
 
 function badRequest(message: string, status = 400): Response {
     return Response.json({ Message: message }, { status })

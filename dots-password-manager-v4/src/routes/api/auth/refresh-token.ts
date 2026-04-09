@@ -6,10 +6,10 @@ import { refreshTokens, users } from '#/db/schema'
 import type {
     AuthTokenResponse,
     RefreshTokenRequest,
-} from '#/lib/auth/contracts'
-import { authConfig } from '#/lib/auth/config'
-import { generateJwt } from '#/lib/auth/jwt'
-import { generateRefreshToken } from '#/lib/auth/refresh-token'
+} from '#/lib/shared/auth/contracts'
+import { authConfig } from '#/lib/server/auth/config'
+import { generateJwt } from '#/lib/server/auth/jwt'
+import { generateRefreshToken } from '#/lib/server/auth/refresh-token'
 
 function errorResponse(message: string, status: number): Response {
     return Response.json({ Message: message }, { status })

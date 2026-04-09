@@ -3,13 +3,13 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { db } from '#/db'
 import { savedPasswords } from '#/db/schema'
-import { getSessionUser, unauthorizedResponse } from '#/lib/auth/session'
-import { getPublicKeyHeader } from '#/lib/crypto/client-public-key'
-import type { SavedPasswordDto } from '#/lib/passwords/contracts'
+import { getSessionUser, unauthorizedResponse } from '#/lib/server/auth/session'
+import { getPublicKeyHeader } from '#/lib/server/crypto/public-key'
+import type { SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 import {
     toSavedPasswordEntity,
     toSavedPasswordResponse,
-} from '#/lib/passwords/mapper'
+} from '#/lib/server/passwords/mapper'
 
 function badRequest(message: string, status = 400): Response {
     return Response.json({ Message: message }, { status })

@@ -3,8 +3,8 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { db } from '#/db'
 import { savedPasswords } from '#/db/schema'
-import { getSessionUser, unauthorizedResponse } from '#/lib/auth/session'
-import { toImportExportPassword } from '#/lib/passwords/mapper'
+import { getSessionUser, unauthorizedResponse } from '#/lib/server/auth/session'
+import { toImportExportPassword } from '#/lib/server/passwords/mapper'
 
 export const Route = createFileRoute('/api/passwords/export')({
     server: {

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { isLoggedIn } from '#/lib/client-auth'
+import { isLoggedIn } from '#/lib/client/auth'
 
 export const Route = createFileRoute('/')({
     beforeLoad: () => {

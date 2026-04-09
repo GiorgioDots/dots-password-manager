@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-import { authConfig } from '#/lib/auth/config'
+import { authConfig } from '#/lib/server/auth/config'
 
 const CLAIM_NAME_ID =
     'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'

@@ -3,9 +3,9 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { db } from '#/db'
 import { savedPasswords } from '#/db/schema'
-import { getSessionUser, unauthorizedResponse } from '#/lib/auth/session'
-import { getPublicKeyHeader } from '#/lib/crypto/client-public-key'
-import { toSavedPasswordResponse } from '#/lib/passwords/mapper'
+import { getSessionUser, unauthorizedResponse } from '#/lib/server/auth/session'
+import { getPublicKeyHeader } from '#/lib/server/crypto/public-key'
+import { toSavedPasswordResponse } from '#/lib/server/passwords/mapper'
 
 function badRequest(message: string, status = 400): Response {
     return Response.json({ Message: message }, { status })

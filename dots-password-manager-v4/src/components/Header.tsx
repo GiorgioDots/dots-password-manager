@@ -1,28 +1,21 @@
-import { useEffect, useState } from 'react'
 import { Logout03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
-import { Link, useLocation, useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
-import { clearTokens, isLoggedIn } from '#/lib/client-auth'
+import { useClientAuth } from '#/lib/client/auth-context'
 import ThemeToggle from './ThemeToggle'
 
 const navLinkClass =
-    'relative rounded-lg px-2 py-1 text-sm text-muted-foreground transition-all duration-200 hover:bg-muted/60 hover:text-foreground sm:px-2.5'
+    'relative rounded-lg px-2 py-1 text-sm text-muted-foreground transition-all duration-200 hover:-translate-y-px hover:bg-muted/60 hover:text-foreground sm:px-2.5 after:absolute after:-bottom-1 after:left-1/2 after:h-0.5 after:w-0 after:-translate-x-1/2 after:rounded-full after:bg-primary/70 after:opacity-0 after:transition-all after:duration-300 after:ease-out after:content-[""]'
 const navLinkActiveClass =
-    'bg-primary/10 text-primary shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.25),0_0_24px_hsl(var(--primary)/0.12)] after:absolute after:-bottom-1 after:left-1/2 after:h-0.5 after:w-8 after:-translate-x-1/2 after:rounded-full after:bg-primary/70 after:content-[""]'
+    'bg-primary/10 text-primary shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.25),0_0_24px_hsl(var(--primary)/0.12)] after:w-8 after:opacity-100'
 
 export default function Header() {
-    const location = useLocation()
     const navigate = useNavigate()
-    const [loggedIn, setLoggedIn] = useState<boolean | undefined>(undefined)
-
-    useEffect(() => {
-        setLoggedIn(isLoggedIn())
-    }, [location.pathname])
+    const { loggedIn, logout } = useClientAuth()
 
     async function onLogout() {
-        clearTokens()
-        setLoggedIn(false)
+        logout()
         await navigate({ to: '/auth/login' })
     }
 
@@ -54,47 +47,9 @@ export default function Header() {
 
                     <div className="grow flex items-center gap-3 text-xs font-semibold sm:flex-nowrap sm:gap-4 sm:text-sm">
                         {loggedIn == true ? (
-                            <>
-                                <Link
-                                    to="/saved-passwords"
-                                    className={navLinkClass}
-                                    activeProps={{
-                                        className: navLinkActiveClass,
-                                    }}
-                                >
-                                    Vault
-                                </Link>
-                                <Link
-                                    to="/settings"
-                                    className={navLinkClass}
-                                    activeProps={{
-                                        className: navLinkActiveClass,
-                                    }}
-                                >
-                                    Settings
-                                </Link>
-                            </>
+                            <LoggedInLinks />
                         ) : loggedIn == false ? (
-                            <>
-                                <Link
-                                    to="/auth/login"
-                                    className={navLinkClass}
-                                    activeProps={{
-                                        className: navLinkActiveClass,
-                                    }}
-                                >
-                                    Login
-                                </Link>
-                                <Link
-                                    to="/auth/register"
-                                    className={navLinkClass}
-                                    activeProps={{
-                                        className: navLinkActiveClass,
-                                    }}
-                                >
-                                    Register
-                                </Link>
-                            </>
+                            <LoggedOutLinks />
                         ) : null}
                     </div>
 
@@ -120,5 +75,55 @@ export default function Header() {
                 </div>
             </nav>
         </header>
+    )
+}
+
+function LoggedInLinks() {
+    return (
+        <>
+            <Link
+                to="/saved-passwords"
+                className={navLinkClass}
+                activeProps={{
+                    className: navLinkActiveClass,
+                }}
+            >
+                Vault
+            </Link>
+            <Link
+                to="/settings"
+                className={navLinkClass}
+                activeProps={{
+                    className: navLinkActiveClass,
+                }}
+            >
+                Settings
+            </Link>
+        </>
+    )
+}
+
+function LoggedOutLinks() {
+    return (
+        <>
+            <Link
+                to="/auth/login"
+                className={navLinkClass}
+                activeProps={{
+                    className: navLinkActiveClass,
+                }}
+            >
+                Login
+            </Link>
+            <Link
+                to="/auth/register"
+                className={navLinkClass}
+                activeProps={{
+                    className: navLinkActiveClass,
+                }}
+            >
+                Register
+            </Link>
+        </>
     )
 }

@@ -1,8 +1,8 @@
-import { authFetch } from '#/lib/client-auth'
+import { authFetch } from '#/lib/client/auth'
 import type {
     ImportExportDto,
     SavedPasswordDto,
-} from '#/lib/passwords/contracts'
+} from '#/lib/shared/passwords/contracts'
 
 export async function getPasswords(): Promise<SavedPasswordDto[]> {
     const res = await authFetch('/api/passwords')

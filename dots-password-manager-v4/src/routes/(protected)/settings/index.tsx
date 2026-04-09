@@ -5,8 +5,8 @@ import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
-import { exportPasswords, importPasswords } from '#/lib/passwords/client'
-import type { ImportExportDto } from '#/lib/passwords/contracts'
+import { exportPasswords, importPasswords } from '#/lib/client/passwords'
+import type { ImportExportDto } from '#/lib/shared/passwords/contracts'
 
 export const Route = createFileRoute('/(protected)/settings/')({
     component: SettingsPage,

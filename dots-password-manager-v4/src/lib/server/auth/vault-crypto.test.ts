@@ -13,7 +13,7 @@ beforeEach(() => {
 
 describe('vault crypto compatibility', () => {
     it('matches expected deterministic ciphertext for known vector', async () => {
-        const { encryptWithUserSalt } = await import('#/lib/auth/vault-crypto')
+        const { encryptWithUserSalt } = await import('#/lib/server/auth/vault-crypto')
 
         const encrypted = encryptWithUserSalt(
             'P@ssw0rd-legacy',
@@ -24,7 +24,7 @@ describe('vault crypto compatibility', () => {
     })
 
     it('decrypts previously encrypted values', async () => {
-        const { decryptWithUserSalt } = await import('#/lib/auth/vault-crypto')
+        const { decryptWithUserSalt } = await import('#/lib/server/auth/vault-crypto')
 
         const plain = decryptWithUserSalt(
             'jmgWnHd0FClCC8QPSoUhHQ==',
@@ -35,7 +35,7 @@ describe('vault crypto compatibility', () => {
     })
 
     it('decrypts values encrypted with newline-terminated key material', async () => {
-        const { decryptWithUserSalt } = await import('#/lib/auth/vault-crypto')
+        const { decryptWithUserSalt } = await import('#/lib/server/auth/vault-crypto')
 
         const legacyKeyWithNewline = `${process.env.CRYPTO_BASE_64_KEY}\n`
         const saltBase64 = 'MDEyMzQ1Njc4OWFiY2RlZg=='
