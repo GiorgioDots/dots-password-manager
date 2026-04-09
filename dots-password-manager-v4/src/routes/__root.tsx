@@ -69,9 +69,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     }, [])
 
     return (
-        <html lang="en" suppressHydrationWarning className="h-full overflow-hidden">
+        <html
+            lang="en"
+            suppressHydrationWarning
+            className="h-full overflow-hidden"
+        >
             <head>
-                <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+                <script
+                    dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+                />
                 <HeadContent />
             </head>
             <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
@@ -79,8 +85,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                     <Header />
                     <div className="grow min-h-0 overflow-auto">{children}</div>
                     <Footer />
-                    <Toaster richColors position="top-right" theme={toasterTheme} />
-                    {/* <TanStackDevtools
+                    <Toaster
+                        richColors
+                        position="top-right"
+                        theme={toasterTheme}
+                    />
+                    <TanStackDevtools
                         config={{
                             position: 'bottom-right',
                         }}
@@ -90,7 +100,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                 render: <TanStackRouterDevtoolsPanel />,
                             },
                         ]}
-                    /> */}
+                    />
                 </ClientAuthProvider>
                 <Scripts />
             </body>
