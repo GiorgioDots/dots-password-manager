@@ -9,14 +9,11 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default:
-                    'bg-primary text-primary-foreground hover:brightness-110',
-                secondary:
-                    'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+                default: 'bg-primary text-primary-foreground hover:brightness-110',
+                secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
                 outline:
                     'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-                destructive:
-                    'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
             },
             size: {
@@ -32,8 +29,7 @@ const buttonVariants = cva(
     },
 )
 
-type ButtonProps = React.ComponentProps<'button'> &
-    VariantProps<typeof buttonVariants>
+type ButtonProps = React.ComponentProps<'button'> & VariantProps<typeof buttonVariants>
 
 function Button({ className, variant, size, ...props }: ButtonProps) {
     return (

@@ -1,12 +1,5 @@
-import {
-    forceLogout,
-    getAccessToken,
-    tryRefreshAccessToken,
-} from '#/lib/client/auth'
-import type {
-    ImportExportDto,
-    SavedPasswordDto,
-} from '#/lib/shared/passwords/contracts'
+import { forceLogout, getAccessToken, tryRefreshAccessToken } from '#/lib/client/auth'
+import type { ImportExportDto, SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 import {
     createPasswordServerFn,
     deletePasswordServerFn,
@@ -30,9 +23,7 @@ function isUnauthorized(error: unknown): boolean {
     return errorMessage(error, '').toLowerCase().includes('unauthorized')
 }
 
-async function withAuth<T>(
-    fn: (accessToken: string) => Promise<T>,
-): Promise<T> {
+async function withAuth<T>(fn: (accessToken: string) => Promise<T>): Promise<T> {
     const firstToken = getAccessToken()
     if (!firstToken) {
         forceLogout()
@@ -85,9 +76,7 @@ export async function getPasswordById(id: string): Promise<SavedPasswordDto> {
     }
 }
 
-export async function createPassword(
-    input: SavedPasswordDto,
-): Promise<SavedPasswordDto> {
+export async function createPassword(input: SavedPasswordDto): Promise<SavedPasswordDto> {
     try {
         return await withAuth((accessToken) =>
             createPasswordServerFn({
@@ -99,9 +88,7 @@ export async function createPassword(
     }
 }
 
-export async function editPassword(
-    input: SavedPasswordDto,
-): Promise<SavedPasswordDto> {
+export async function editPassword(input: SavedPasswordDto): Promise<SavedPasswordDto> {
     try {
         return await withAuth((accessToken) =>
             editPasswordServerFn({

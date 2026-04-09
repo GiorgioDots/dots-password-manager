@@ -37,9 +37,7 @@ function SettingsPage() {
         }
     }
 
-    async function onImportFileChange(
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) {
+    async function onImportFileChange(event: React.ChangeEvent<HTMLInputElement>) {
         const file = event.target.files?.[0]
         if (!file) {
             return
@@ -67,8 +65,8 @@ function SettingsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                        Export your vault as JSON for backup, or import a
-                        compatible JSON file to restore or migrate passwords.
+                        Export your vault as JSON for backup, or import a compatible JSON file to
+                        restore or migrate passwords.
                     </p>
 
                     <input
@@ -80,11 +78,7 @@ function SettingsPage() {
                     />
 
                     <div className="flex flex-col gap-2 sm:flex-row">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => void onExport()}
-                        >
+                        <Button type="button" variant="outline" onClick={() => void onExport()}>
                             <DownloadIcon className="size-4" />
                             Export passwords
                         </Button>

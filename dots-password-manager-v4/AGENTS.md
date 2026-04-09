@@ -41,6 +41,22 @@ This file defines repository-specific guidance for coding agents working in this
 - Keep route search typing strict for TanStack Router.
 - Use small reusable UI components where appropriate.
 
+## Form Standard (TanStack Form + shadcn Field)
+
+- Build forms with `@tanstack/react-form` and shadcn `Field` primitives (`Field`, `FieldLabel`, `FieldError`).
+- Define validation rules in `useForm({ validators: { ... } })` as the default approach.
+- Prefer form-level validators that return `fields` errors for consistency across inputs.
+- Do not use browser-native validation UI:
+    - add `noValidate` on `<form>`
+    - avoid `required` attributes when equivalent TanStack validation exists
+- Wire each input to TanStack field handlers (`value`, `onChange`, `onBlur`).
+- Reflect invalid state in both layers:
+    - set `data-invalid` on `Field`
+    - set `aria-invalid` on the input/control
+- Render validation feedback with `FieldError` (prefer the `errors` prop when available).
+- Disable all controls and submit actions while `isSubmitting` is true.
+- Keep validation messages explicit and user-facing (no vague generic errors).
+
 ## Validation Checklist (run after meaningful code changes)
 
 1. `npm run lint`

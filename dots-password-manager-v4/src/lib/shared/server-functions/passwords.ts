@@ -1,12 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 
-import type {
-    ImportExportDto,
-    SavedPasswordDto,
-} from '#/lib/shared/passwords/contracts'
+import type { ImportExportDto, SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 
-const CLAIM_NAME_ID =
-    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+const CLAIM_NAME_ID = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
 
 type SessionUser = {
     id: string
@@ -22,9 +18,7 @@ type AuthInput = {
     AccessToken: string
 }
 
-async function getSessionUserFromAccessToken(
-    accessToken: string,
-): Promise<SessionUser | null> {
+async function getSessionUserFromAccessToken(accessToken: string): Promise<SessionUser | null> {
     const [{ eq }, { db }, { users }, { verifyJwt }] = await Promise.all([
         import('drizzle-orm'),
         import('#/lib/server/db'),
@@ -72,17 +66,13 @@ export const getPasswordsServerFn = createServerFn({ method: 'GET' })
     .inputValidator((input: AuthInput) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto[]> => {
         const user = await requireSessionUser(data.AccessToken)
-        const [
-            { eq },
-            { db },
-            { savedPasswords },
-            { toSavedPasswordListResponse },
-        ] = await Promise.all([
-            import('drizzle-orm'),
-            import('#/lib/server/db'),
-            import('#/lib/server/db/schema'),
-            import('#/lib/server/passwords/mapper'),
-        ])
+        const [{ eq }, { db }, { savedPasswords }, { toSavedPasswordListResponse }] =
+            await Promise.all([
+                import('drizzle-orm'),
+                import('#/lib/server/db'),
+                import('#/lib/server/db/schema'),
+                import('#/lib/server/passwords/mapper'),
+            ])
 
         const passwords = await db.query.savedPasswords.findMany({
             where: eq(savedPasswords.userId, user.id),
@@ -95,23 +85,16 @@ export const getPasswordByIdServerFn = createServerFn({ method: 'GET' })
     .inputValidator((input: AuthInput & { PasswordId: string }) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto> => {
         const user = await requireSessionUser(data.AccessToken)
-        const [
-            { and, eq },
-            { db },
-            { savedPasswords },
-            { toSavedPasswordResponse },
-        ] = await Promise.all([
-            import('drizzle-orm'),
-            import('#/lib/server/db'),
-            import('#/lib/server/db/schema'),
-            import('#/lib/server/passwords/mapper'),
-        ])
+        const [{ and, eq }, { db }, { savedPasswords }, { toSavedPasswordResponse }] =
+            await Promise.all([
+                import('drizzle-orm'),
+                import('#/lib/server/db'),
+                import('#/lib/server/db/schema'),
+                import('#/lib/server/passwords/mapper'),
+            ])
 
         const password = await db.query.savedPasswords.findFirst({
-            where: and(
-                eq(savedPasswords.userId, user.id),
-                eq(savedPasswords.id, data.PasswordId),
-            ),
+            where: and(eq(savedPasswords.userId, user.id), eq(savedPasswords.id, data.PasswordId)),
         })
 
         if (!password) {
@@ -122,20 +105,15 @@ export const getPasswordByIdServerFn = createServerFn({ method: 'GET' })
     })
 
 export const createPasswordServerFn = createServerFn({ method: 'POST' })
-    .inputValidator(
-        (input: AuthInput & { Password: SavedPasswordDto }) => input,
-    )
+    .inputValidator((input: AuthInput & { Password: SavedPasswordDto }) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto> => {
         const user = await requireSessionUser(data.AccessToken)
-        const [
-            { db },
-            { savedPasswords },
-            { toSavedPasswordEntity, toSavedPasswordResponse },
-        ] = await Promise.all([
-            import('#/lib/server/db'),
-            import('#/lib/server/db/schema'),
-            import('#/lib/server/passwords/mapper'),
-        ])
+        const [{ db }, { savedPasswords }, { toSavedPasswordEntity, toSavedPasswordResponse }] =
+            await Promise.all([
+                import('#/lib/server/db'),
+                import('#/lib/server/db/schema'),
+                import('#/lib/server/passwords/mapper'),
+            ])
 
         const body = data.Password
 
@@ -157,9 +135,7 @@ export const createPasswordServerFn = createServerFn({ method: 'POST' })
     })
 
 export const editPasswordServerFn = createServerFn({ method: 'POST' })
-    .inputValidator(
-        (input: AuthInput & { Password: SavedPasswordDto }) => input,
-    )
+    .inputValidator((input: AuthInput & { Password: SavedPasswordDto }) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto> => {
         const user = await requireSessionUser(data.AccessToken)
         const [
@@ -176,20 +152,12 @@ export const editPasswordServerFn = createServerFn({ method: 'POST' })
 
         const body = data.Password
 
-        if (
-            !body.PasswordId ||
-            !body.Name.trim() ||
-            !body.Login.trim() ||
-            !body.Password.trim()
-        ) {
+        if (!body.PasswordId || !body.Name.trim() || !body.Login.trim() || !body.Password.trim()) {
             throw new Error('Invalid request.')
         }
 
         const existing = await db.query.savedPasswords.findFirst({
-            where: and(
-                eq(savedPasswords.id, body.PasswordId),
-                eq(savedPasswords.userId, user.id),
-            ),
+            where: and(eq(savedPasswords.id, body.PasswordId), eq(savedPasswords.userId, user.id)),
         })
 
         if (!existing) {
@@ -221,10 +189,7 @@ export const deletePasswordServerFn = createServerFn({ method: 'POST' })
         ])
 
         const password = await db.query.savedPasswords.findFirst({
-            where: and(
-                eq(savedPasswords.userId, user.id),
-                eq(savedPasswords.id, data.PasswordId),
-            ),
+            where: and(eq(savedPasswords.userId, user.id), eq(savedPasswords.id, data.PasswordId)),
             columns: { id: true },
         })
 
@@ -232,9 +197,7 @@ export const deletePasswordServerFn = createServerFn({ method: 'POST' })
             throw new Error('Not Found')
         }
 
-        await db
-            .delete(savedPasswords)
-            .where(eq(savedPasswords.id, password.id))
+        await db.delete(savedPasswords).where(eq(savedPasswords.id, password.id))
 
         return { Message: 'Password deleted' }
     })
@@ -243,71 +206,59 @@ export const togglePasswordFavouriteServerFn = createServerFn({
     method: 'POST',
 })
     .inputValidator((input: AuthInput & { PasswordId: string }) => input)
-    .handler(
-        async ({
-            data,
-        }): Promise<{ PasswordId: string; IsFavourite: boolean }> => {
-            const user = await requireSessionUser(data.AccessToken)
-            const [{ and, eq }, { db }, { savedPasswords }] = await Promise.all(
-                [
-                    import('drizzle-orm'),
-                    import('#/lib/server/db'),
-                    import('#/lib/server/db/schema'),
-                ],
-            )
+    .handler(async ({ data }): Promise<{ PasswordId: string; IsFavourite: boolean }> => {
+        const user = await requireSessionUser(data.AccessToken)
+        const [{ and, eq }, { db }, { savedPasswords }] = await Promise.all([
+            import('drizzle-orm'),
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+        ])
 
-            const existing = await db.query.savedPasswords.findFirst({
-                where: and(
-                    eq(savedPasswords.userId, user.id),
-                    eq(savedPasswords.id, data.PasswordId),
-                ),
+        const existing = await db.query.savedPasswords.findFirst({
+            where: and(eq(savedPasswords.userId, user.id), eq(savedPasswords.id, data.PasswordId)),
+        })
+
+        if (!existing) {
+            throw new Error('Not Found')
+        }
+
+        const updated = await db
+            .update(savedPasswords)
+            .set({
+                isFavourite: !existing.isFavourite,
+                updatedAt: new Date(),
+            })
+            .where(eq(savedPasswords.id, existing.id))
+            .returning({
+                PasswordId: savedPasswords.id,
+                IsFavourite: savedPasswords.isFavourite,
             })
 
-            if (!existing) {
-                throw new Error('Not Found')
+        return (
+            updated[0] ?? {
+                PasswordId: existing.id,
+                IsFavourite: !existing.isFavourite,
             }
-
-            const updated = await db
-                .update(savedPasswords)
-                .set({
-                    isFavourite: !existing.isFavourite,
-                    updatedAt: new Date(),
-                })
-                .where(eq(savedPasswords.id, existing.id))
-                .returning({
-                    PasswordId: savedPasswords.id,
-                    IsFavourite: savedPasswords.isFavourite,
-                })
-
-            return (
-                updated[0] ?? {
-                    PasswordId: existing.id,
-                    IsFavourite: !existing.isFavourite,
-                }
-            )
-        },
-    )
+        )
+    })
 
 export const exportPasswordsServerFn = createServerFn({ method: 'GET' })
     .inputValidator((input: AuthInput) => input)
     .handler(async ({ data }): Promise<ImportExportDto> => {
         const user = await requireSessionUser(data.AccessToken)
-        const [{ eq }, { db }, { savedPasswords }, { toImportExportPassword }] =
-            await Promise.all([
-                import('drizzle-orm'),
-                import('#/lib/server/db'),
-                import('#/lib/server/db/schema'),
-                import('#/lib/server/passwords/mapper'),
-            ])
+        const [{ eq }, { db }, { savedPasswords }, { toImportExportPassword }] = await Promise.all([
+            import('drizzle-orm'),
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+            import('#/lib/server/passwords/mapper'),
+        ])
 
         const passwords = await db.query.savedPasswords.findMany({
             where: eq(savedPasswords.userId, user.id),
         })
 
         return {
-            AUTHENTIFIANT: passwords.map((p) =>
-                toImportExportPassword(p, user),
-            ),
+            AUTHENTIFIANT: passwords.map((p) => toImportExportPassword(p, user)),
         }
     })
 
@@ -315,12 +266,11 @@ export const importPasswordsServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: AuthInput & { Payload: ImportExportDto }) => input)
     .handler(async ({ data }): Promise<{ Message: string }> => {
         const user = await requireSessionUser(data.AccessToken)
-        const [{ db }, { savedPasswords }, { toSavedPasswordEntity }] =
-            await Promise.all([
-                import('#/lib/server/db'),
-                import('#/lib/server/db/schema'),
-                import('#/lib/server/passwords/mapper'),
-            ])
+        const [{ db }, { savedPasswords }, { toSavedPasswordEntity }] = await Promise.all([
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+            import('#/lib/server/passwords/mapper'),
+        ])
 
         const body = data.Payload
 

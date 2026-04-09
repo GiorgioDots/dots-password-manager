@@ -1,3 +1,6 @@
+import { Github } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
+
 export default function Footer() {
     const year = new Date().getFullYear()
 
@@ -12,7 +15,20 @@ export default function Footer() {
                     />
                     <span>&copy; {year} Dots Password Manager</span>
                 </p>
-                <div className="flex items-center gap-1"></div>
+                <div className="flex items-center gap-1">
+                    <a
+                        href="https://github.com/GiorgioDots/dots-password-manager"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <HugeiconsIcon
+                            icon={Github}
+                            className="size-5"
+                            strokeWidth={0}
+                            fill="var(--primary)"
+                        />
+                    </a>
+                </div>
             </div>
         </footer>
     )

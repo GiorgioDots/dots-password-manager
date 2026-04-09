@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import {
-    CheckIcon,
-    CopyIcon,
-    EyeIcon,
-    EyeOffIcon,
-    RefreshCwIcon,
-    XIcon,
-} from 'lucide-react'
+import { CheckIcon, CopyIcon, EyeIcon, EyeOffIcon, RefreshCwIcon, XIcon } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Badge } from '#/components/ui/badge'
@@ -48,9 +41,7 @@ export default function PasswordEditForm({
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     const [copiedField, setCopiedField] = useState<string | null>(null)
     const [tagInput, setTagInput] = useState('')
-    const [confirmAction, setConfirmAction] = useState<
-        'save' | 'delete' | null
-    >(null)
+    const [confirmAction, setConfirmAction] = useState<'save' | 'delete' | null>(null)
     const copiedResetTimeoutRef = useRef<number | null>(null)
 
     useEffect(() => {
@@ -96,9 +87,7 @@ export default function PasswordEditForm({
         }
 
         const current = draft.Tags ?? []
-        const exists = current.some(
-            (tag) => tag.trim().toLowerCase() === next.toLowerCase(),
-        )
+        const exists = current.some((tag) => tag.trim().toLowerCase() === next.toLowerCase())
         if (exists) {
             setTagInput('')
             return
@@ -179,9 +168,7 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy name"
-                        onClick={() =>
-                            void copyValue(draft.Name, 'Name', 'name')
-                        }
+                        onClick={() => void copyValue(draft.Name, 'Name', 'name')}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'name' ? (
@@ -206,9 +193,7 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy login"
-                        onClick={() =>
-                            void copyValue(draft.Login, 'Login', 'login')
-                        }
+                        onClick={() => void copyValue(draft.Login, 'Login', 'login')}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'login' ? (
@@ -226,9 +211,7 @@ export default function PasswordEditForm({
                     <Input
                         id="second-login"
                         value={draft.SecondLogin ?? ''}
-                        onChange={(e) =>
-                            onChange({ SecondLogin: e.target.value || null })
-                        }
+                        onChange={(e) => onChange({ SecondLogin: e.target.value || null })}
                         placeholder="optional"
                         className="pr-10"
                     />
@@ -236,11 +219,7 @@ export default function PasswordEditForm({
                         type="button"
                         aria-label="Copy second login"
                         onClick={() =>
-                            void copyValue(
-                                draft.SecondLogin ?? '',
-                                'Second login',
-                                'second-login',
-                            )
+                            void copyValue(draft.SecondLogin ?? '', 'Second login', 'second-login')
                         }
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
@@ -280,14 +259,8 @@ export default function PasswordEditForm({
                     <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
                         <button
                             type="button"
-                            aria-label={
-                                isPasswordVisible
-                                    ? 'Hide password'
-                                    : 'Show password'
-                            }
-                            onClick={() =>
-                                setIsPasswordVisible((prev) => !prev)
-                            }
+                            aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+                            onClick={() => setIsPasswordVisible((prev) => !prev)}
                             className="inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                         >
                             {isPasswordVisible ? (
@@ -299,13 +272,7 @@ export default function PasswordEditForm({
                         <button
                             type="button"
                             aria-label="Copy password"
-                            onClick={() =>
-                                void copyValue(
-                                    draft.Password,
-                                    'Password',
-                                    'password',
-                                )
-                            }
+                            onClick={() => void copyValue(draft.Password, 'Password', 'password')}
                             className="inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                         >
                             {copiedField === 'password' ? (
@@ -324,18 +291,14 @@ export default function PasswordEditForm({
                     <Input
                         id="url"
                         value={draft.Url ?? ''}
-                        onChange={(e) =>
-                            onChange({ Url: e.target.value || null })
-                        }
+                        onChange={(e) => onChange({ Url: e.target.value || null })}
                         placeholder="https://..."
                         className="pr-10"
                     />
                     <button
                         type="button"
                         aria-label="Copy url"
-                        onClick={() =>
-                            void copyValue(draft.Url ?? '', 'Url', 'url')
-                        }
+                        onClick={() => void copyValue(draft.Url ?? '', 'Url', 'url')}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'url' ? (
@@ -353,11 +316,7 @@ export default function PasswordEditForm({
                     {(draft.Tags ?? []).length > 0 ? (
                         <div className="flex flex-wrap gap-2">
                             {(draft.Tags ?? []).map((tag) => (
-                                <Badge
-                                    key={tag}
-                                    variant="secondary"
-                                    className="gap-1 pr-1"
-                                >
+                                <Badge key={tag} variant="secondary" className="gap-1 pr-1">
                                     {tag}
                                     <button
                                         type="button"
@@ -389,8 +348,7 @@ export default function PasswordEditForm({
                                     !tagInput &&
                                     (draft.Tags ?? []).length
                                 ) {
-                                    const last =
-                                        draft.Tags?.[draft.Tags.length - 1]
+                                    const last = draft.Tags?.[draft.Tags.length - 1]
                                     if (last) {
                                         removeTag(last)
                                     }
@@ -403,9 +361,7 @@ export default function PasswordEditForm({
                         <button
                             type="button"
                             aria-label="Copy tags"
-                            onClick={() =>
-                                void copyValue(tagsString, 'Tags', 'tags')
-                            }
+                            onClick={() => void copyValue(tagsString, 'Tags', 'tags')}
                             className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                         >
                             {copiedField === 'tags' ? (
@@ -424,18 +380,14 @@ export default function PasswordEditForm({
                     <Textarea
                         id="notes"
                         value={draft.Notes ?? ''}
-                        onChange={(e) =>
-                            onChange({ Notes: e.target.value || null })
-                        }
+                        onChange={(e) => onChange({ Notes: e.target.value || null })}
                         placeholder="Additional notes"
                         className="pr-10 bg-background!"
                     />
                     <button
                         type="button"
                         aria-label="Copy notes"
-                        onClick={() =>
-                            void copyValue(draft.Notes ?? '', 'Notes', 'notes')
-                        }
+                        onClick={() => void copyValue(draft.Notes ?? '', 'Notes', 'notes')}
                         className="absolute right-2 top-2 inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'notes' ? (
@@ -510,16 +462,10 @@ export default function PasswordEditForm({
                         </Button>
                         <Button
                             type="button"
-                            variant={
-                                confirmAction === 'delete'
-                                    ? 'destructive'
-                                    : 'default'
-                            }
+                            variant={confirmAction === 'delete' ? 'destructive' : 'default'}
                             onClick={() => void handleConfirmAction()}
                         >
-                            {confirmAction === 'save'
-                                ? 'Confirm save'
-                                : 'Confirm delete'}
+                            {confirmAction === 'save' ? 'Confirm save' : 'Confirm delete'}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

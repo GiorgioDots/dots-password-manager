@@ -21,8 +21,7 @@ const alertVariants = cva(
     },
 )
 
-type AlertProps = React.ComponentProps<'div'> &
-    VariantProps<typeof alertVariants>
+type AlertProps = React.ComponentProps<'div'> & VariantProps<typeof alertVariants>
 
 function Alert({ className, variant, ...props }: AlertProps) {
     return (
@@ -36,9 +35,7 @@ function Alert({ className, variant, ...props }: AlertProps) {
 }
 
 function AlertDescription({ className, ...props }: React.ComponentProps<'p'>) {
-    return (
-        <p data-slot="alert-description" className={cn(className)} {...props} />
-    )
+    return <p data-slot="alert-description" className={cn(className)} {...props} />
 }
 
 export { Alert, AlertDescription }

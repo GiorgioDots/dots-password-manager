@@ -45,7 +45,7 @@ export default function Header() {
                         </Link>
                     </h2>
 
-                    <div className="grow flex items-center gap-3 text-xs font-semibold sm:flex-nowrap sm:gap-4 sm:text-sm">
+                    <div className="grow flex items-center justify-center sm:justify-start gap-3 text-xs font-semibold sm:flex-nowrap sm:gap-4 sm:text-sm">
                         {loggedIn == true ? (
                             <LoggedInLinks />
                         ) : loggedIn == false ? (
@@ -58,16 +58,12 @@ export default function Header() {
                         {loggedIn && (
                             <Button
                                 type="button"
-                                variant="outline"
+                                variant="secondary"
                                 size="sm"
                                 onClick={onLogout}
                                 className="inline-flex h-8 items-center gap-1.5 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
                             >
-                                <HugeiconsIcon
-                                    icon={Logout03Icon}
-                                    size={14}
-                                    strokeWidth={1.9}
-                                />
+                                <HugeiconsIcon icon={Logout03Icon} size={14} strokeWidth={1.9} />
                                 Logout
                             </Button>
                         )}

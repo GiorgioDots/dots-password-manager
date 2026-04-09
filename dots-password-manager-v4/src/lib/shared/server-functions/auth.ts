@@ -24,12 +24,11 @@ function asMessage(error: unknown, fallback: string): string {
 export const loginServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: LoginRequest) => input)
     .handler(async ({ data }): Promise<AuthTokenResponse> => {
-        const [{ eq, or }, { db }, { refreshTokens, users }] =
-            await Promise.all([
-                import('drizzle-orm'),
-                import('#/lib/server/db'),
-                import('#/lib/server/db/schema'),
-            ])
+        const [{ eq, or }, { db }, { refreshTokens, users }] = await Promise.all([
+            import('drizzle-orm'),
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+        ])
         const [
             { authConfig },
             { generateJwt },
@@ -51,20 +50,10 @@ export const loginServerFn = createServerFn({ method: 'POST' })
 
         const loweredLogin = login.toLowerCase()
         const user = await db.query.users.findFirst({
-            where: or(
-                eq(users.email, loweredLogin),
-                eq(users.username, loweredLogin),
-            ),
+            where: or(eq(users.email, loweredLogin), eq(users.username, loweredLogin)),
         })
 
-        if (
-            !user ||
-            !verifyPasswordWithSalt(
-                password,
-                user.passwordSalt,
-                user.passwordHash,
-            )
-        ) {
+        if (!user || !verifyPasswordWithSalt(password, user.passwordSalt, user.passwordHash)) {
             throw new Error('Invalid credentials.')
         }
 
@@ -79,8 +68,7 @@ export const loginServerFn = createServerFn({ method: 'POST' })
             userId: user.id,
             token: refreshToken,
             expiresAt: new Date(
-                Date.now() +
-                    authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
+                Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
             ),
         })
 
@@ -93,13 +81,12 @@ export const loginServerFn = createServerFn({ method: 'POST' })
 export const registerServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: RegisterRequest) => input)
     .handler(async ({ data }): Promise<AuthTokenResponse> => {
-        const [{ eq }, { randomBytes }, { db }, { refreshTokens, users }] =
-            await Promise.all([
-                import('drizzle-orm'),
-                import('node:crypto'),
-                import('#/lib/server/db'),
-                import('#/lib/server/db/schema'),
-            ])
+        const [{ eq }, { randomBytes }, { db }, { refreshTokens, users }] = await Promise.all([
+            import('drizzle-orm'),
+            import('node:crypto'),
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+        ])
         const [
             { authConfig },
             { generateJwt },
@@ -180,8 +167,7 @@ export const registerServerFn = createServerFn({ method: 'POST' })
             userId: user.id,
             token: refreshToken,
             expiresAt: new Date(
-                Date.now() +
-                    authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
+                Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
             ),
         })
 
@@ -194,18 +180,16 @@ export const registerServerFn = createServerFn({ method: 'POST' })
 export const refreshTokenServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: RefreshTokenRequest) => input)
     .handler(async ({ data }): Promise<AuthTokenResponse> => {
-        const [{ and, eq, isNull }, { db }, { refreshTokens, users }] =
-            await Promise.all([
-                import('drizzle-orm'),
-                import('#/lib/server/db'),
-                import('#/lib/server/db/schema'),
-            ])
-        const [{ authConfig }, { generateJwt }, { generateRefreshToken }] =
-            await Promise.all([
-                import('#/lib/server/auth/config'),
-                import('#/lib/server/auth/jwt'),
-                import('#/lib/server/auth/refresh-token'),
-            ])
+        const [{ and, eq, isNull }, { db }, { refreshTokens, users }] = await Promise.all([
+            import('drizzle-orm'),
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+        ])
+        const [{ authConfig }, { generateJwt }, { generateRefreshToken }] = await Promise.all([
+            import('#/lib/server/auth/config'),
+            import('#/lib/server/auth/jwt'),
+            import('#/lib/server/auth/refresh-token'),
+        ])
 
         const token = data.Token.trim()
         if (!token) {
@@ -213,10 +197,7 @@ export const refreshTokenServerFn = createServerFn({ method: 'POST' })
         }
 
         const existingToken = await db.query.refreshTokens.findFirst({
-            where: and(
-                eq(refreshTokens.token, token),
-                isNull(refreshTokens.revokedAt),
-            ),
+            where: and(eq(refreshTokens.token, token), isNull(refreshTokens.revokedAt)),
         })
 
         if (!existingToken || existingToken.expiresAt <= new Date()) {
@@ -247,8 +228,7 @@ export const refreshTokenServerFn = createServerFn({ method: 'POST' })
             userId: user.id,
             token: newRefreshToken,
             expiresAt: new Date(
-                Date.now() +
-                    authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
+                Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
             ),
         })
 
@@ -261,17 +241,13 @@ export const refreshTokenServerFn = createServerFn({ method: 'POST' })
 export const requestPasswordResetServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: ResetPasswordRequestRequest) => input)
     .handler(async ({ data }): Promise<AuthMessageResponse> => {
-        const [
-            { eq },
-            { db },
-            { userRequests, users },
-            { sendPasswordResetRequestEmail },
-        ] = await Promise.all([
-            import('drizzle-orm'),
-            import('#/lib/server/db'),
-            import('#/lib/server/db/schema'),
-            import('#/lib/server/email/service'),
-        ])
+        const [{ eq }, { db }, { userRequests, users }, { sendPasswordResetRequestEmail }] =
+            await Promise.all([
+                import('drizzle-orm'),
+                import('#/lib/server/db'),
+                import('#/lib/server/db/schema'),
+                import('#/lib/server/email/service'),
+            ])
 
         const email = data.Email.trim()
         if (!email || !email.includes('@')) {
@@ -351,17 +327,15 @@ export const validatePasswordResetRequestServerFn = createServerFn({
 export const resetPasswordServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: ResetPasswordRequest) => input)
     .handler(async ({ data }): Promise<AuthMessageResponse> => {
-        const [{ and, eq, gt }, { db }, { userRequests, users }] =
-            await Promise.all([
-                import('drizzle-orm'),
-                import('#/lib/server/db'),
-                import('#/lib/server/db/schema'),
-            ])
-        const [{ sendPasswordResettedEmail }, { hashPasswordWithSalt }] =
-            await Promise.all([
-                import('#/lib/server/email/service'),
-                import('#/lib/server/auth/password-hash'),
-            ])
+        const [{ and, eq, gt }, { db }, { userRequests, users }] = await Promise.all([
+            import('drizzle-orm'),
+            import('#/lib/server/db'),
+            import('#/lib/server/db/schema'),
+        ])
+        const [{ sendPasswordResettedEmail }, { hashPasswordWithSalt }] = await Promise.all([
+            import('#/lib/server/email/service'),
+            import('#/lib/server/auth/password-hash'),
+        ])
 
         const requestId = data.RequestId.trim()
         const newPassword = data.NewPassword
@@ -396,15 +370,9 @@ export const resetPasswordServerFn = createServerFn({ method: 'POST' })
             throw new Error(INVALID_RESET_REQUEST_MESSAGE)
         }
 
-        const passwordHash = hashPasswordWithSalt(
-            newPassword,
-            user.passwordSalt,
-        )
+        const passwordHash = hashPasswordWithSalt(newPassword, user.passwordSalt)
 
-        await db
-            .update(users)
-            .set({ passwordHash })
-            .where(eq(users.id, user.id))
+        await db.update(users).set({ passwordHash }).where(eq(users.id, user.id))
 
         await db
             .update(userRequests)

@@ -4,10 +4,7 @@ export function generatePasswordSalt(): string {
     return bcrypt.genSaltSync()
 }
 
-export function hashPasswordWithSalt(
-    plainPassword: string,
-    salt: string,
-): string {
+export function hashPasswordWithSalt(plainPassword: string, salt: string): string {
     return bcrypt.hashSync(plainPassword, salt)
 }
 

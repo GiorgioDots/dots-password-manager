@@ -4,10 +4,7 @@ export function getPublicKeyHeader(request: Request): string | null {
     return request.headers.get('x-public-key')
 }
 
-export function encryptForClient(
-    text: string,
-    publicKeyBase64: string | null,
-): string {
+export function encryptForClient(text: string, publicKeyBase64: string | null): string {
     if (!publicKeyBase64) {
         return text
     }

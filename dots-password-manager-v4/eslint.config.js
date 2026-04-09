@@ -31,11 +31,7 @@ export default [
         },
     },
     {
-        files: [
-            'src/lib/server/**/*.{ts,tsx}',
-            'src/routes/api/**/*.{ts,tsx}',
-            'server.ts',
-        ],
+        files: ['src/lib/server/**/*.{ts,tsx}', 'src/routes/api/**/*.{ts,tsx}', 'server.ts'],
         rules: {
             'no-restricted-imports': [
                 'error',

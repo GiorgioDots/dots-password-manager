@@ -105,10 +105,7 @@ async function performRequest(
     })
 }
 
-export async function authFetch(
-    input: RequestInfo | URL,
-    init?: RequestInit,
-): Promise<Response> {
+export async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
     const accessToken = getAccessToken()
     const firstResponse = await performRequest(input, init, accessToken)
 
@@ -117,11 +114,7 @@ export async function authFetch(
     }
 
     const path =
-        typeof input === 'string'
-            ? input
-            : input instanceof URL
-              ? input.pathname
-              : input.url
+        typeof input === 'string' ? input : input instanceof URL ? input.pathname : input.url
 
     if (path.includes('/api/auth/refresh-token')) {
         return firstResponse

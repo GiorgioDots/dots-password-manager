@@ -1,23 +1,11 @@
 import type { savedPasswords, users } from '#/lib/server/db/schema'
 import { encryptForClient } from '#/lib/server/crypto/public-key'
-import type {
-    ImportExportPasswordDto,
-    SavedPasswordDto,
-} from '#/lib/shared/passwords/contracts'
-import {
-    decryptWithUserSalt,
-    encryptWithUserSalt,
-} from '#/lib/server/auth/vault-crypto'
+import type { ImportExportPasswordDto, SavedPasswordDto } from '#/lib/shared/passwords/contracts'
+import { decryptWithUserSalt, encryptWithUserSalt } from '#/lib/server/auth/vault-crypto'
 
 type UserRow = Pick<
     typeof users.$inferSelect,
-    | 'id'
-    | 'email'
-    | 'username'
-    | 'originalUsername'
-    | 'salt'
-    | 'passwordSalt'
-    | 'passwordHash'
+    'id' | 'email' | 'username' | 'originalUsername' | 'salt' | 'passwordSalt' | 'passwordHash'
 >
 
 type SavedPasswordRow = typeof savedPasswords.$inferSelect
@@ -27,14 +15,7 @@ export function toSavedPasswordEntity(
     user: UserRow,
 ): Pick<
     SavedPasswordRow,
-    | 'name'
-    | 'login'
-    | 'secondLogin'
-    | 'passwordHash'
-    | 'isFavourite'
-    | 'url'
-    | 'notes'
-    | 'tags'
+    'name' | 'login' | 'secondLogin' | 'passwordHash' | 'isFavourite' | 'url' | 'notes' | 'tags'
 > {
     return {
         name: dto.Name,
@@ -53,35 +34,24 @@ export function toSavedPasswordResponse(
     user: UserRow,
     publicKey: string | null,
 ): SavedPasswordDto {
-    const decryptedPassword = decryptWithUserSalt(
-        entity.passwordHash,
-        user.salt,
-    )
+    const decryptedPassword = decryptWithUserSalt(entity.passwordHash, user.salt)
 
     return {
         PasswordId: entity.id,
         Name: entity.name,
         Login: encryptForClient(entity.login, publicKey),
-        SecondLogin: entity.secondLogin
-            ? encryptForClient(entity.secondLogin, publicKey)
-            : null,
+        SecondLogin: entity.secondLogin ? encryptForClient(entity.secondLogin, publicKey) : null,
         Password: encryptForClient(decryptedPassword, publicKey),
         Url: entity.url,
         Notes: entity.notes,
         Tags: entity.tags ?? [],
         IsFavourite: entity.isFavourite,
-        CreatedAt: entity.createdAt
-            ? entity.createdAt.toISOString()
-            : undefined,
-        UpdatedAt: entity.updatedAt
-            ? entity.updatedAt.toISOString()
-            : undefined,
+        CreatedAt: entity.createdAt ? entity.createdAt.toISOString() : undefined,
+        UpdatedAt: entity.updatedAt ? entity.updatedAt.toISOString() : undefined,
     }
 }
 
-export function toSavedPasswordListResponse(
-    entity: SavedPasswordRow,
-): SavedPasswordDto {
+export function toSavedPasswordListResponse(entity: SavedPasswordRow): SavedPasswordDto {
     return {
         PasswordId: entity.id,
         Name: entity.name,
@@ -89,12 +59,8 @@ export function toSavedPasswordListResponse(
         Notes: entity.notes,
         Tags: entity.tags ?? [],
         IsFavourite: entity.isFavourite,
-        CreatedAt: entity.createdAt
-            ? entity.createdAt.toISOString()
-            : undefined,
-        UpdatedAt: entity.updatedAt
-            ? entity.updatedAt.toISOString()
-            : undefined,
+        CreatedAt: entity.createdAt ? entity.createdAt.toISOString() : undefined,
+        UpdatedAt: entity.updatedAt ? entity.updatedAt.toISOString() : undefined,
         Login: '',
         Password: '',
         SecondLogin: null,

@@ -4,8 +4,7 @@ import { db } from '#/lib/server/db'
 import { users } from '#/lib/server/db/schema'
 import { verifyJwt } from '#/lib/server/auth/jwt'
 
-const CLAIM_NAME_ID =
-    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+const CLAIM_NAME_ID = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
 
 type SessionUser = {
     id: string
@@ -29,9 +28,7 @@ function getBearerToken(request: Request): string | null {
     return token
 }
 
-export async function getSessionUser(
-    request: Request,
-): Promise<SessionUser | null> {
+export async function getSessionUser(request: Request): Promise<SessionUser | null> {
     const token = getBearerToken(request)
     if (!token) return null
 

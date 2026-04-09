@@ -77,16 +77,10 @@ async function sendMail(options: {
 }
 
 function welcomeTemplate(user: MailUser, webappHost: string): string {
-    return welcomeTemplateRaw
-        .replaceAll('[USER-EMAIL]', user.email)
-        .replaceAll('[URL]', webappHost)
+    return welcomeTemplateRaw.replaceAll('[USER-EMAIL]', user.email).replaceAll('[URL]', webappHost)
 }
 
-function resetRequestTemplate(
-    user: MailUser,
-    requestId: string,
-    webappHost: string,
-): string {
+function resetRequestTemplate(user: MailUser, requestId: string, webappHost: string): string {
     const requestUrl = `${webappHost}/auth/reset-password?r=${requestId}`
     return passwordResetRequestTemplateRaw
         .replaceAll('[USER-EMAIL]', user.email)

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import z from 'zod'
 
-import PasswordEditForm from '#/components/PasswordEditForm'
+import PasswordEditForm from '#/components/passwords/PasswordEditForm'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader } from '#/components/ui/card'
 import {
@@ -43,9 +43,7 @@ function SavedPasswordsPage() {
     const [commandOpen, setCommandOpen] = useState(false)
     const [selectedId, setSelectedId] = useState<string | null>(null)
     const [draft, setDraft] = useState<SavedPasswordDto | null>(null)
-    const [initialDraft, setInitialDraft] = useState<SavedPasswordDto | null>(
-        null,
-    )
+    const [initialDraft, setInitialDraft] = useState<SavedPasswordDto | null>(null)
 
     function normalize(item: SavedPasswordDto): SavedPasswordDto {
         return {
@@ -88,10 +86,7 @@ function SavedPasswordsPage() {
         }).catch(() => undefined)
     }
 
-    async function selectPassword(
-        id: string,
-        opts?: { syncUrl?: boolean; silent?: boolean },
-    ) {
+    async function selectPassword(id: string, opts?: { syncUrl?: boolean; silent?: boolean }) {
         setSelectedId(id)
         setLoadingSelected(true)
 
@@ -145,7 +140,8 @@ function SavedPasswordsPage() {
 
     useEffect(() => {
         function onKeyDown(event: KeyboardEvent) {
-            const key = event.key?.toLowerCase()
+            if (!event.key) return
+            const key = event.key.toLowerCase()
             if ((event.ctrlKey || event.metaKey) && key === 'k') {
                 event.preventDefault()
                 setCommandOpen((open) => !open)
@@ -163,11 +159,7 @@ function SavedPasswordsPage() {
     }, [draft, initialDraft])
 
     const canSave =
-        !!draft &&
-        !!draft.Name.trim() &&
-        !!draft.Login.trim() &&
-        !!draft.Password.trim() &&
-        isDirty
+        !!draft && !!draft.Name.trim() && !!draft.Login.trim() && !!draft.Password.trim() && isDirty
 
     const canReset = !!draft && isDirty
 
@@ -180,9 +172,7 @@ function SavedPasswordsPage() {
             if (draft.PasswordId) {
                 const updated = await editPassword(draft)
                 setPasswords((prev) =>
-                    prev.map((p) =>
-                        p.PasswordId === updated.PasswordId ? updated : p,
-                    ),
+                    prev.map((p) => (p.PasswordId === updated.PasswordId ? updated : p)),
                 )
 
                 const nextDraft = normalize(updated)
@@ -236,9 +226,7 @@ function SavedPasswordsPage() {
             )
 
             if (selectedId === updated.PasswordId) {
-                setDraft((prev) =>
-                    prev ? { ...prev, IsFavourite: updated.IsFavourite } : prev,
-                )
+                setDraft((prev) => (prev ? { ...prev, IsFavourite: updated.IsFavourite } : prev))
                 setInitialDraft((prev) =>
                     prev ? { ...prev, IsFavourite: updated.IsFavourite } : prev,
                 )
@@ -300,9 +288,7 @@ function SavedPasswordsPage() {
     }, [passwords])
 
     const hasFavourites = orderedPasswords.some((item) => item.IsFavourite)
-    const favouritePasswords = orderedPasswords.filter(
-        (item) => item.IsFavourite,
-    )
+    const favouritePasswords = orderedPasswords.filter((item) => item.IsFavourite)
     const otherPasswords = orderedPasswords.filter((item) => !item.IsFavourite)
 
     return (
@@ -345,9 +331,7 @@ function SavedPasswordsPage() {
                 <CommandInput placeholder="Search by name, login or url..." />
                 <CommandList className="max-h-[min(50vh,420px)]">
                     <CommandEmpty>
-                        {loading
-                            ? 'Loading passwords...'
-                            : 'No passwords found.'}
+                        {loading ? 'Loading passwords...' : 'No passwords found.'}
                     </CommandEmpty>
                     {hasFavourites ? (
                         <CommandGroup heading="Favourites">
@@ -361,9 +345,7 @@ function SavedPasswordsPage() {
                                         }
 
                                         setCommandOpen(false)
-                                        selectPassword(item.PasswordId).catch(
-                                            () => undefined,
-                                        )
+                                        selectPassword(item.PasswordId).catch(() => undefined)
                                     }}
                                 >
                                     <div className="flex w-full items-center justify-between gap-2">
@@ -386,9 +368,9 @@ function SavedPasswordsPage() {
                                                 event.preventDefault()
                                                 event.stopPropagation()
                                                 if (item.PasswordId) {
-                                                    onToggleFavourite(
-                                                        item.PasswordId,
-                                                    ).catch(() => undefined)
+                                                    onToggleFavourite(item.PasswordId).catch(
+                                                        () => undefined,
+                                                    )
                                                 }
                                             }}
                                             className="inline-flex size-7 items-center justify-center rounded-md text-yellow-500 hover:bg-accent"
@@ -401,9 +383,7 @@ function SavedPasswordsPage() {
                         </CommandGroup>
                     ) : null}
 
-                    <CommandGroup
-                        heading={hasFavourites ? 'All passwords' : 'Vault'}
-                    >
+                    <CommandGroup heading={hasFavourites ? 'All passwords' : 'Vault'}>
                         {otherPasswords.map((item) => (
                             <CommandItem
                                 key={item.PasswordId}
@@ -414,9 +394,7 @@ function SavedPasswordsPage() {
                                     }
 
                                     setCommandOpen(false)
-                                    selectPassword(item.PasswordId).catch(
-                                        () => undefined,
-                                    )
+                                    selectPassword(item.PasswordId).catch(() => undefined)
                                 }}
                             >
                                 <div className="flex w-full items-center justify-between gap-2">
@@ -439,9 +417,9 @@ function SavedPasswordsPage() {
                                             event.preventDefault()
                                             event.stopPropagation()
                                             if (item.PasswordId) {
-                                                onToggleFavourite(
-                                                    item.PasswordId,
-                                                ).catch(() => undefined)
+                                                onToggleFavourite(item.PasswordId).catch(
+                                                    () => undefined,
+                                                )
                                             }
                                         }}
                                         className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"

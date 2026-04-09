@@ -1,10 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import {
-    AUTH_STATE_CHANGED_EVENT,
-    clearTokens,
-    isLoggedIn,
-} from '#/lib/client/auth'
+import { AUTH_STATE_CHANGED_EVENT, clearTokens, isLoggedIn } from '#/lib/client/auth'
 
 type ClientAuthContextValue = {
     loggedIn: boolean | undefined
@@ -12,9 +8,7 @@ type ClientAuthContextValue = {
     refresh: () => void
 }
 
-const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(
-    undefined,
-)
+const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(undefined)
 
 export function ClientAuthProvider({ children }: { children: ReactNode }) {
     const [loggedIn, setLoggedIn] = useState<boolean | undefined>(undefined)
@@ -60,11 +54,7 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
         [loggedIn],
     )
 
-    return (
-        <ClientAuthContext.Provider value={value}>
-            {children}
-        </ClientAuthContext.Provider>
-    )
+    return <ClientAuthContext.Provider value={value}>{children}</ClientAuthContext.Provider>
 }
 
 export function useClientAuth() {

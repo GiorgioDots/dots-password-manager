@@ -15,10 +15,7 @@ describe('vault crypto compatibility', () => {
     it('matches expected deterministic ciphertext for known vector', async () => {
         const { encryptWithUserSalt } = await import('#/lib/server/auth/vault-crypto')
 
-        const encrypted = encryptWithUserSalt(
-            'P@ssw0rd-legacy',
-            'MDEyMzQ1Njc4OWFiY2RlZg==',
-        )
+        const encrypted = encryptWithUserSalt('P@ssw0rd-legacy', 'MDEyMzQ1Njc4OWFiY2RlZg==')
 
         expect(encrypted).toBe('jmgWnHd0FClCC8QPSoUhHQ==')
     })
@@ -26,10 +23,7 @@ describe('vault crypto compatibility', () => {
     it('decrypts previously encrypted values', async () => {
         const { decryptWithUserSalt } = await import('#/lib/server/auth/vault-crypto')
 
-        const plain = decryptWithUserSalt(
-            'jmgWnHd0FClCC8QPSoUhHQ==',
-            'MDEyMzQ1Njc4OWFiY2RlZg==',
-        )
+        const plain = decryptWithUserSalt('jmgWnHd0FClCC8QPSoUhHQ==', 'MDEyMzQ1Njc4OWFiY2RlZg==')
 
         expect(plain).toBe('P@ssw0rd-legacy')
     })
@@ -40,13 +34,7 @@ describe('vault crypto compatibility', () => {
         const legacyKeyWithNewline = `${process.env.CRYPTO_BASE_64_KEY}\n`
         const saltBase64 = 'MDEyMzQ1Njc4OWFiY2RlZg=='
         const salt = Buffer.from(saltBase64, 'base64')
-        const derived = pbkdf2Sync(
-            legacyKeyWithNewline,
-            salt,
-            100_000,
-            48,
-            'sha256',
-        )
+        const derived = pbkdf2Sync(legacyKeyWithNewline, salt, 100_000, 48, 'sha256')
         const key = derived.subarray(0, 32)
         const iv = derived.subarray(32, 48)
         const cipher = createCipheriv('aes-256-cbc', key, iv)

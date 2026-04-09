@@ -10,9 +10,7 @@ function readSecretFromFilePath(envVarName: string): string | undefined {
 
 function readRequired(name: string): string {
     const value =
-        process.env[name] ??
-        readSecretFromFilePath(`${name}_FILE`) ??
-        readSecretFromFilePath(name)
+        process.env[name] ?? readSecretFromFilePath(`${name}_FILE`) ?? readSecretFromFilePath(name)
 
     if (!value) {
         throw new Error(`Missing required environment variable: ${name}`)

@@ -16,10 +16,7 @@ describe('client public key encryption', () => {
         })
 
         const publicKeyBase64 = exportSpkiBase64(publicKey)
-        const encryptedBase64 = encryptForClient(
-            'secret-value',
-            publicKeyBase64,
-        )
+        const encryptedBase64 = encryptForClient('secret-value', publicKeyBase64)
 
         const decrypted = privateDecrypt(
             {

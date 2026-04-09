@@ -21,8 +21,7 @@ const buildDatabaseUrl = () => {
         return normalizeEnvValue(process.env.DATABASE_URL)!
     }
 
-    const protocol =
-        normalizeEnvValue(process.env.DATABASE_PROTOCOL) ?? 'postgresql'
+    const protocol = normalizeEnvValue(process.env.DATABASE_PROTOCOL) ?? 'postgresql'
     const host = normalizeEnvValue(process.env.DATABASE_HOST)
     const port = normalizeEnvValue(process.env.DATABASE_PORT)
     const database = normalizeEnvValue(process.env.DATABASE_NAME)

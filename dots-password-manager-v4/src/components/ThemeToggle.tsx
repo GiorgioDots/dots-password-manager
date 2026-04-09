@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ComputerIcon, Moon02Icon, Sun01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { Button } from './ui/button'
 
 type ThemeMode = 'light' | 'dark' | 'auto'
 
@@ -18,9 +19,7 @@ function getInitialMode(): ThemeMode {
 }
 
 function applyThemeMode(mode: ThemeMode) {
-    const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)',
-    ).matches
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     const resolved = mode === 'auto' ? (prefersDark ? 'dark' : 'light') : mode
 
     document.documentElement.classList.remove('light', 'dark')
@@ -59,8 +58,7 @@ export default function ThemeToggle() {
     }, [mode])
 
     function toggleMode() {
-        const nextMode: ThemeMode =
-            mode === 'light' ? 'dark' : mode === 'dark' ? 'auto' : 'light'
+        const nextMode: ThemeMode = mode === 'light' ? 'dark' : mode === 'dark' ? 'auto' : 'light'
         setMode(nextMode)
         applyThemeMode(nextMode)
         window.localStorage.setItem('theme', nextMode)
@@ -72,27 +70,23 @@ export default function ThemeToggle() {
             : `Theme mode: ${mode}. Click to switch mode.`
 
     return (
-        <button
+        <Button
             type="button"
             onClick={toggleMode}
             aria-label={label}
             title={label}
-            className="inline-flex shrink-0 h-8 items-center gap-1 rounded-full border border-border bg-card/80 px-2 text-xs font-semibold text-foreground shadow-sm transition hover:-translate-y-0.5 sm:h-auto sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-sm"
+            variant={'outline'}
+            className="inline-flex h-8 items-center gap-1.5 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
+            // className="inline-flex shrink-0 h-8 items-center gap-1 rounded-full border border-border bg-card/80 px-2 text-xs font-semibold text-foreground shadow-sm transition hover:-translate-y-px sm:h-auto sm:gap-1.5 sm:px-3 sm:py-1.5 sm:text-sm"
         >
             <HugeiconsIcon
-                icon={
-                    mode === 'auto'
-                        ? ComputerIcon
-                        : mode === 'dark'
-                          ? Moon02Icon
-                          : Sun01Icon
-                }
+                icon={mode === 'auto' ? ComputerIcon : mode === 'dark' ? Moon02Icon : Sun01Icon}
                 size={16}
                 strokeWidth={1.8}
             />
             <span className="hidden sm:inline">
                 {mode === 'auto' ? 'Auto' : mode === 'dark' ? 'Dark' : 'Light'}
             </span>
-        </button>
+        </Button>
     )
 }

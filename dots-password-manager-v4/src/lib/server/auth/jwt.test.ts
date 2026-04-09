@@ -23,24 +23,14 @@ describe('jwt compatibility', () => {
         const payload = verifyJwt(token)
 
         expect(
-            payload[
-                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-            ],
+            payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
         ).toBe('00000000-0000-0000-0000-000000000001')
-        expect(
-            payload[
-                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
-            ],
-        ).toBe('user@example.com')
-        expect(
-            payload[
-                'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'
-            ],
-        ).toBe('UserOne')
-        expect(
-            payload[
-                'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
-            ],
-        ).toBe('User')
+        expect(payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress']).toBe(
+            'user@example.com',
+        )
+        expect(payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']).toBe(
+            'UserOne',
+        )
+        expect(payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']).toBe('User')
     })
 })
