@@ -23,10 +23,12 @@ export function ErrorLayout({
                 <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground uppercase">
                     Dots Password Manager
                 </p>
-                <h1 className="mt-3 text-2xl font-semibold tracking-tight">{title}</h1>
+                <h1 className="mt-3 text-2xl font-semibold tracking-tight">
+                    {title}
+                </h1>
                 <p className="mt-2 text-sm text-muted-foreground">{message}</p>
                 {details ? (
-                    <pre className="mt-4 max-h-56 overflow-auto rounded-md border border-border bg-muted p-3 text-left text-xs whitespace-pre-wrap break-words">
+                    <pre className="mt-4 max-h-56 overflow-auto rounded-md border border-border bg-muted p-3 text-left text-xs whitespace-pre-wrap wrap-break-words">
                         {details}
                     </pre>
                 ) : null}
@@ -41,7 +43,9 @@ export function ErrorLayout({
                     {showReload ? (
                         <button
                             type="button"
-                            onClick={onRetry ?? (() => window.location.reload())}
+                            onClick={
+                                onRetry ?? (() => window.location.reload())
+                            }
                             className="inline-flex h-10 items-center justify-center rounded-md border border-border bg-background px-4 text-sm font-medium"
                         >
                             Try again
