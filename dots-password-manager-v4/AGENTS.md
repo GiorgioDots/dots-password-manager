@@ -59,3 +59,16 @@ This file defines repository-specific guidance for coding agents working in this
 - If behavior-critical code is touched (auth/crypto/db), explain the risk and the compatibility strategy.
 - Prefer concrete fixes with verification over speculative changes.
 - When a user reports regression, reproduce or add regression tests whenever feasible.
+
+<!-- intent-skills:start -->
+
+# Skill mappings - when working in these areas, load the linked skill file into context.
+
+skills: - task: "keep route search typing strict for TanStack Router"
+load: "node_modules/@tanstack/router-core/skills/router-core/search-params/SKILL.md" - task: "route protection and redirects in (protected) routes"
+load: "node_modules/@tanstack/router-core/skills/router-core/auth-and-guards/SKILL.md" - task: "server handlers in createFileRoute server blocks for /api routes"
+load: "node_modules/@tanstack/start-client-core/skills/start-core/server-routes/SKILL.md" - task: "TanStack Start app setup with tanstackStart, routeTree.gen.ts, and document shell"
+load: "node_modules/@tanstack/start-client-core/skills/start-core/SKILL.md" - task: "deploying Node.js or Docker production runtime"
+load: "node_modules/@tanstack/start-client-core/skills/start-core/deployment/SKILL.md"
+
+<!-- intent-skills:end -->
