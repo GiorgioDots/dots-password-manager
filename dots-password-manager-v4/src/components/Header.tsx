@@ -7,8 +7,9 @@ import { clearTokens, isLoggedIn } from '#/lib/client-auth'
 import ThemeToggle from './ThemeToggle'
 
 const navLinkClass =
-    'text-sm text-muted-foreground transition-colors hover:text-foreground'
-const navLinkActiveClass = 'text-primary'
+    'relative rounded-lg px-2 py-1 text-sm text-muted-foreground transition-all duration-200 hover:bg-muted/60 hover:text-foreground sm:px-2.5'
+const navLinkActiveClass =
+    'bg-primary/10 text-primary shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.25),0_0_24px_hsl(var(--primary)/0.12)] after:absolute after:-bottom-1 after:left-1/2 after:h-0.5 after:w-8 after:-translate-x-1/2 after:rounded-full after:bg-primary/70 after:content-[""]'
 
 export default function Header() {
     const location = useLocation()
