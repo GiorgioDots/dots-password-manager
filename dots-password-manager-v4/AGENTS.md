@@ -23,8 +23,8 @@ This file defines repository-specific guidance for coding agents working in this
 ## Env and Config Conventions
 
 - DB config must support both:
-  - `DATABASE_URL`
-  - Split vars: `DATABASE_PROTOCOL`, `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, optional `DATABASE_SSLMODE`
+    - `DATABASE_URL`
+    - Split vars: `DATABASE_PROTOCOL`, `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, optional `DATABASE_SSLMODE`
 - Auth config must support env-based secrets (`JWT_SECRET`, `CRYPTO_BASE_64_KEY`).
 - When touching secret loading or crypto logic, keep compatibility with legacy newline-terminated secret file content.
 

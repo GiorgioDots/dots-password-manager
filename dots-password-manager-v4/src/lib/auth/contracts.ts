@@ -1,32 +1,32 @@
 export type LoginRequest = {
-  Login: string
-  Password: string
+    Login: string
+    Password: string
 }
 
 export type RegisterRequest = {
-  Email: string
-  Username: string
-  Password: string
+    Email: string
+    Username: string
+    Password: string
 }
 
 export type RefreshTokenRequest = {
-  Token: string
+    Token: string
 }
 
 export type ResetPasswordRequestRequest = {
-  Email: string
+    Email: string
 }
 
 export type ResetPasswordRequest = {
-  RequestId: string
-  NewPassword: string
+    RequestId: string
+    NewPassword: string
 }
 
 export type AuthTokenResponse = {
-  Token: string
-  RefreshToken: string
+    Token: string
+    RefreshToken: string
 }
 
 export type AuthMessageResponse = {
-  Message: string
+    Message: string
 }

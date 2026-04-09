@@ -1,25 +1,20 @@
 {
-  "projectName": "dots-password-manager-v4",
-  "mode": "file-router",
-  "typescript": true,
-  "tailwind": true,
-  "packageManager": "npm",
-  "git": true,
-  "install": true,
-  "addOnOptions": {
-    "drizzle": {
-      "database": "postgresql"
-    }
-  },
-  "includeExamples": true,
-  "envVarValues": {},
-  "routerOnly": false,
-  "version": 1,
-  "framework": "react",
-  "chosenAddOns": [
-    "drizzle",
-    "mcp",
-    "eslint",
-    "shadcn"
-  ]
+    "projectName": "dots-password-manager-v4",
+    "mode": "file-router",
+    "typescript": true,
+    "tailwind": true,
+    "packageManager": "npm",
+    "git": true,
+    "install": true,
+    "addOnOptions": {
+        "drizzle": {
+            "database": "postgresql"
+        }
+    },
+    "includeExamples": true,
+    "envVarValues": {},
+    "routerOnly": false,
+    "version": 1,
+    "framework": "react",
+    "chosenAddOns": ["drizzle", "mcp", "eslint", "shadcn"]
 }
