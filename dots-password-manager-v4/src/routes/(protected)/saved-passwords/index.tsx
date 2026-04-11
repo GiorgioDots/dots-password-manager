@@ -414,7 +414,7 @@ function SavedPasswordsPage() {
                 onOpenChange={setCommandOpen}
                 title="Select a password"
                 description="Search your vault and open a password entry."
-                className="w-[calc(100vw-2rem)] max-w-xl"
+                className="w-[calc(100vw-2rem)] max-w-xl top-4 xl:top-1/2 xl:-translate-y-1/2"
             >
                 <Command>
                     <CommandInput placeholder="Search by name, login or url..." />
@@ -472,7 +472,13 @@ function SavedPasswordsPage() {
                             </CommandGroup>
                         ) : null}
 
-                        <CommandGroup heading={hasFavourites ? 'All passwords' : 'Vault'}>
+                        <CommandGroup
+                            heading={
+                                hasFavourites && otherPasswords.length > 0
+                                    ? 'All passwords'
+                                    : 'Vault'
+                            }
+                        >
                             {otherPasswords.map((item) => (
                                 <CommandItem
                                     key={item.PasswordId}

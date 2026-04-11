@@ -28,11 +28,23 @@ export const Route = createRootRoute({
                 name: 'description',
                 content: 'Manage your password easily and securely',
             },
+            {
+                name: 'theme-color',
+                content: '#96A4FB',
+            },
         ],
         links: [
             {
                 rel: 'stylesheet',
                 href: appCss,
+            },
+            {
+                rel: 'manifest',
+                href: '/manifest.json',
+            },
+            {
+                rel: 'apple-touch-icon',
+                href: '/android/android-launchericon-192-192.png',
             },
             {
                 rel: 'icon',
@@ -87,6 +99,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             observer.disconnect()
             media.removeEventListener('change', onMediaChange)
         }
+    }, [])
+
+    useEffect(() => {
+        if (!import.meta.env.PROD || !('serviceWorker' in navigator)) {
+            return
+        }
+
+        import('virtual:pwa-register')
+            .then(({ registerSW }) => {
+                registerSW({ immediate: true })
+            })
+            .catch(() => {
+                // Keep app boot resilient even if SW registration fails.
+            })
     }, [])
 
     return (
