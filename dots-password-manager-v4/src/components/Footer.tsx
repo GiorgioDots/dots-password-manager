@@ -1,11 +1,43 @@
+import { useEffect, useRef } from 'react'
+
 import { Github } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 
 export default function Footer() {
+    const footerRef = useRef<HTMLElement | null>(null)
     const year = new Date().getFullYear()
 
+    useEffect(() => {
+        const footerElement = footerRef.current
+        if (!footerElement) {
+            return
+        }
+
+        const updateFooterHeightVar = () => {
+            document.body.style.setProperty('--footer-height', `${footerElement.offsetHeight}px`)
+        }
+
+        updateFooterHeightVar()
+
+        const observer = new ResizeObserver(() => {
+            updateFooterHeightVar()
+        })
+
+        observer.observe(footerElement)
+        window.addEventListener('resize', updateFooterHeightVar)
+
+        return () => {
+            observer.disconnect()
+            window.removeEventListener('resize', updateFooterHeightVar)
+            document.body.style.removeProperty('--footer-height')
+        }
+    }, [])
+
     return (
-        <footer className="border-t border-border/80 px-4 py-3 text-muted-foreground bg-background/80">
+        <footer
+            ref={footerRef}
+            className="absolute bottom-0 w-full border-t border-border/80 px-4 py-3 text-muted-foreground bg-background/80"
+        >
             <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs sm:text-sm">
                 <p className="m-0 inline-flex items-center gap-2">
                     <img

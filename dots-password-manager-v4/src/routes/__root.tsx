@@ -135,9 +135,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
                 <HeadContent />
             </head>
-            <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
+            <body className="font-sans antialiased wrap-anywhere h-dvh overflow-auto flex flex-col ">
                 <ClientAuthProvider>
                     <Header />
+                    <div className="absolute inset-0 bg-background/60"></div>
                     <div
                         className="absolute inset-0 -z-10 bg-cover hidden dark:block"
                         style={{ backgroundImage: 'url(/wallpaper-dark.webp)' }}
@@ -149,11 +150,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
                     <main
                         role="main"
-                        className="relative grow min-h-0 overflow-auto bg-background/60 *:bg-background/50 dark:*:bg-background/70 lg:*:border-x border-border"
+                        className="relative grow *:bg-background/50 dark:*:bg-background/60 lg:*:border-x border-border"
                     >
-                        {/* <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 left-1/12 -z-10" /> */}
-                        <div className="w-full max-w-5xl mx-auto h-full">{children}</div>
-                        {/* <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 right-1/12 -z-10" /> */}
+                        <div className="max-w-6xl min-h-full mx-auto pt-(--header-height) pb-(--footer-height)">
+                            {children}
+                        </div>
                     </main>
                     <Footer />
                     <Toaster richColors position="top-right" theme={toasterTheme} />

@@ -1,6 +1,7 @@
 import { Logout03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
 import { Button } from '#/components/ui/button'
 import { useClientAuth } from '#/lib/client/auth-context'
 import ThemeToggle from './ThemeToggle'
@@ -11,8 +12,35 @@ const navLinkActiveClass =
     'bg-primary/10 text-primary shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.25),0_0_24px_hsl(var(--primary)/0.12)] after:w-8 after:opacity-100'
 
 export default function Header() {
+    const headerRef = useRef<HTMLElement | null>(null)
     const navigate = useNavigate()
     const { loggedIn, logout } = useClientAuth()
+
+    useEffect(() => {
+        const headerElement = headerRef.current
+        if (!headerElement) {
+            return
+        }
+
+        const updateHeaderHeightVar = () => {
+            document.body.style.setProperty('--header-height', `${headerElement.offsetHeight}px`)
+        }
+
+        updateHeaderHeightVar()
+
+        const observer = new ResizeObserver(() => {
+            updateHeaderHeightVar()
+        })
+
+        observer.observe(headerElement)
+        window.addEventListener('resize', updateHeaderHeightVar)
+
+        return () => {
+            observer.disconnect()
+            window.removeEventListener('resize', updateHeaderHeightVar)
+            document.body.style.removeProperty('--header-height')
+        }
+    }, [])
 
     async function onLogout() {
         logout()
@@ -20,7 +48,10 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 border-b border-border bg-background/90 px-4">
+        <header
+            ref={headerRef}
+            className="absolute w-full top-0 z-50 border-b border-border bg-background/80 px-4"
+        >
             <nav className="mx-auto w-full max-w-5xl py-2.5 ">
                 <div className="flex items-center gap-2 sm:gap-4">
                     <h2 className="shrink-0 m-0 min-w-0 text-base font-semibold tracking-tight sm:flex-none">
