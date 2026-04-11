@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 text-xs sm:text-sm">
                 <p className="m-0 inline-flex items-center gap-2">
                     <img
-                        src="/dpm-logo.png"
+                        src="/dpm-logo.webp"
                         alt="Dots Password Manager logo"
                         className="h-5 w-5 rounded-sm border border-border/70 object-cover"
                     />
@@ -17,9 +17,10 @@ export default function Footer() {
                 </p>
                 <div className="flex items-center gap-1">
                     <a
-                        href="https://github.com/GiorgioDots/dots-password-manager"
+                        href="https://github.com/GiorgioDots/dots-password-managerr"
                         target="_blank"
                         rel="noopener noreferrer"
+                        aria-label="Open developer's GitHub repository"
                     >
                         <HugeiconsIcon
                             icon={Github}

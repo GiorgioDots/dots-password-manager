@@ -102,7 +102,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     }, [])
 
     useEffect(() => {
-        if (!import.meta.env.PROD || !('serviceWorker' in navigator)) {
+        if (!('serviceWorker' in navigator)) {
+            return
+        }
+
+        if (!import.meta.env.PROD) {
+            void navigator.serviceWorker
+                .getRegistrations()
+                .then((registrations) =>
+                    Promise.all(registrations.map((registration) => registration.unregister())),
+                )
+                .catch(() => {
+                    // Ignore cleanup errors in local dev.
+                })
+
             return
         }
 
@@ -124,7 +137,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
                 <ClientAuthProvider>
                     <Header />
-                    <div className="grow min-h-0 overflow-auto">{children}</div>
+                    <main role="main" className="grow min-h-0 overflow-auto">
+                        {children}
+                    </main>
                     <Footer />
                     <Toaster richColors position="top-right" theme={toasterTheme} />
                     <TanStackDevtools

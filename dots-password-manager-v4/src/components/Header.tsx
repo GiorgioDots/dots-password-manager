@@ -30,7 +30,7 @@ export default function Header() {
                             className="inline-flex min-w-0 max-w-full items-center gap-0 sm:gap-2 rounded-xl border border-border bg-card/80 px-2 py-1.5 text-foreground no-underline shadow-sm sm:px-3"
                         >
                             <img
-                                src="/dpm-logo.png"
+                                src="/dpm-logo.webp"
                                 alt="Dots Password Manager logo"
                                 className="h-9 w-9 rounded-md border border-border/70 bg-background/60 object-cover "
                             />

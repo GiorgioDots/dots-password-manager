@@ -9,17 +9,18 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-const config = defineConfig({
+const config = defineConfig(({ mode }) => ({
     plugins: [
         devtools(),
         tsconfigPaths({ projects: ['./tsconfig.json'] }),
         tailwindcss(),
         VitePWA({
+            disable: mode !== 'production',
             registerType: 'autoUpdate',
             injectRegister: false,
             outDir: '.output/public',
             manifest: false,
-            includeAssets: ['logo_black.ico', 'logo_white.ico', 'dpm-logo.png'],
+            includeAssets: ['logo_black.ico', 'logo_white.ico', 'dpm-logo.webp'],
             workbox: {
                 globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
                 cleanupOutdatedCaches: true,
@@ -31,6 +32,6 @@ const config = defineConfig({
         nitro({ preset: 'bun', compressPublicAssets: { gzip: true, brotli: true } }),
         viteReact(),
     ],
-})
+}))
 
 export default config
