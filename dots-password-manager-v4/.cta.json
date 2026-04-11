@@ -3,7 +3,7 @@
     "mode": "file-router",
     "typescript": true,
     "tailwind": true,
-    "packageManager": "npm",
+    "packageManager": "bun",
     "git": true,
     "install": true,
     "addOnOptions": {
@@ -16,5 +16,5 @@
     "routerOnly": false,
     "version": 1,
     "framework": "react",
-    "chosenAddOns": ["drizzle", "mcp", "eslint", "shadcn"]
+    "chosenAddOns": ["drizzle", "eslint", "shadcn"]
 }

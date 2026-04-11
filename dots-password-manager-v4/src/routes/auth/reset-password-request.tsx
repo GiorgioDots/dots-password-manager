@@ -142,7 +142,7 @@ function ResetPasswordRequestPage() {
 
                     <div className="mt-5 text-sm">
                         <Link to="/auth/login" className="text-primary hover:underline">
-                            Back to sign in
+                            Go back
                         </Link>
                     </div>
                 </CardContent>

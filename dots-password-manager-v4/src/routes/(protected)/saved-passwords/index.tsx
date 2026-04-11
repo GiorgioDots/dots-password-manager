@@ -8,6 +8,7 @@ import PasswordEditForm from '#/components/passwords/PasswordEditForm'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader } from '#/components/ui/card'
 import {
+    Command,
     CommandDialog,
     CommandEmpty,
     CommandGroup,
@@ -25,6 +26,7 @@ import {
     togglePasswordFavourite,
 } from '#/lib/client/passwords'
 import type { SavedPasswordDto } from '#/lib/shared/passwords/contracts'
+import { cn } from '#/lib/utils'
 
 export const Route = createFileRoute('/(protected)/saved-passwords/')({
     validateSearch: z.object({
@@ -34,7 +36,7 @@ export const Route = createFileRoute('/(protected)/saved-passwords/')({
 })
 
 function SavedPasswordsPage() {
-    const navigate = useNavigate({ from: '/saved-passwords/' })
+    const navigate = useNavigate()
     const search = Route.useSearch()
 
     const [passwords, setPasswords] = useState<SavedPasswordDto[]>([])
@@ -81,6 +83,7 @@ function SavedPasswordsPage() {
 
     function syncSelectedIdToSearch(id: string | null) {
         navigate({
+            to: '/saved-passwords',
             search: id ? { id } : {},
             replace: true,
         }).catch(() => undefined)
@@ -293,18 +296,23 @@ function SavedPasswordsPage() {
 
     return (
         <main className="mx-auto w-full max-w-5xl px-4 pb-8 sm:pb-10 pt-4">
-            <div className="mb-6 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                <h1 className="min-h-7 text-xl font-semibold capitalize">
+            <div className="mb-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <h1
+                    className={cn(
+                        'min-h-7 text-xl font-semibold capitalize',
+                        selectedId ? 'visible' : 'hidden',
+                    )}
+                >
                     {selectedId ? (draft?.Name ?? '') : ''}
                 </h1>
-                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center ml-auto">
                     <Button
                         type="button"
                         onClick={() => setCommandOpen(true)}
-                        className="w-full justify-between sm:w-auto"
+                        className="w-full sm:w-auto"
                     >
                         Open vault
-                        <span className="ml-2 text-xs text-foreground bg-background p-0.5 rounded-sm hidden sm:inline">
+                        <span className="ml-2 text-xs text-foreground bg-card p-0.5 rounded-sm hidden sm:inline">
                             Ctrl+K
                         </span>
                     </Button>
@@ -312,7 +320,6 @@ function SavedPasswordsPage() {
                         type="button"
                         variant="outline"
                         onClick={onAddNew}
-                        size="sm"
                         className="w-full sm:w-auto"
                     >
                         <PlusIcon className="size-4" />
@@ -320,118 +327,6 @@ function SavedPasswordsPage() {
                     </Button>
                 </div>
             </div>
-
-            <CommandDialog
-                open={commandOpen}
-                onOpenChange={setCommandOpen}
-                title="Select a password"
-                description="Search your vault and open a password entry."
-                className="w-[calc(100vw-2rem)] max-w-xl"
-            >
-                <CommandInput placeholder="Search by name, login or url..." />
-                <CommandList className="max-h-[min(50vh,420px)]">
-                    <CommandEmpty>
-                        {loading ? 'Loading passwords...' : 'No passwords found.'}
-                    </CommandEmpty>
-                    {hasFavourites ? (
-                        <CommandGroup heading="Favourites">
-                            {favouritePasswords.map((item) => (
-                                <CommandItem
-                                    key={item.PasswordId}
-                                    value={`${item.Name} ${item.Login} ${item.Url ?? ''}`}
-                                    onSelect={() => {
-                                        if (!item.PasswordId) {
-                                            return
-                                        }
-
-                                        setCommandOpen(false)
-                                        selectPassword(item.PasswordId).catch(() => undefined)
-                                    }}
-                                >
-                                    <div className="flex w-full items-center justify-between gap-2">
-                                        <div className="flex min-w-0 flex-col">
-                                            <span className="truncate font-medium capitalize">
-                                                {item.Name}
-                                            </span>
-                                            <span className="truncate text-xs text-muted-foreground">
-                                                {item.Url || 'No url'}
-                                            </span>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            aria-label="Toggle favourite"
-                                            onMouseDown={(event) => {
-                                                event.preventDefault()
-                                                event.stopPropagation()
-                                            }}
-                                            onClick={(event) => {
-                                                event.preventDefault()
-                                                event.stopPropagation()
-                                                if (item.PasswordId) {
-                                                    onToggleFavourite(item.PasswordId).catch(
-                                                        () => undefined,
-                                                    )
-                                                }
-                                            }}
-                                            className="inline-flex size-7 items-center justify-center rounded-md text-yellow-500 hover:bg-accent"
-                                        >
-                                            <StarIcon className="size-4 fill-current" />
-                                        </button>
-                                    </div>
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    ) : null}
-
-                    <CommandGroup heading={hasFavourites ? 'All passwords' : 'Vault'}>
-                        {otherPasswords.map((item) => (
-                            <CommandItem
-                                key={item.PasswordId}
-                                value={`${item.Name} ${item.Login} ${item.Url ?? ''}`}
-                                onSelect={() => {
-                                    if (!item.PasswordId) {
-                                        return
-                                    }
-
-                                    setCommandOpen(false)
-                                    selectPassword(item.PasswordId).catch(() => undefined)
-                                }}
-                            >
-                                <div className="flex w-full items-center justify-between gap-2">
-                                    <div className="flex min-w-0 flex-col">
-                                        <span className="truncate font-medium capitalize">
-                                            {item.Name}
-                                        </span>
-                                        <span className="truncate text-xs text-muted-foreground">
-                                            {item.Url || 'No url'}
-                                        </span>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        aria-label="Toggle favourite"
-                                        onMouseDown={(event) => {
-                                            event.preventDefault()
-                                            event.stopPropagation()
-                                        }}
-                                        onClick={(event) => {
-                                            event.preventDefault()
-                                            event.stopPropagation()
-                                            if (item.PasswordId) {
-                                                onToggleFavourite(item.PasswordId).catch(
-                                                    () => undefined,
-                                                )
-                                            }
-                                        }}
-                                        className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
-                                    >
-                                        <StarIcon className="size-4" />
-                                    </button>
-                                </div>
-                            </CommandItem>
-                        ))}
-                    </CommandGroup>
-                </CommandList>
-            </CommandDialog>
 
             <Card>
                 <CardHeader>
@@ -513,6 +408,120 @@ function SavedPasswordsPage() {
                     )}
                 </CardContent>
             </Card>
+
+            <CommandDialog
+                open={commandOpen}
+                onOpenChange={setCommandOpen}
+                title="Select a password"
+                description="Search your vault and open a password entry."
+                className="w-[calc(100vw-2rem)] max-w-xl"
+            >
+                <Command>
+                    <CommandInput placeholder="Search by name, login or url..." />
+                    <CommandList className="max-h-[min(50vh,420px)]">
+                        <CommandEmpty>
+                            {loading ? 'Loading passwords...' : 'No passwords found.'}
+                        </CommandEmpty>
+                        {hasFavourites ? (
+                            <CommandGroup heading="Favourites">
+                                {favouritePasswords.map((item) => (
+                                    <CommandItem
+                                        key={item.PasswordId}
+                                        value={`${item.Name} ${item.Login} ${item.Url ?? ''}`}
+                                        onSelect={() => {
+                                            if (!item.PasswordId) {
+                                                return
+                                            }
+
+                                            setCommandOpen(false)
+                                            selectPassword(item.PasswordId).catch(() => undefined)
+                                        }}
+                                    >
+                                        <div className="flex w-full items-center justify-between gap-2">
+                                            <div className="flex min-w-0 flex-col">
+                                                <span className="truncate font-medium capitalize">
+                                                    {item.Name}
+                                                </span>
+                                                <span className="truncate text-xs text-muted-foreground">
+                                                    {item.Url || 'No url'}
+                                                </span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                aria-label="Toggle favourite"
+                                                onMouseDown={(event) => {
+                                                    event.preventDefault()
+                                                    event.stopPropagation()
+                                                }}
+                                                onClick={(event) => {
+                                                    event.preventDefault()
+                                                    event.stopPropagation()
+                                                    if (item.PasswordId) {
+                                                        onToggleFavourite(item.PasswordId).catch(
+                                                            () => undefined,
+                                                        )
+                                                    }
+                                                }}
+                                                className="inline-flex size-7 items-center justify-center rounded-md text-yellow-500 hover:bg-accent"
+                                            >
+                                                <StarIcon className="size-4 fill-current" />
+                                            </button>
+                                        </div>
+                                    </CommandItem>
+                                ))}
+                            </CommandGroup>
+                        ) : null}
+
+                        <CommandGroup heading={hasFavourites ? 'All passwords' : 'Vault'}>
+                            {otherPasswords.map((item) => (
+                                <CommandItem
+                                    key={item.PasswordId}
+                                    value={`${item.Name} ${item.Login} ${item.Url ?? ''}`}
+                                    onSelect={() => {
+                                        if (!item.PasswordId) {
+                                            return
+                                        }
+
+                                        setCommandOpen(false)
+                                        selectPassword(item.PasswordId).catch(() => undefined)
+                                    }}
+                                >
+                                    <div className="flex w-full items-center justify-between gap-2">
+                                        <div className="flex min-w-0 flex-col">
+                                            <span className="truncate font-medium capitalize">
+                                                {item.Name}
+                                            </span>
+                                            <span className="truncate text-xs text-muted-foreground">
+                                                {item.Url || 'No url'}
+                                            </span>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            aria-label="Toggle favourite"
+                                            onMouseDown={(event) => {
+                                                event.preventDefault()
+                                                event.stopPropagation()
+                                            }}
+                                            onClick={(event) => {
+                                                event.preventDefault()
+                                                event.stopPropagation()
+                                                if (item.PasswordId) {
+                                                    onToggleFavourite(item.PasswordId).catch(
+                                                        () => undefined,
+                                                    )
+                                                }
+                                            }}
+                                            className="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
+                                        >
+                                            <StarIcon className="size-4" />
+                                        </button>
+                                    </div>
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </CommandDialog>
         </main>
     )
 }

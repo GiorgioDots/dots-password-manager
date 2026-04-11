@@ -59,7 +59,6 @@ export default function Header() {
                             <Button
                                 type="button"
                                 variant="secondary"
-                                size="sm"
                                 onClick={onLogout}
                                 className="inline-flex h-8 items-center gap-1.5 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
                             >
