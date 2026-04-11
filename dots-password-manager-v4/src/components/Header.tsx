@@ -20,7 +20,7 @@ export default function Header() {
     }
 
     return (
-        <header className="sticky top-0 z-50 border-b border-border bg-background px-4">
+        <header className="sticky top-0 z-50 border-b border-border bg-background/90 px-4">
             <nav className="mx-auto w-full max-w-5xl py-2.5 ">
                 <div className="flex items-center gap-2 sm:gap-4">
                     <h2 className="shrink-0 m-0 min-w-0 text-base font-semibold tracking-tight sm:flex-none">
@@ -58,7 +58,7 @@ export default function Header() {
                         {loggedIn && (
                             <Button
                                 type="button"
-                                variant="secondary"
+                                variant="destructive"
                                 onClick={onLogout}
                                 className="inline-flex h-8 items-center gap-1.5 px-2 text-xs sm:h-9 sm:px-3 sm:text-sm"
                             >

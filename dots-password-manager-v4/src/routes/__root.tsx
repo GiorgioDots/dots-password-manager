@@ -138,13 +138,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
                 <ClientAuthProvider>
                     <Header />
+                    <div
+                        className="absolute inset-0 -z-10 bg-cover hidden dark:block"
+                        style={{ backgroundImage: 'url(/wallpaper-dark.webp)' }}
+                    ></div>
+                    <div
+                        className="absolute inset-0 -z-10 bg-cover block dark:hidden"
+                        style={{ backgroundImage: 'url(/wallpaper-light.webp)' }}
+                    ></div>
+
                     <main
                         role="main"
-                        className="relative grow min-h-0 overflow-auto bg-primary/10 *:bg-background"
+                        className="relative grow min-h-0 overflow-auto bg-background/60 *:bg-background/50 dark:*:bg-background/70 lg:*:border-x border-border"
                     >
-                        <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 left-1/12 -z-10" />
+                        {/* <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 left-1/12 -z-10" /> */}
                         <div className="w-full max-w-5xl mx-auto h-full">{children}</div>
-                        <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 right-1/12 -z-10" />
+                        {/* <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 right-1/12 -z-10" /> */}
                     </main>
                     <Footer />
                     <Toaster richColors position="top-right" theme={toasterTheme} />
