@@ -8,6 +8,7 @@ import appCss from '../styles.css?url'
 import { ClientAuthProvider } from '#/lib/client/auth-context'
 import { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
+import { cn } from '#/lib/utils'
 
 const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`
 
@@ -137,8 +138,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <body className="font-sans antialiased wrap-anywhere flex h-dvh flex-col overflow-hidden">
                 <ClientAuthProvider>
                     <Header />
-                    <main role="main" className="grow min-h-0 overflow-auto">
-                        {children}
+                    <main
+                        role="main"
+                        className="relative grow min-h-0 overflow-auto bg-primary/10 *:bg-background"
+                    >
+                        <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 left-1/12 -z-10" />
+                        <div className="w-full max-w-5xl mx-auto h-full">{children}</div>
+                        <CatppuccinLogo className="absolute top-1/2 -translate-y-1/2 right-1/12 -z-10" />
                     </main>
                     <Footer />
                     <Toaster richColors position="top-right" theme={toasterTheme} />
@@ -157,5 +163,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <Scripts />
             </body>
         </html>
+    )
+}
+
+function CatppuccinLogo({ className }: { className?: string }) {
+    return (
+        <div className={cn('max-w-60 aspect-square bg-transparent!', className)}>
+            <img src="/catppuccin.webp" className="w-full h-full" alt="Catppuccin logo" />
+        </div>
     )
 }
