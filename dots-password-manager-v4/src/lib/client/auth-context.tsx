@@ -10,8 +10,14 @@ type ClientAuthContextValue = {
 
 const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(undefined)
 
-export function ClientAuthProvider({ children }: { children: ReactNode }) {
-    const [loggedIn, setLoggedIn] = useState<boolean | undefined>(undefined)
+export function ClientAuthProvider({
+    children,
+    initialLoggedIn,
+}: {
+    children: ReactNode
+    initialLoggedIn?: boolean
+}) {
+    const [loggedIn, setLoggedIn] = useState<boolean | undefined>(initialLoggedIn)
 
     useEffect(() => {
         async function syncLoginState() {
