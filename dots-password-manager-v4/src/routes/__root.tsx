@@ -130,7 +130,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     }, [])
 
     return (
-        <html lang="en" suppressHydrationWarning className="h-full overflow-hidden">
+        <html lang="en" suppressHydrationWarning className="h-dvh overflow-hidden">
             <head>
                 <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
                 <HeadContent />
@@ -138,21 +138,21 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <body className="font-sans antialiased wrap-anywhere h-dvh overflow-auto flex flex-col ">
                 <ClientAuthProvider>
                     <Header />
-                    <div className="absolute inset-0 bg-background/60"></div>
+                    <div className="fixed h-dvh w-full bg-background/60"></div>
                     <div
-                        className="absolute inset-0 -z-10 bg-cover hidden dark:block"
+                        className="fixed h-dvh inset-0 -z-10 bg-cover hidden dark:block"
                         style={{ backgroundImage: 'url(/wallpaper-dark.webp)' }}
                     ></div>
                     <div
-                        className="absolute inset-0 -z-10 bg-cover block dark:hidden"
+                        className="fixed h-dvh inset-0 -z-10 bg-cover block dark:hidden"
                         style={{ backgroundImage: 'url(/wallpaper-light.webp)' }}
                     ></div>
 
                     <main
                         role="main"
-                        className="relative grow *:bg-background/50 dark:*:bg-background/60 lg:*:border-x border-border"
+                        className="relative grow flex flex-col *:bg-background/50 dark:*:bg-background/60 lg:*:border-x border-border"
                     >
-                        <div className="max-w-6xl min-h-full mx-auto pt-(--header-height) pb-(--footer-height)">
+                        <div className="max-w-6xl *:h-full w-full min-h-dvh mx-auto pt-(--header-height) pb-(--footer-height)">
                             {children}
                         </div>
                     </main>
@@ -173,13 +173,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <Scripts />
             </body>
         </html>
-    )
-}
-
-function CatppuccinLogo({ className }: { className?: string }) {
-    return (
-        <div className={cn('max-w-60 aspect-square bg-transparent!', className)}>
-            <img src="/catppuccin.webp" className="w-full h-full" alt="Catppuccin logo" />
-        </div>
     )
 }

@@ -50,7 +50,7 @@ export default function Header() {
     return (
         <header
             ref={headerRef}
-            className="absolute w-full top-0 z-50 border-b border-border bg-background/80 px-4"
+            className="fixed w-full top-0 z-50 border-b border-border bg-background/80 px-4"
         >
             <nav className="mx-auto w-full max-w-5xl py-2.5 ">
                 <div className="flex items-center gap-2 sm:gap-4">

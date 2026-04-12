@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { PlusIcon, StarIcon } from 'lucide-react'
+import { PlusIcon, StarIcon, XIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import z from 'zod'
@@ -417,8 +417,21 @@ function SavedPasswordsPage() {
                 className="w-[calc(100vw-2rem)] max-w-xl top-4 xl:top-1/2 xl:-translate-y-1/2"
             >
                 <Command>
-                    <CommandInput placeholder="Search by name, login or url..." />
-                    <CommandList className="max-h-[min(50vh,420px)]">
+                    <div className="flex items-center">
+                        <CommandInput
+                            placeholder="Search by name, login or url..."
+                            wrapperClassName="grow"
+                        />
+                        <Button
+                            variant={'ghost'}
+                            size={'icon'}
+                            type="button"
+                            onClick={() => setCommandOpen(false)}
+                        >
+                            <XIcon />
+                        </Button>
+                    </div>
+                    <CommandList className="max-h-[calc(100dvh-5rem)] md:max-h-[min(50vh,420px)]">
                         <CommandEmpty>
                             {loading ? 'Loading passwords...' : 'No passwords found.'}
                         </CommandEmpty>
