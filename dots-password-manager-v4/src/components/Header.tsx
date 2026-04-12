@@ -1,9 +1,9 @@
+import { Button } from '#/components/ui/button'
+import { useClientAuth } from '#/lib/client/auth-context'
 import { Logout03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useEffect, useRef } from 'react'
-import { Button } from '#/components/ui/button'
-import { useClientAuth } from '#/lib/client/auth-context'
 import ThemeToggle from './ThemeToggle'
 
 const navLinkClass =
@@ -43,14 +43,19 @@ export default function Header() {
     }, [])
 
     async function onLogout() {
-        logout()
-        await navigate({ to: '/auth/login' })
+        await logout()
+
+        try {
+            await navigate({ to: '/auth/login', replace: true })
+        } catch {
+            window.location.href = '/auth/login'
+        }
     }
 
     return (
         <header
             ref={headerRef}
-            className="fixed w-full top-0 z-50 border-b border-border bg-background/80 px-4"
+            className="fixed w-full top-0 z-50 h-18 border-b border-border bg-background/80 px-4"
         >
             <nav className="mx-auto w-full max-w-5xl py-2.5 ">
                 <div className="flex items-center gap-2 sm:gap-4">

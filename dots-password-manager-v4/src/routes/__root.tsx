@@ -7,7 +7,7 @@ import Header from '../components/Header'
 import appCss from '../styles.css?url'
 import { ClientAuthProvider } from '#/lib/client/auth-context'
 import { getAuthSessionServerFn } from '#/lib/shared/server-functions/auth'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Toaster } from 'sonner'
 import { cn } from '#/lib/utils'
 
@@ -143,7 +143,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
                 <HeadContent />
             </head>
-            <body className="font-sans antialiased wrap-anywhere h-dvh overflow-auto flex flex-col ">
+            <body
+                className="font-sans antialiased wrap-anywhere h-dvh overflow-auto flex flex-col"
+                style={{ '--header-height': '4.5rem' } as React.CSSProperties}
+            >
                 <ClientAuthProvider initialLoggedIn={initialLoggedIn}>
                     <Header />
                     <div className="fixed h-dvh w-full bg-background/60"></div>
