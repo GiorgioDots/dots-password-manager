@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
-import { AUTH_STATE_CHANGED_EVENT, clearTokens, isLoggedIn } from '#/lib/client/auth'
+import { AUTH_STATE_CHANGED_EVENT, isLoggedIn, logout } from '#/lib/client/auth'
 
 type ClientAuthContextValue = {
     loggedIn: boolean | undefined
-    logout: () => void
-    refresh: () => void
+    logout: () => Promise<void>
+    refresh: () => Promise<void>
 }
 
 const ClientAuthContext = createContext<ClientAuthContextValue | undefined>(undefined)
@@ -14,41 +14,40 @@ export function ClientAuthProvider({ children }: { children: ReactNode }) {
     const [loggedIn, setLoggedIn] = useState<boolean | undefined>(undefined)
 
     useEffect(() => {
-        function syncLoginState() {
-            setLoggedIn(isLoggedIn())
+        async function syncLoginState() {
+            setLoggedIn(await isLoggedIn())
         }
 
-        syncLoginState()
+        syncLoginState().catch(() => {})
 
-        function onStorage(event: StorageEvent) {
-            if (!event.key) {
-                syncLoginState()
-                return
-            }
-
-            if (event.key === 'accessToken' || event.key === 'refreshToken') {
-                syncLoginState()
+        function onVisibilityChange() {
+            if (!document.hidden) {
+                syncLoginState().catch(() => {})
             }
         }
 
-        window.addEventListener(AUTH_STATE_CHANGED_EVENT, syncLoginState)
-        window.addEventListener('storage', onStorage)
+        function onAuthStateChanged() {
+            syncLoginState().catch(() => {})
+        }
+
+        window.addEventListener(AUTH_STATE_CHANGED_EVENT, onAuthStateChanged)
+        document.addEventListener('visibilitychange', onVisibilityChange)
 
         return () => {
-            window.removeEventListener(AUTH_STATE_CHANGED_EVENT, syncLoginState)
-            window.removeEventListener('storage', onStorage)
+            window.removeEventListener(AUTH_STATE_CHANGED_EVENT, onAuthStateChanged)
+            document.removeEventListener('visibilitychange', onVisibilityChange)
         }
     }, [])
 
     const value = useMemo<ClientAuthContextValue>(
         () => ({
             loggedIn,
-            logout: () => {
-                clearTokens()
+            logout: async () => {
+                await logout()
                 setLoggedIn(false)
             },
-            refresh: () => {
-                setLoggedIn(isLoggedIn())
+            refresh: async () => {
+                setLoggedIn(await isLoggedIn())
             },
         }),
         [loggedIn],

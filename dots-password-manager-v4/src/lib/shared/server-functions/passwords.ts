@@ -2,8 +2,6 @@ import { createServerFn } from '@tanstack/react-start'
 
 import type { ImportExportDto, SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 
-const CLAIM_NAME_ID = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-
 type SessionUser = {
     id: string
     email: string
@@ -14,47 +12,17 @@ type SessionUser = {
     passwordHash: string
 }
 
-type AuthInput = {
-    AccessToken: string
-}
-
-async function getSessionUserFromAccessToken(accessToken: string): Promise<SessionUser | null> {
-    const [{ eq }, { db }, { users }, { verifyJwt }] = await Promise.all([
-        import('drizzle-orm'),
-        import('#/lib/server/db'),
-        import('#/lib/server/db/schema'),
-        import('#/lib/server/auth/jwt'),
+async function importSessionUser(): Promise<SessionUser | null> {
+    const [{ getSessionUser }, { getRequest }] = await Promise.all([
+        import('#/lib/server/auth/session'),
+        import('@tanstack/react-start/server'),
     ])
 
-    try {
-        const payload = verifyJwt(accessToken)
-        const userId = payload[CLAIM_NAME_ID]
-
-        if (typeof userId !== 'string') {
-            return null
-        }
-
-        const user = await db.query.users.findFirst({
-            where: eq(users.id, userId),
-            columns: {
-                id: true,
-                email: true,
-                username: true,
-                originalUsername: true,
-                salt: true,
-                passwordSalt: true,
-                passwordHash: true,
-            },
-        })
-
-        return user ?? null
-    } catch {
-        return null
-    }
+    return getSessionUser(getRequest())
 }
 
-async function requireSessionUser(accessToken: string): Promise<SessionUser> {
-    const user = await getSessionUserFromAccessToken(accessToken)
+async function requireSessionUser(): Promise<Exclude<SessionUser, null>> {
+    const user = await importSessionUser()
     if (!user) {
         throw new Error('Unauthorized')
     }
@@ -62,10 +30,9 @@ async function requireSessionUser(accessToken: string): Promise<SessionUser> {
     return user
 }
 
-export const getPasswordsServerFn = createServerFn({ method: 'GET' })
-    .inputValidator((input: AuthInput) => input)
-    .handler(async ({ data }): Promise<SavedPasswordDto[]> => {
-        const user = await requireSessionUser(data.AccessToken)
+export const getPasswordsServerFn = createServerFn({ method: 'GET' }).handler(
+    async (): Promise<SavedPasswordDto[]> => {
+        const user = await requireSessionUser()
         const [{ eq }, { db }, { savedPasswords }, { toSavedPasswordListResponse }] =
             await Promise.all([
                 import('drizzle-orm'),
@@ -79,12 +46,13 @@ export const getPasswordsServerFn = createServerFn({ method: 'GET' })
         })
 
         return passwords.map(toSavedPasswordListResponse)
-    })
+    },
+)
 
 export const getPasswordByIdServerFn = createServerFn({ method: 'GET' })
-    .inputValidator((input: AuthInput & { PasswordId: string }) => input)
+    .inputValidator((input: { PasswordId: string }) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto> => {
-        const user = await requireSessionUser(data.AccessToken)
+        const user = await requireSessionUser()
         const [{ and, eq }, { db }, { savedPasswords }, { toSavedPasswordResponse }] =
             await Promise.all([
                 import('drizzle-orm'),
@@ -105,9 +73,9 @@ export const getPasswordByIdServerFn = createServerFn({ method: 'GET' })
     })
 
 export const createPasswordServerFn = createServerFn({ method: 'POST' })
-    .inputValidator((input: AuthInput & { Password: SavedPasswordDto }) => input)
+    .inputValidator((input: { Password: SavedPasswordDto }) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto> => {
-        const user = await requireSessionUser(data.AccessToken)
+        const user = await requireSessionUser()
         const [{ db }, { savedPasswords }, { toSavedPasswordEntity, toSavedPasswordResponse }] =
             await Promise.all([
                 import('#/lib/server/db'),
@@ -135,9 +103,9 @@ export const createPasswordServerFn = createServerFn({ method: 'POST' })
     })
 
 export const editPasswordServerFn = createServerFn({ method: 'POST' })
-    .inputValidator((input: AuthInput & { Password: SavedPasswordDto }) => input)
+    .inputValidator((input: { Password: SavedPasswordDto }) => input)
     .handler(async ({ data }): Promise<SavedPasswordDto> => {
-        const user = await requireSessionUser(data.AccessToken)
+        const user = await requireSessionUser()
         const [
             { and, eq },
             { db },
@@ -179,9 +147,9 @@ export const editPasswordServerFn = createServerFn({ method: 'POST' })
     })
 
 export const deletePasswordServerFn = createServerFn({ method: 'POST' })
-    .inputValidator((input: AuthInput & { PasswordId: string }) => input)
+    .inputValidator((input: { PasswordId: string }) => input)
     .handler(async ({ data }): Promise<{ Message: string }> => {
-        const user = await requireSessionUser(data.AccessToken)
+        const user = await requireSessionUser()
         const [{ and, eq }, { db }, { savedPasswords }] = await Promise.all([
             import('drizzle-orm'),
             import('#/lib/server/db'),
@@ -205,9 +173,9 @@ export const deletePasswordServerFn = createServerFn({ method: 'POST' })
 export const togglePasswordFavouriteServerFn = createServerFn({
     method: 'POST',
 })
-    .inputValidator((input: AuthInput & { PasswordId: string }) => input)
+    .inputValidator((input: { PasswordId: string }) => input)
     .handler(async ({ data }): Promise<{ PasswordId: string; IsFavourite: boolean }> => {
-        const user = await requireSessionUser(data.AccessToken)
+        const user = await requireSessionUser()
         const [{ and, eq }, { db }, { savedPasswords }] = await Promise.all([
             import('drizzle-orm'),
             import('#/lib/server/db'),
@@ -242,10 +210,9 @@ export const togglePasswordFavouriteServerFn = createServerFn({
         )
     })
 
-export const exportPasswordsServerFn = createServerFn({ method: 'GET' })
-    .inputValidator((input: AuthInput) => input)
-    .handler(async ({ data }): Promise<ImportExportDto> => {
-        const user = await requireSessionUser(data.AccessToken)
+export const exportPasswordsServerFn = createServerFn({ method: 'GET' }).handler(
+    async (): Promise<ImportExportDto> => {
+        const user = await requireSessionUser()
         const [{ eq }, { db }, { savedPasswords }, { toImportExportPassword }] = await Promise.all([
             import('drizzle-orm'),
             import('#/lib/server/db'),
@@ -260,12 +227,13 @@ export const exportPasswordsServerFn = createServerFn({ method: 'GET' })
         return {
             AUTHENTIFIANT: passwords.map((p) => toImportExportPassword(p, user)),
         }
-    })
+    },
+)
 
 export const importPasswordsServerFn = createServerFn({ method: 'POST' })
-    .inputValidator((input: AuthInput & { Payload: ImportExportDto }) => input)
+    .inputValidator((input: { Payload: ImportExportDto }) => input)
     .handler(async ({ data }): Promise<{ Message: string }> => {
-        const user = await requireSessionUser(data.AccessToken)
+        const user = await requireSessionUser()
         const [{ db }, { savedPasswords }, { toSavedPasswordEntity }] = await Promise.all([
             import('#/lib/server/db'),
             import('#/lib/server/db/schema'),

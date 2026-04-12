@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server'
 
 import type {
     AuthMessageResponse,
@@ -70,6 +71,12 @@ export const loginServerFn = createServerFn({ method: 'POST' })
             expiresAt: new Date(
                 Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
             ),
+        })
+
+        const { setSessionCookies } = await import('#/lib/server/auth/session')
+        setSessionCookies({
+            accessToken: jwt,
+            refreshToken,
         })
 
         return {
@@ -171,6 +178,12 @@ export const registerServerFn = createServerFn({ method: 'POST' })
             ),
         })
 
+        const { setSessionCookies } = await import('#/lib/server/auth/session')
+        setSessionCookies({
+            accessToken: jwt,
+            refreshToken,
+        })
+
         return {
             Token: jwt,
             RefreshToken: refreshToken,
@@ -191,7 +204,10 @@ export const refreshTokenServerFn = createServerFn({ method: 'POST' })
             import('#/lib/server/auth/refresh-token'),
         ])
 
-        const token = data.Token.trim()
+        const inputToken = data.Token?.trim()
+        const { getRefreshTokenFromRequest, setSessionCookies } =
+            await import('#/lib/server/auth/session')
+        const token = inputToken || getRefreshTokenFromRequest(getRequest())
         if (!token) {
             throw new Error('Invalid request.')
         }
@@ -232,11 +248,42 @@ export const refreshTokenServerFn = createServerFn({ method: 'POST' })
             ),
         })
 
+        setSessionCookies({
+            accessToken: newJwt,
+            refreshToken: newRefreshToken,
+        })
+
         return {
             Token: newJwt,
             RefreshToken: newRefreshToken,
         }
     })
+
+export const getAuthSessionServerFn = createServerFn({ method: 'GET' }).handler(
+    async (): Promise<{ LoggedIn: boolean }> => {
+        const [{ getSessionUser }] = await Promise.all([import('#/lib/server/auth/session')])
+
+        const user = await getSessionUser(getRequest())
+        return {
+            LoggedIn: Boolean(user),
+        }
+    },
+)
+
+export const logoutServerFn = createServerFn({ method: 'POST' }).handler(
+    async (): Promise<AuthMessageResponse> => {
+        const [{ clearSessionCookies, getRefreshTokenFromRequest, revokeRefreshToken }] =
+            await Promise.all([import('#/lib/server/auth/session')])
+
+        const refreshToken = getRefreshTokenFromRequest(getRequest())
+        await revokeRefreshToken(refreshToken)
+        clearSessionCookies()
+
+        return {
+            Message: 'Logged out successfully',
+        }
+    },
+)
 
 export const requestPasswordResetServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: ResetPasswordRequestRequest) => input)

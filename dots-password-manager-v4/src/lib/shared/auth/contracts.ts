@@ -10,7 +10,7 @@ export type RegisterRequest = {
 }
 
 export type RefreshTokenRequest = {
-    Token: string
+    Token?: string
 }
 
 export type ResetPasswordRequestRequest = {

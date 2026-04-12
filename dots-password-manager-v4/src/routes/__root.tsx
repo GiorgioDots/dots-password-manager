@@ -108,7 +108,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         }
 
         if (!import.meta.env.PROD) {
-            void navigator.serviceWorker
+            navigator.serviceWorker
                 .getRegistrations()
                 .then((registrations) =>
                     Promise.all(registrations.map((registration) => registration.unregister())),

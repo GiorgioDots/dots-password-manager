@@ -1,4 +1,4 @@
-import { forceLogout, getAccessToken, tryRefreshAccessToken } from '#/lib/client/auth'
+import { forceLogout } from '#/lib/client/auth'
 import type { ImportExportDto, SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 import {
     createPasswordServerFn,
@@ -23,42 +23,22 @@ function isUnauthorized(error: unknown): boolean {
     return errorMessage(error, '').toLowerCase().includes('unauthorized')
 }
 
-async function withAuth<T>(fn: (accessToken: string) => Promise<T>): Promise<T> {
-    const firstToken = getAccessToken()
-    if (!firstToken) {
-        forceLogout()
-        throw new Error('Unauthorized')
-    }
-
+async function withAuth<T>(fn: () => Promise<T>): Promise<T> {
     try {
-        return await fn(firstToken)
+        return await fn()
     } catch (error) {
         if (!isUnauthorized(error)) {
             throw error
         }
 
-        const refreshedToken = await tryRefreshAccessToken()
-        if (!refreshedToken) {
-            forceLogout()
-            throw new Error('Unauthorized')
-        }
-
-        try {
-            return await fn(refreshedToken)
-        } catch (retryError) {
-            if (isUnauthorized(retryError)) {
-                forceLogout()
-            }
-            throw retryError
-        }
+        forceLogout()
+        throw new Error('Unauthorized')
     }
 }
 
 export async function getPasswords(): Promise<SavedPasswordDto[]> {
     try {
-        return await withAuth((accessToken) =>
-            getPasswordsServerFn({ data: { AccessToken: accessToken } }),
-        )
+        return await withAuth(() => getPasswordsServerFn())
     } catch {
         throw new Error('Failed to load passwords')
     }
@@ -66,9 +46,9 @@ export async function getPasswords(): Promise<SavedPasswordDto[]> {
 
 export async function getPasswordById(id: string): Promise<SavedPasswordDto> {
     try {
-        return await withAuth((accessToken) =>
+        return await withAuth(() =>
             getPasswordByIdServerFn({
-                data: { AccessToken: accessToken, PasswordId: id },
+                data: { PasswordId: id },
             }),
         )
     } catch {
@@ -78,9 +58,9 @@ export async function getPasswordById(id: string): Promise<SavedPasswordDto> {
 
 export async function createPassword(input: SavedPasswordDto): Promise<SavedPasswordDto> {
     try {
-        return await withAuth((accessToken) =>
+        return await withAuth(() =>
             createPasswordServerFn({
-                data: { AccessToken: accessToken, Password: input },
+                data: { Password: input },
             }),
         )
     } catch {
@@ -90,9 +70,9 @@ export async function createPassword(input: SavedPasswordDto): Promise<SavedPass
 
 export async function editPassword(input: SavedPasswordDto): Promise<SavedPasswordDto> {
     try {
-        return await withAuth((accessToken) =>
+        return await withAuth(() =>
             editPasswordServerFn({
-                data: { AccessToken: accessToken, Password: input },
+                data: { Password: input },
             }),
         )
     } catch {
@@ -102,9 +82,9 @@ export async function editPassword(input: SavedPasswordDto): Promise<SavedPasswo
 
 export async function deletePassword(id: string): Promise<void> {
     try {
-        await withAuth((accessToken) =>
+        await withAuth(() =>
             deletePasswordServerFn({
-                data: { AccessToken: accessToken, PasswordId: id },
+                data: { PasswordId: id },
             }),
         )
     } catch {
@@ -116,9 +96,9 @@ export async function togglePasswordFavourite(
     id: string,
 ): Promise<{ PasswordId: string; IsFavourite: boolean }> {
     try {
-        return await withAuth((accessToken) =>
+        return await withAuth(() =>
             togglePasswordFavouriteServerFn({
-                data: { AccessToken: accessToken, PasswordId: id },
+                data: { PasswordId: id },
             }),
         )
     } catch {
@@ -128,9 +108,7 @@ export async function togglePasswordFavourite(
 
 export async function exportPasswords(): Promise<ImportExportDto> {
     try {
-        return await withAuth((accessToken) =>
-            exportPasswordsServerFn({ data: { AccessToken: accessToken } }),
-        )
+        return await withAuth(() => exportPasswordsServerFn())
     } catch {
         throw new Error('Failed to export passwords')
     }
@@ -138,9 +116,9 @@ export async function exportPasswords(): Promise<ImportExportDto> {
 
 export async function importPasswords(payload: ImportExportDto): Promise<void> {
     try {
-        await withAuth((accessToken) =>
+        await withAuth(() =>
             importPasswordsServerFn({
-                data: { AccessToken: accessToken, Payload: payload },
+                data: { Payload: payload },
             }),
         )
     } catch {

@@ -40,6 +40,7 @@ This file defines repository-specific guidance for coding agents working in this
 - Avoid unrelated formatting churn.
 - Keep route search typing strict for TanStack Router.
 - Use small reusable UI components where appropriate.
+- Do not use unary `void` to discard function return values; handle promises explicitly with `await` or `.catch(...)`.
 
 ## Form Standard (TanStack Form + shadcn Field)
 

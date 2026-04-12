@@ -3,8 +3,8 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/auth/(only-no-auth)')({
     component: RouteComponent,
-    beforeLoad: () => {
-        if (typeof window !== 'undefined' && isLoggedIn()) {
+    beforeLoad: async () => {
+        if (await isLoggedIn()) {
             throw redirect({ to: '/saved-passwords' })
         }
     },

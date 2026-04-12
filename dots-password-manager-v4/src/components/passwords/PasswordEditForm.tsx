@@ -168,7 +168,9 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy name"
-                        onClick={() => void copyValue(draft.Name, 'Name', 'name')}
+                        onClick={() => {
+                            copyValue(draft.Name, 'Name', 'name').catch(() => {})
+                        }}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'name' ? (
@@ -193,7 +195,9 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy login"
-                        onClick={() => void copyValue(draft.Login, 'Login', 'login')}
+                        onClick={() => {
+                            copyValue(draft.Login, 'Login', 'login').catch(() => {})
+                        }}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'login' ? (
@@ -218,9 +222,13 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy second login"
-                        onClick={() =>
-                            void copyValue(draft.SecondLogin ?? '', 'Second login', 'second-login')
-                        }
+                        onClick={() => {
+                            copyValue(
+                                draft.SecondLogin ?? '',
+                                'Second login',
+                                'second-login',
+                            ).catch(() => {})
+                        }}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'second-login' ? (
@@ -272,7 +280,9 @@ export default function PasswordEditForm({
                         <button
                             type="button"
                             aria-label="Copy password"
-                            onClick={() => void copyValue(draft.Password, 'Password', 'password')}
+                            onClick={() => {
+                                copyValue(draft.Password, 'Password', 'password').catch(() => {})
+                            }}
                             className="inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                         >
                             {copiedField === 'password' ? (
@@ -298,7 +308,9 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy url"
-                        onClick={() => void copyValue(draft.Url ?? '', 'Url', 'url')}
+                        onClick={() => {
+                            copyValue(draft.Url ?? '', 'Url', 'url').catch(() => {})
+                        }}
                         className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'url' ? (
@@ -361,7 +373,9 @@ export default function PasswordEditForm({
                         <button
                             type="button"
                             aria-label="Copy tags"
-                            onClick={() => void copyValue(tagsString, 'Tags', 'tags')}
+                            onClick={() => {
+                                copyValue(tagsString, 'Tags', 'tags').catch(() => {})
+                            }}
                             className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                         >
                             {copiedField === 'tags' ? (
@@ -387,7 +401,9 @@ export default function PasswordEditForm({
                     <button
                         type="button"
                         aria-label="Copy notes"
-                        onClick={() => void copyValue(draft.Notes ?? '', 'Notes', 'notes')}
+                        onClick={() => {
+                            copyValue(draft.Notes ?? '', 'Notes', 'notes').catch(() => {})
+                        }}
                         className="absolute right-2 top-2 inline-flex items-center justify-center rounded-md p-1 text-muted-foreground hover:bg-accent"
                     >
                         {copiedField === 'notes' ? (
@@ -463,7 +479,9 @@ export default function PasswordEditForm({
                         <Button
                             type="button"
                             variant={confirmAction === 'delete' ? 'destructive' : 'default'}
-                            onClick={() => void handleConfirmAction()}
+                            onClick={() => {
+                                handleConfirmAction().catch(() => {})
+                            }}
                         >
                             {confirmAction === 'save' ? 'Confirm save' : 'Confirm delete'}
                         </Button>

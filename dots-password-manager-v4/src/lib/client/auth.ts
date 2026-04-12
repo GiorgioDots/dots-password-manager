@@ -1,58 +1,36 @@
-import { refreshTokenServerFn } from '#/lib/shared/server-functions/auth'
+import {
+    getAuthSessionServerFn,
+    logoutServerFn,
+    refreshTokenServerFn,
+} from '#/lib/shared/server-functions/auth'
 
 export const AUTH_STATE_CHANGED_EVENT = 'dpm:auth-state-changed'
 
-function emitAuthStateChanged(): void {
+export function notifyAuthStateChanged(): void {
     if (typeof window === 'undefined') return
     window.dispatchEvent(new Event(AUTH_STATE_CHANGED_EVENT))
 }
 
-export function getAccessToken(): string | null {
-    if (typeof window === 'undefined') return null
-    return window.localStorage.getItem('accessToken')
-}
-
-export function getRefreshToken(): string | null {
-    if (typeof window === 'undefined') return null
-    return window.localStorage.getItem('refreshToken')
-}
-
-export function setTokens(token: string, refreshToken: string): void {
-    if (typeof window === 'undefined') return
-    window.localStorage.setItem('accessToken', token)
-    window.localStorage.setItem('refreshToken', refreshToken)
-    emitAuthStateChanged()
-}
-
-export function clearTokens(): void {
-    if (typeof window === 'undefined') return
-    window.localStorage.removeItem('accessToken')
-    window.localStorage.removeItem('refreshToken')
-    emitAuthStateChanged()
-}
-
-export function isLoggedIn(): boolean {
-    return !!getAccessToken()
+export async function isLoggedIn(): Promise<boolean> {
+    try {
+        const session = await getAuthSessionServerFn()
+        return session.LoggedIn
+    } catch {
+        return false
+    }
 }
 
 let refreshInFlight: Promise<string | null> | null = null
 
 async function refreshAccessToken(): Promise<string | null> {
-    const refreshToken = getRefreshToken()
-    if (!refreshToken) {
-        return null
-    }
-
     try {
-        const data = await refreshTokenServerFn({
-            data: { Token: refreshToken },
-        })
+        const data = await refreshTokenServerFn({ data: {} })
 
         if (!data.Token || !data.RefreshToken) {
             return null
         }
 
-        setTokens(data.Token, data.RefreshToken)
+        notifyAuthStateChanged()
         return data.Token
     } catch {
         return null
@@ -69,8 +47,18 @@ async function refreshAccessTokenOnce(): Promise<string | null> {
     return refreshInFlight
 }
 
+export async function logout(): Promise<void> {
+    try {
+        await logoutServerFn({ data: undefined })
+    } catch {
+        // Keep client flow resilient even if server logout fails.
+    }
+
+    notifyAuthStateChanged()
+}
+
 export function forceLogout(): void {
-    clearTokens()
+    logout().catch(() => {})
     if (typeof window !== 'undefined') {
         window.location.href = '/auth/login'
     }
@@ -106,8 +94,7 @@ async function performRequest(
 }
 
 export async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-    const accessToken = getAccessToken()
-    const firstResponse = await performRequest(input, init, accessToken)
+    const firstResponse = await performRequest(input, init, null)
 
     if (firstResponse.status !== 401) {
         return firstResponse

@@ -3,12 +3,8 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/(protected)')({
     component: RouteComponent,
-    beforeLoad: () => {
-        if (typeof window === 'undefined') {
-            return
-        }
-
-        if (!isLoggedIn()) {
+    beforeLoad: async () => {
+        if (!(await isLoggedIn())) {
             throw redirect({ to: '/auth/login' })
         }
     },

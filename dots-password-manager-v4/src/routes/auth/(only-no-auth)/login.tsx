@@ -1,13 +1,12 @@
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
-import { useEffect } from 'react'
 import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
-import { isLoggedIn, setTokens } from '#/lib/client/auth'
+import { notifyAuthStateChanged } from '#/lib/client/auth'
 import type { LoginRequest } from '#/lib/shared/auth/contracts'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
 import { getErrorMessage, loginServerFn } from '#/lib/shared/server-functions/auth'
@@ -19,12 +18,6 @@ export const Route = createFileRoute('/auth/(only-no-auth)/login')({
 
 function LoginPage() {
     const navigate = useNavigate()
-
-    useEffect(() => {
-        if (isLoggedIn()) {
-            navigate({ to: '/saved-passwords', replace: true }).catch(() => {})
-        }
-    }, [navigate])
 
     const defaultValues: LoginRequest = {
         Login: '',
@@ -87,7 +80,7 @@ function LoginPage() {
                     return
                 }
 
-                setTokens(data.Token, data.RefreshToken)
+                notifyAuthStateChanged()
                 await navigate({ to: '/saved-passwords' })
             } catch (error) {
                 toast.error(getErrorMessage(error, 'Unable to reach the server.'))

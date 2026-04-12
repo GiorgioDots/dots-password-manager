@@ -73,12 +73,20 @@ function SettingsPage() {
                         ref={importInputRef}
                         type="file"
                         accept="application/json,.json"
-                        onChange={(e) => void onImportFileChange(e)}
+                        onChange={(e) => {
+                            onImportFileChange(e).catch(() => {})
+                        }}
                         className="hidden"
                     />
 
                     <div className="flex flex-col gap-2 sm:flex-row">
-                        <Button type="button" variant="outline" onClick={() => void onExport()}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => {
+                                onExport().catch(() => {})
+                            }}
+                        >
                             <DownloadIcon className="size-4" />
                             Export passwords
                         </Button>
