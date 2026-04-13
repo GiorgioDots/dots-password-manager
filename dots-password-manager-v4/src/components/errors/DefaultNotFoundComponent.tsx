@@ -1,4 +1,5 @@
 import type { NotFoundRouteProps } from '@tanstack/react-router'
+
 import { ErrorLayout } from './ErrorLayout'
 
 function formatNotFoundDetails({ routeId, data }: NotFoundRouteProps) {

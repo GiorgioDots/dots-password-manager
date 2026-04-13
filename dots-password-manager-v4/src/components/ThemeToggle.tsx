@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
 import { ComputerIcon, Moon02Icon, Sun01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { useEffect, useState } from 'react'
+
 import { Button } from './ui/button'
 import { Spinner } from './ui/spinner'
 

@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+
 import { ClientAuthContext } from './context'
 
 export function useClientAuth() {

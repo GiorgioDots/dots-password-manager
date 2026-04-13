@@ -1,7 +1,6 @@
-import { useEffect, useRef } from 'react'
-
 import { Github } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
+import { useEffect, useRef } from 'react'
 
 export default function Footer() {
     const footerRef = useRef<HTMLElement | null>(null)

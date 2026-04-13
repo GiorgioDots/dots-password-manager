@@ -1,15 +1,17 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
+
+import { ClientAuthContext } from './context'
+import type { ClientAuthContextValue } from './context'
+
 import {
     AUTH_FORCE_LOGOUT_EVENT,
     AUTH_STATE_CHANGED_EVENT,
     isLoggedIn,
     logout,
 } from '#/lib/client/auth'
-import { ClientAuthContext } from './context'
-import type { ClientAuthContextValue } from './context'
-import { useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 
 export function ClientAuthProvider({
     children,

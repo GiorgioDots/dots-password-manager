@@ -2,6 +2,7 @@ import { useForm } from '@tanstack/react-form'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { toast } from 'sonner'
 
+import { AuthMainContainer } from '#/components/auth/MainContainer'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
@@ -9,7 +10,6 @@ import { Input } from '#/components/ui/input'
 import type { ResetPasswordRequestRequest } from '#/lib/shared/auth/contracts'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
 import { getErrorMessage, requestPasswordResetServerFn } from '#/lib/shared/server-functions/auth'
-import { AuthMainContainer } from '#/components/auth/MainContainer'
 
 export const Route = createFileRoute('/auth/reset-password-request')({
     component: ResetPasswordRequestPage,

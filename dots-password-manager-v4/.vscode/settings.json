@@ -8,5 +8,21 @@
     "files.readonlyInclude": {
         "**/routeTree.gen.ts": true
     },
-    "js/ts.preferences.autoImportFileExcludePatterns": []
+    "js/ts.preferences.autoImportFileExcludePatterns": [],
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "always",
+        "source.fixAll.eslint": "always"
+    },
+    "[typescript]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "always",
+            "source.fixAll.eslint": "always"
+        }
+    },
+    "[typescriptreact]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "always",
+            "source.fixAll.eslint": "always"
+        }
+    }
 }

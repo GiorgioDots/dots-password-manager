@@ -1,6 +1,7 @@
-import nodemailer from 'nodemailer'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
+
+import nodemailer from 'nodemailer'
 
 import passwordResetRequestTemplateRaw from './templates/password-reset-request.html?raw'
 import passwordResettedTemplateRaw from './templates/password-resetted.html?raw'

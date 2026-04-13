@@ -1,9 +1,10 @@
 import { useForm } from '@tanstack/react-form'
-import { useEffect, useState } from 'react'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import z from 'zod'
 
+import { AuthMainContainer } from '#/components/auth/MainContainer'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
@@ -14,7 +15,6 @@ import {
     resetPasswordServerFn,
     validatePasswordResetRequestServerFn,
 } from '#/lib/shared/server-functions/auth'
-import { AuthMainContainer } from '#/components/auth/MainContainer'
 
 export const Route = createFileRoute('/auth/reset-password')({
     validateSearch: z.object({

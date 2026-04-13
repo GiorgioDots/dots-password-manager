@@ -1,4 +1,5 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
+
 import { ErrorLayout } from './ErrorLayout'
 
 function formatErrorDetails({ error, info }: ErrorComponentProps) {

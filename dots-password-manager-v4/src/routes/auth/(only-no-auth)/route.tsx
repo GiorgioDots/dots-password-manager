@@ -1,5 +1,6 @@
-import { isLoggedIn } from '#/lib/client/auth'
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+
+import { isLoggedIn } from '#/lib/client/auth'
 
 export const Route = createFileRoute('/auth/(only-no-auth)')({
     component: RouteComponent,

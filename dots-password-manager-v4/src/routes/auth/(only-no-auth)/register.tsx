@@ -1,7 +1,8 @@
-import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { toast } from 'sonner'
 
+import { AuthMainContainer } from '#/components/auth/MainContainer'
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
@@ -10,7 +11,6 @@ import { notifyAuthStateChanged } from '#/lib/client/auth'
 import type { RegisterRequest } from '#/lib/shared/auth/contracts'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
 import { getErrorMessage, registerServerFn } from '#/lib/shared/server-functions/auth'
-import { AuthMainContainer } from '#/components/auth/MainContainer'
 
 export const Route = createFileRoute('/auth/(only-no-auth)/register')({
     component: RegisterPage,

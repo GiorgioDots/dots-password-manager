@@ -1,9 +1,9 @@
-import { and, eq, isNull } from 'drizzle-orm'
 import { deleteCookie, getCookie, setCookie } from '@tanstack/react-start/server'
+import { and, eq, isNull } from 'drizzle-orm'
 
+import { authConfig } from '#/lib/server/auth/config'
 import { db } from '#/lib/server/db'
 import { refreshTokens as sessionTokens, users } from '#/lib/server/db/schema'
-import { authConfig } from '#/lib/server/auth/config'
 
 function getSessionTokenCookieName(): string {
     return 'dpm_session_token'

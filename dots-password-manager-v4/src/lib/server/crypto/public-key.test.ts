@@ -1,5 +1,6 @@
 import { constants, generateKeyPairSync, privateDecrypt } from 'node:crypto'
 import type { KeyObject } from 'node:crypto'
+
 import { describe, expect, it } from 'vitest'
 
 import { encryptForClient } from '#/lib/server/crypto/public-key'
