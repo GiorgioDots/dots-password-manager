@@ -13,7 +13,6 @@ const navLinkActiveClass =
 
 export default function Header() {
     const headerRef = useRef<HTMLElement | null>(null)
-    const navigate = useNavigate()
     const { loggedIn, logout } = useClientAuth()
 
     useEffect(() => {
@@ -44,12 +43,6 @@ export default function Header() {
 
     async function onLogout() {
         await logout()
-
-        try {
-            await navigate({ to: '/auth/login', replace: true })
-        } catch {
-            window.location.href = '/auth/login'
-        }
     }
 
     return (

@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon, StarIcon, XIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import z from 'zod'
 
@@ -18,13 +18,13 @@ import {
 } from '#/components/ui/command'
 import { Skeleton } from '#/components/ui/skeleton'
 import {
-    createPassword,
-    deletePassword,
-    editPassword,
-    getPasswordById,
-    getPasswords,
-    togglePasswordFavourite,
-} from '#/lib/client/passwords'
+    useCreatePasswordMutation,
+    useDeletePasswordMutation,
+    useEditPasswordMutation,
+    usePasswordByIdQuery,
+    usePasswordsQuery,
+    useTogglePasswordFavouriteMutation,
+} from '#/lib/client/queries/passwords'
 import type { SavedPasswordDto } from '#/lib/shared/passwords/contracts'
 import { cn } from '#/lib/utils'
 
@@ -39,13 +39,11 @@ function SavedPasswordsPage() {
     const navigate = useNavigate()
     const search = Route.useSearch()
 
-    const [passwords, setPasswords] = useState<SavedPasswordDto[]>([])
-    const [loading, setLoading] = useState(true)
-    const [loadingSelected, setLoadingSelected] = useState(false)
     const [commandOpen, setCommandOpen] = useState(false)
-    const [selectedId, setSelectedId] = useState<string | null>(null)
+    const [selectedId, setSelectedId] = useState<string | null>(search.id ?? null)
     const [draft, setDraft] = useState<SavedPasswordDto | null>(null)
     const [initialDraft, setInitialDraft] = useState<SavedPasswordDto | null>(null)
+    const silentSelectionRef = useRef(false)
 
     function normalize(item: SavedPasswordDto): SavedPasswordDto {
         return {
@@ -89,57 +87,79 @@ function SavedPasswordsPage() {
         }).catch(() => undefined)
     }
 
-    async function selectPassword(id: string, opts?: { syncUrl?: boolean; silent?: boolean }) {
+    function selectPassword(id: string, opts?: { syncUrl?: boolean; silent?: boolean }) {
+        silentSelectionRef.current = !!opts?.silent
         setSelectedId(id)
-        setLoadingSelected(true)
-
-        try {
-            const item = await getPasswordById(id)
-            const nextDraft = normalize(item)
-            setDraft(nextDraft)
-            setInitialDraft(nextDraft)
-            if (opts?.syncUrl !== false) {
-                syncSelectedIdToSearch(id)
-            }
-        } catch {
-            if (!opts?.silent) {
-                toast.error('Unable to load selected password.')
-            }
-            setSelectedId(null)
-            setDraft(null)
-            setInitialDraft(null)
-            syncSelectedIdToSearch(null)
-        } finally {
-            setLoadingSelected(false)
+        if (opts?.syncUrl !== false) {
+            syncSelectedIdToSearch(id)
         }
     }
 
-    async function loadPasswords() {
-        setLoading(true)
-        try {
-            const items = await getPasswords()
-            setPasswords(items)
+    const passwordsQuery = usePasswordsQuery()
+    const selectedPasswordQuery = usePasswordByIdQuery(selectedId)
+    const createPasswordMutation = useCreatePasswordMutation()
+    const editPasswordMutation = useEditPasswordMutation()
+    const deletePasswordMutation = useDeletePasswordMutation()
+    const toggleFavouriteMutation = useTogglePasswordFavouriteMutation()
 
-            if (search.id) {
-                await selectPassword(search.id, {
-                    syncUrl: false,
-                    silent: true,
-                })
-            } else {
-                setSelectedId(null)
-                setDraft(null)
-                setInitialDraft(null)
-            }
-        } catch {
-            toast.error('Unable to load passwords.')
-        } finally {
-            setLoading(false)
-        }
-    }
+    const passwords = passwordsQuery.data ?? []
+    const loading = passwordsQuery.isLoading
+    const loadingSelected = !!selectedId && selectedPasswordQuery.isFetching
 
     useEffect(() => {
-        loadPasswords().catch(() => undefined)
-    }, [])
+        const nextSelectedId = search.id ?? null
+
+        // Ignore one stale search tick while opening a new unsaved draft.
+        if (!selectedId && !!nextSelectedId && draft !== null && !draft.PasswordId) {
+            return
+        }
+
+        if (nextSelectedId === selectedId) {
+            return
+        }
+
+        silentSelectionRef.current = true
+        setSelectedId(nextSelectedId)
+
+        if (!nextSelectedId && draft?.PasswordId) {
+            setDraft(null)
+            setInitialDraft(null)
+        }
+    }, [search.id, selectedId, draft])
+
+    useEffect(() => {
+        if (!selectedId || !selectedPasswordQuery.data) {
+            return
+        }
+
+        const nextDraft = normalize(selectedPasswordQuery.data)
+        setDraft(nextDraft)
+        setInitialDraft(nextDraft)
+    }, [selectedId, selectedPasswordQuery.data])
+
+    useEffect(() => {
+        if (!selectedId || !selectedPasswordQuery.isError) {
+            return
+        }
+
+        if (!silentSelectionRef.current) {
+            toast.error('Unable to load selected password.')
+        }
+
+        silentSelectionRef.current = false
+        setSelectedId(null)
+        setDraft(null)
+        setInitialDraft(null)
+        syncSelectedIdToSearch(null)
+    }, [selectedId, selectedPasswordQuery.isError])
+
+    useEffect(() => {
+        if (!passwordsQuery.isError) {
+            return
+        }
+
+        toast.error('Unable to load passwords.')
+    }, [passwordsQuery.isError])
 
     useEffect(() => {
         function onKeyDown(event: KeyboardEvent) {
@@ -173,10 +193,7 @@ function SavedPasswordsPage() {
 
         try {
             if (draft.PasswordId) {
-                const updated = await editPassword(draft)
-                setPasswords((prev) =>
-                    prev.map((p) => (p.PasswordId === updated.PasswordId ? updated : p)),
-                )
+                const updated = await editPasswordMutation.mutateAsync(draft)
 
                 const nextDraft = normalize(updated)
                 setDraft(nextDraft)
@@ -185,8 +202,7 @@ function SavedPasswordsPage() {
                 return
             }
 
-            const created = await createPassword(draft)
-            setPasswords((prev) => [created, ...prev])
+            const created = await createPasswordMutation.mutateAsync(draft)
 
             const nextDraft = normalize(created)
             setSelectedId(created.PasswordId ?? null)
@@ -203,8 +219,7 @@ function SavedPasswordsPage() {
         if (!id) return
 
         try {
-            await deletePassword(id)
-            setPasswords((prev) => prev.filter((p) => p.PasswordId !== id))
+            await deletePasswordMutation.mutateAsync(id)
             if (selectedId === id) {
                 setSelectedId(null)
                 setDraft(null)
@@ -218,15 +233,7 @@ function SavedPasswordsPage() {
 
     async function onToggleFavourite(id: string) {
         try {
-            const updated = await togglePasswordFavourite(id)
-
-            setPasswords((prev) =>
-                prev.map((p) =>
-                    p.PasswordId === updated.PasswordId
-                        ? { ...p, IsFavourite: updated.IsFavourite }
-                        : p,
-                ),
-            )
+            const updated = await toggleFavouriteMutation.mutateAsync(id)
 
             if (selectedId === updated.PasswordId) {
                 setDraft((prev) => (prev ? { ...prev, IsFavourite: updated.IsFavourite } : prev))
@@ -447,7 +454,7 @@ function SavedPasswordsPage() {
                                             }
 
                                             setCommandOpen(false)
-                                            selectPassword(item.PasswordId).catch(() => undefined)
+                                            selectPassword(item.PasswordId)
                                         }}
                                     >
                                         <div className="flex w-full items-center justify-between gap-2">
@@ -471,7 +478,7 @@ function SavedPasswordsPage() {
                                                     event.stopPropagation()
                                                     if (item.PasswordId) {
                                                         onToggleFavourite(item.PasswordId).catch(
-                                                            () => undefined,
+                                                            () => {},
                                                         )
                                                     }
                                                 }}
@@ -502,7 +509,7 @@ function SavedPasswordsPage() {
                                         }
 
                                         setCommandOpen(false)
-                                        selectPassword(item.PasswordId).catch(() => undefined)
+                                        selectPassword(item.PasswordId)
                                     }}
                                 >
                                     <div className="flex w-full items-center justify-between gap-2">
@@ -526,7 +533,7 @@ function SavedPasswordsPage() {
                                                 event.stopPropagation()
                                                 if (item.PasswordId) {
                                                     onToggleFavourite(item.PasswordId).catch(
-                                                        () => undefined,
+                                                        () => {},
                                                     )
                                                 }
                                             }}

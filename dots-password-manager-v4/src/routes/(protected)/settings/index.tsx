@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { DownloadIcon, UploadIcon } from 'lucide-react'
 import { useRef } from 'react'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui/card'
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/(protected)/settings/')({
 
 function SettingsPage() {
     const importInputRef = useRef<HTMLInputElement | null>(null)
+    const queryClient = useQueryClient()
 
     async function onExport() {
         try {
@@ -47,6 +49,7 @@ function SettingsPage() {
             const text = await file.text()
             const payload = JSON.parse(text) as ImportExportDto
             await importPasswords(payload)
+            await queryClient.invalidateQueries()
             toast.success('Passwords imported.')
         } catch {
             toast.error('Unable to import passwords. Check file format.')

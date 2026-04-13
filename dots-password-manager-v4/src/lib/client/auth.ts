@@ -1,6 +1,7 @@
 import { getAuthSessionServerFn, logoutServerFn } from '#/lib/shared/server-functions/auth'
 
 export const AUTH_STATE_CHANGED_EVENT = 'dpm:auth-state-changed'
+export const AUTH_FORCE_LOGOUT_EVENT = 'dpm:auth-force-logout'
 const AUTH_STATE_CACHE_TTL_MS = 15_000
 
 let authStateCache: { loggedIn: boolean; expiresAt: number } | null = null
@@ -64,6 +65,6 @@ export async function logout(): Promise<void> {
 export function forceLogout(): void {
     logout().catch(() => {})
     if (typeof window !== 'undefined') {
-        window.location.href = '/auth/login'
+        window.dispatchEvent(new Event(AUTH_FORCE_LOGOUT_EVENT))
     }
 }
