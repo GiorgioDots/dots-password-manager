@@ -9,10 +9,6 @@ export type RegisterRequest = {
     Password: string
 }
 
-export type RefreshTokenRequest = {
-    Token?: string
-}
-
 export type ResetPasswordRequestRequest = {
     Email: string
 }
@@ -22,9 +18,8 @@ export type ResetPasswordRequest = {
     NewPassword: string
 }
 
-export type AuthTokenResponse = {
-    Token: string
-    RefreshToken: string
+export type AuthSessionResponse = {
+    LoggedIn: boolean
 }
 
 export type AuthMessageResponse = {

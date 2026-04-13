@@ -1,14 +1,17 @@
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { deleteCookie, getCookie, setCookie } from '@tanstack/react-start/server'
 
 import { db } from '#/lib/server/db'
-import { refreshTokens, users } from '#/lib/server/db/schema'
-import { verifyJwt } from '#/lib/server/auth/jwt'
+import { refreshTokens as sessionTokens, users } from '#/lib/server/db/schema'
 import { authConfig } from '#/lib/server/auth/config'
 
-const CLAIM_NAME_ID = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-const AUTH_ACCESS_TOKEN_COOKIE = 'dpm_access_token'
-const AUTH_REFRESH_TOKEN_COOKIE = 'dpm_refresh_token'
+function getSessionTokenCookieName(): string {
+    return 'dpm_session_token'
+}
+
+function getLegacyRefreshTokenCookieName(): string {
+    return 'dpm_refresh_token'
+}
 
 type SessionUser = {
     id: string
@@ -18,28 +21,6 @@ type SessionUser = {
     salt: string
     passwordSalt: string
     passwordHash: string
-}
-
-type SessionTokens = {
-    accessToken: string | null
-    refreshToken: string
-}
-
-type CookieSessionTokens = {
-    accessToken: string
-    refreshToken: string
-}
-
-function getBearerToken(request: Request): string | null {
-    const auth = request.headers.get('authorization')
-    if (!auth) return null
-
-    const [scheme, token] = auth.split(' ')
-    if (!scheme || !token || scheme.toLowerCase() !== 'bearer') {
-        return null
-    }
-
-    return token
 }
 
 function getTokenFromCookieHeader(cookieHeader: string | null, cookieName: string): string | null {
@@ -59,49 +40,34 @@ function getTokenFromCookieHeader(cookieHeader: string | null, cookieName: strin
     return null
 }
 
-function getSessionTokens(request: Request): SessionTokens | null {
-    const accessToken =
-        getTokenFromCookieHeader(request.headers.get('cookie'), AUTH_ACCESS_TOKEN_COOKIE) ??
-        getCookie(AUTH_ACCESS_TOKEN_COOKIE) ??
-        null
-    const refreshToken =
-        getTokenFromCookieHeader(request.headers.get('cookie'), AUTH_REFRESH_TOKEN_COOKIE) ??
-        getCookie(AUTH_REFRESH_TOKEN_COOKIE) ??
-        null
+function readSessionToken(request: Request): string | null {
+    const sessionCookieName = getSessionTokenCookieName()
+    const legacyCookieName = getLegacyRefreshTokenCookieName()
 
-    if (!refreshToken) {
-        return null
-    }
-
-    return {
-        accessToken,
-        refreshToken,
-    }
+    return (
+        getTokenFromCookieHeader(request.headers.get('cookie'), sessionCookieName) ??
+        getCookie(sessionCookieName) ??
+        getTokenFromCookieHeader(request.headers.get('cookie'), legacyCookieName) ??
+        getCookie(legacyCookieName) ??
+        null
+    )
 }
 
-export function setSessionCookies(tokens: CookieSessionTokens): void {
+export function setSessionTokenCookie(sessionToken: string): void {
     const isProd = process.env.NODE_ENV === 'production'
 
-    setCookie(AUTH_ACCESS_TOKEN_COOKIE, tokens.accessToken, {
+    setCookie(getSessionTokenCookieName(), sessionToken, {
         httpOnly: true,
         secure: isProd,
         sameSite: 'lax',
         path: '/',
-        maxAge: authConfig.jwtExpMinutes * 60,
-    })
-
-    setCookie(AUTH_REFRESH_TOKEN_COOKIE, tokens.refreshToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
-        path: '/',
-        maxAge: authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60,
+        maxAge: authConfig.sessionTokenExpDays * 24 * 60 * 60,
     })
 }
 
-export function clearSessionCookies(): void {
-    deleteCookie(AUTH_ACCESS_TOKEN_COOKIE, { path: '/' })
-    deleteCookie(AUTH_REFRESH_TOKEN_COOKIE, { path: '/' })
+export function clearSessionCookie(): void {
+    deleteCookie(getSessionTokenCookieName(), { path: '/' })
+    deleteCookie(getLegacyRefreshTokenCookieName(), { path: '/' })
 }
 
 async function getUserById(userId: string): Promise<SessionUser | null> {
@@ -121,107 +87,40 @@ async function getUserById(userId: string): Promise<SessionUser | null> {
     return user ?? null
 }
 
-async function getSessionUserFromAccessToken(accessToken: string): Promise<SessionUser | null> {
-    try {
-        const payload = verifyJwt(accessToken)
-        const userId = payload[CLAIM_NAME_ID]
-
-        if (typeof userId !== 'string') {
-            return null
-        }
-
-        return getUserById(userId)
-    } catch {
-        return null
-    }
-}
-
-async function refreshSessionUser(refreshToken: string): Promise<SessionUser | null> {
-    const [{ and, isNull }, { generateJwt }, { generateRefreshToken }] = await Promise.all([
-        import('drizzle-orm'),
-        import('#/lib/server/auth/jwt'),
-        import('#/lib/server/auth/refresh-token'),
-    ])
-
+async function getSessionUserFromSessionToken(sessionToken: string): Promise<SessionUser | null> {
     const existingToken = await db.query.refreshTokens.findFirst({
-        where: and(eq(refreshTokens.token, refreshToken), isNull(refreshTokens.revokedAt)),
+        where: and(eq(sessionTokens.token, sessionToken), isNull(sessionTokens.revokedAt)),
     })
 
     if (!existingToken || existingToken.expiresAt <= new Date()) {
         return null
     }
 
-    const user = await getUserById(existingToken.userId)
-    if (!user) {
-        return null
-    }
-
-    const newAccessToken = generateJwt({
-        userId: user.id,
-        email: user.email,
-        originalUsername: user.originalUsername,
-    })
-    const newRefreshToken = generateRefreshToken()
-
-    await db
-        .update(refreshTokens)
-        .set({ revokedAt: new Date() })
-        .where(eq(refreshTokens.id, existingToken.id))
-
-    await db.insert(refreshTokens).values({
-        userId: user.id,
-        token: newRefreshToken,
-        expiresAt: new Date(Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000),
-    })
-
-    setSessionCookies({
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-    })
-
-    return user
+    return getUserById(existingToken.userId)
 }
 
 export async function getSessionUser(request: Request): Promise<SessionUser | null> {
-    const token = getBearerToken(request)
-    if (token) {
-        const user = await getSessionUserFromAccessToken(token)
-        if (user) {
-            return user
-        }
-    }
-
-    const tokens = getSessionTokens(request)
-    if (!tokens) {
+    const sessionToken = readSessionToken(request)
+    if (!sessionToken) {
         return null
     }
 
-    const user = tokens.accessToken ? await getSessionUserFromAccessToken(tokens.accessToken) : null
-
-    if (user) {
-        return user
-    }
-
-    return refreshSessionUser(tokens.refreshToken)
+    return getSessionUserFromSessionToken(sessionToken)
 }
 
-export async function revokeRefreshToken(token: string | null | undefined): Promise<void> {
+export async function revokeSessionToken(token: string | null | undefined): Promise<void> {
     if (!token) {
         return
     }
 
     await db
-        .update(refreshTokens)
+        .update(sessionTokens)
         .set({ revokedAt: new Date() })
-        .where(eq(refreshTokens.token, token))
+        .where(eq(sessionTokens.token, token))
 }
 
-export function getRefreshTokenFromRequest(request: Request): string | null {
-    return (
-        getTokenFromCookieHeader(request.headers.get('cookie'), AUTH_REFRESH_TOKEN_COOKIE) ??
-        getCookie(AUTH_REFRESH_TOKEN_COOKIE) ??
-        null
-    )
+export function getSessionTokenFromRequest(request: Request): string | null {
+    return readSessionToken(request)
 }
 
 export function unauthorizedResponse(): Response {

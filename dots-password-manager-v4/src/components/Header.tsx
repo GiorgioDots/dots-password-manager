@@ -1,5 +1,5 @@
 import { Button } from '#/components/ui/button'
-import { useClientAuth } from '#/lib/client/auth-context'
+import { useClientAuth } from '#/lib/client/auth-context/index'
 import { Logout03Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Link, useNavigate } from '@tanstack/react-router'

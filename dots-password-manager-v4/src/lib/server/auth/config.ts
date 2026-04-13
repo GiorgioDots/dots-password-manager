@@ -19,20 +19,28 @@ function readRequired(name: string): string {
     return value
 }
 
-function readRequiredNumber(name: string): number {
-    const value = readRequired(name)
-    const parsed = Number.parseInt(value, 10)
-    if (Number.isNaN(parsed)) {
-        throw new Error(`Environment variable ${name} must be a number`)
+function readRequiredNumberFromAny(names: string[]): number {
+    for (const name of names) {
+        const raw = process.env[name]
+        if (!raw) {
+            continue
+        }
+
+        const parsed = Number.parseInt(raw, 10)
+        if (Number.isNaN(parsed)) {
+            throw new Error(`Environment variable ${name} must be a number`)
+        }
+
+        return parsed
     }
-    return parsed
+
+    throw new Error(`Missing required environment variable: one of ${names.join(', ')}`)
 }
 
 export const authConfig = {
-    jwtSecret: readRequired('JWT_SECRET'),
-    jwtIssuer: readRequired('JWT_ISSUER'),
-    jwtAudience: readRequired('JWT_AUDIENCE'),
-    jwtExpMinutes: readRequiredNumber('JWT_EXP_MINUTES'),
-    jwtRefreshTokenExpDays: readRequiredNumber('JWT_REFRESH_TOKEN_EXP_DAYS'),
+    sessionTokenExpDays: readRequiredNumberFromAny([
+        'SESSION_TOKEN_EXP_DAYS',
+        'JWT_REFRESH_TOKEN_EXP_DAYS',
+    ]),
     cryptoBase64Key: readRequired('CRYPTO_BASE_64_KEY'),
 }

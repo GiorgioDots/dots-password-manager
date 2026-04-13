@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto'
 
-export function generateRefreshToken(): string {
+export function generateSessionToken(): string {
     return randomBytes(32).toString('base64')
 }

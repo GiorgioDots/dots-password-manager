@@ -3,9 +3,8 @@ import { getRequest } from '@tanstack/react-start/server'
 
 import type {
     AuthMessageResponse,
-    AuthTokenResponse,
+    AuthSessionResponse,
     LoginRequest,
-    RefreshTokenRequest,
     RegisterRequest,
     ResetPasswordRequest,
     ResetPasswordRequestRequest,
@@ -24,23 +23,18 @@ function asMessage(error: unknown, fallback: string): string {
 
 export const loginServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: LoginRequest) => input)
-    .handler(async ({ data }): Promise<AuthTokenResponse> => {
-        const [{ eq, or }, { db }, { refreshTokens, users }] = await Promise.all([
+    .handler(async ({ data }): Promise<AuthSessionResponse> => {
+        const [{ eq, or }, { db }, { refreshTokens: sessionTokens, users }] = await Promise.all([
             import('drizzle-orm'),
             import('#/lib/server/db'),
             import('#/lib/server/db/schema'),
         ])
-        const [
-            { authConfig },
-            { generateJwt },
-            { verifyPasswordWithSalt },
-            { generateRefreshToken },
-        ] = await Promise.all([
-            import('#/lib/server/auth/config'),
-            import('#/lib/server/auth/jwt'),
-            import('#/lib/server/auth/password-hash'),
-            import('#/lib/server/auth/refresh-token'),
-        ])
+        const [{ authConfig }, { verifyPasswordWithSalt }, { generateSessionToken }] =
+            await Promise.all([
+                import('#/lib/server/auth/config'),
+                import('#/lib/server/auth/password-hash'),
+                import('#/lib/server/auth/session-token'),
+            ])
 
         const login = data.Login.trim()
         const password = data.Password
@@ -58,54 +52,41 @@ export const loginServerFn = createServerFn({ method: 'POST' })
             throw new Error('Invalid credentials.')
         }
 
-        const jwt = generateJwt({
+        const sessionToken = generateSessionToken()
+        await db.insert(sessionTokens).values({
             userId: user.id,
-            email: user.email,
-            originalUsername: user.originalUsername,
+            token: sessionToken,
+            expiresAt: new Date(Date.now() + authConfig.sessionTokenExpDays * 24 * 60 * 60 * 1000),
         })
 
-        const refreshToken = generateRefreshToken()
-        await db.insert(refreshTokens).values({
-            userId: user.id,
-            token: refreshToken,
-            expiresAt: new Date(
-                Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
-            ),
-        })
-
-        const { setSessionCookies } = await import('#/lib/server/auth/session')
-        setSessionCookies({
-            accessToken: jwt,
-            refreshToken,
-        })
+        const { setSessionTokenCookie } = await import('#/lib/server/auth/session')
+        setSessionTokenCookie(sessionToken)
 
         return {
-            Token: jwt,
-            RefreshToken: refreshToken,
+            LoggedIn: true,
         }
     })
 
 export const registerServerFn = createServerFn({ method: 'POST' })
     .inputValidator((input: RegisterRequest) => input)
-    .handler(async ({ data }): Promise<AuthTokenResponse> => {
-        const [{ eq }, { randomBytes }, { db }, { refreshTokens, users }] = await Promise.all([
-            import('drizzle-orm'),
-            import('node:crypto'),
-            import('#/lib/server/db'),
-            import('#/lib/server/db/schema'),
-        ])
+    .handler(async ({ data }): Promise<AuthSessionResponse> => {
+        const [{ eq }, { randomBytes }, { db }, { refreshTokens: sessionTokens, users }] =
+            await Promise.all([
+                import('drizzle-orm'),
+                import('node:crypto'),
+                import('#/lib/server/db'),
+                import('#/lib/server/db/schema'),
+            ])
         const [
             { authConfig },
-            { generateJwt },
             { sendWelcomeEmail },
             { generatePasswordSalt, hashPasswordWithSalt },
-            { generateRefreshToken },
+            { generateSessionToken },
         ] = await Promise.all([
             import('#/lib/server/auth/config'),
-            import('#/lib/server/auth/jwt'),
             import('#/lib/server/email/service'),
             import('#/lib/server/auth/password-hash'),
-            import('#/lib/server/auth/refresh-token'),
+            import('#/lib/server/auth/session-token'),
         ])
 
         const email = data.Email.trim()
@@ -163,99 +144,18 @@ export const registerServerFn = createServerFn({ method: 'POST' })
             originalUsername: user.originalUsername,
         })
 
-        const jwt = generateJwt({
+        const sessionToken = generateSessionToken()
+        await db.insert(sessionTokens).values({
             userId: user.id,
-            email: user.email,
-            originalUsername: user.originalUsername,
+            token: sessionToken,
+            expiresAt: new Date(Date.now() + authConfig.sessionTokenExpDays * 24 * 60 * 60 * 1000),
         })
 
-        const refreshToken = generateRefreshToken()
-        await db.insert(refreshTokens).values({
-            userId: user.id,
-            token: refreshToken,
-            expiresAt: new Date(
-                Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
-            ),
-        })
-
-        const { setSessionCookies } = await import('#/lib/server/auth/session')
-        setSessionCookies({
-            accessToken: jwt,
-            refreshToken,
-        })
+        const { setSessionTokenCookie } = await import('#/lib/server/auth/session')
+        setSessionTokenCookie(sessionToken)
 
         return {
-            Token: jwt,
-            RefreshToken: refreshToken,
-        }
-    })
-
-export const refreshTokenServerFn = createServerFn({ method: 'POST' })
-    .inputValidator((input: RefreshTokenRequest) => input)
-    .handler(async ({ data }): Promise<AuthTokenResponse> => {
-        const [{ and, eq, isNull }, { db }, { refreshTokens, users }] = await Promise.all([
-            import('drizzle-orm'),
-            import('#/lib/server/db'),
-            import('#/lib/server/db/schema'),
-        ])
-        const [{ authConfig }, { generateJwt }, { generateRefreshToken }] = await Promise.all([
-            import('#/lib/server/auth/config'),
-            import('#/lib/server/auth/jwt'),
-            import('#/lib/server/auth/refresh-token'),
-        ])
-
-        const inputToken = data.Token?.trim()
-        const { getRefreshTokenFromRequest, setSessionCookies } =
-            await import('#/lib/server/auth/session')
-        const token = inputToken || getRefreshTokenFromRequest(getRequest())
-        if (!token) {
-            throw new Error('Invalid request.')
-        }
-
-        const existingToken = await db.query.refreshTokens.findFirst({
-            where: and(eq(refreshTokens.token, token), isNull(refreshTokens.revokedAt)),
-        })
-
-        if (!existingToken || existingToken.expiresAt <= new Date()) {
-            throw new Error('Invalid or expired refresh token.')
-        }
-
-        const user = await db.query.users.findFirst({
-            where: eq(users.id, existingToken.userId),
-        })
-
-        if (!user) {
-            throw new Error('User not found.')
-        }
-
-        const newJwt = generateJwt({
-            userId: user.id,
-            email: user.email,
-            originalUsername: user.originalUsername,
-        })
-        const newRefreshToken = generateRefreshToken()
-
-        await db
-            .update(refreshTokens)
-            .set({ revokedAt: new Date() })
-            .where(eq(refreshTokens.id, existingToken.id))
-
-        await db.insert(refreshTokens).values({
-            userId: user.id,
-            token: newRefreshToken,
-            expiresAt: new Date(
-                Date.now() + authConfig.jwtRefreshTokenExpDays * 24 * 60 * 60 * 1000,
-            ),
-        })
-
-        setSessionCookies({
-            accessToken: newJwt,
-            refreshToken: newRefreshToken,
-        })
-
-        return {
-            Token: newJwt,
-            RefreshToken: newRefreshToken,
+            LoggedIn: true,
         }
     })
 
@@ -272,12 +172,12 @@ export const getAuthSessionServerFn = createServerFn({ method: 'GET' }).handler(
 
 export const logoutServerFn = createServerFn({ method: 'POST' }).handler(
     async (): Promise<AuthMessageResponse> => {
-        const [{ clearSessionCookies, getRefreshTokenFromRequest, revokeRefreshToken }] =
+        const [{ clearSessionCookie, getSessionTokenFromRequest, revokeSessionToken }] =
             await Promise.all([import('#/lib/server/auth/session')])
 
-        const refreshToken = getRefreshTokenFromRequest(getRequest())
-        await revokeRefreshToken(refreshToken)
-        clearSessionCookies()
+        const sessionToken = getSessionTokenFromRequest(getRequest())
+        await revokeSessionToken(sessionToken)
+        clearSessionCookie()
 
         return {
             Message: 'Logged out successfully',

@@ -92,7 +92,7 @@ function RegisterPage() {
                     data: value,
                 })
 
-                if (!data.Token || !data.RefreshToken) {
+                if (!data.LoggedIn) {
                     toast.error('Registration failed.')
                     return
                 }

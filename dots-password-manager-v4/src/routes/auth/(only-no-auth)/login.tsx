@@ -75,7 +75,7 @@ function LoginPage() {
                     data: value,
                 })
 
-                if (!data.Token || !data.RefreshToken) {
+                if (!data.LoggedIn) {
                     toast.error('Invalid credentials.')
                     return
                 }
