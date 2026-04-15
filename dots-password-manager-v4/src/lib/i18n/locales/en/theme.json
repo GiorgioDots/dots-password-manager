@@ -1,0 +1,7 @@
+{
+    "toggle_aria_auto": "Theme mode: auto (system). Click to switch to light mode.",
+    "toggle_aria_named": "Theme mode: {{mode}}. Click to switch mode.",
+    "mode_auto": "Auto",
+    "mode_dark": "Dark",
+    "mode_light": "Light"
+}

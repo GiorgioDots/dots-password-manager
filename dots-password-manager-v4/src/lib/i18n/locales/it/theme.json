@@ -1,0 +1,7 @@
+{
+    "toggle_aria_auto": "Tema: automatico (sistema). Clicca per passare alla modalità chiara.",
+    "toggle_aria_named": "Tema: {{mode}}. Clicca per cambiare modalità.",
+    "mode_auto": "Auto",
+    "mode_dark": "Scuro",
+    "mode_light": "Chiaro"
+}

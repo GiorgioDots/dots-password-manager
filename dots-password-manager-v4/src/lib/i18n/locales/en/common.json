@@ -1,0 +1,18 @@
+{
+    "app_name": "Dots Password Manager",
+    "logo_alt": "Dots Password Manager logo",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "reset": "Reset",
+    "go_back": "Go back",
+    "server_unreachable": "Unable to reach the server.",
+    "nav_vault": "Vault",
+    "nav_settings": "Settings",
+    "nav_login": "Login",
+    "nav_register": "Register",
+    "app_subtitle": "Secure vault",
+    "logout_button": "Logout",
+    "copyright": "© {{year}} Dots Password Manager",
+    "github_aria": "Open developer's GitHub repository"
+}

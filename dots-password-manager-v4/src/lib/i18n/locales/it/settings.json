@@ -1,0 +1,10 @@
+{
+    "import_export_title": "Importa / Esporta",
+    "import_export_description": "Esporta la tua cassaforte in JSON per il backup, o importa un file JSON compatibile per ripristinare o migrare le password.",
+    "export_button": "Esporta password",
+    "import_button": "Importa password",
+    "toast_exported": "Password esportate.",
+    "toast_export_failed": "Impossibile esportare le password.",
+    "toast_imported": "Password importate.",
+    "toast_import_failed": "Impossibile importare le password. Controlla il formato del file."
+}

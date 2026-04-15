@@ -1,4 +1,5 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 import { ErrorLayout } from './ErrorLayout'
 
@@ -23,12 +24,13 @@ function formatErrorDetails({ error, info }: ErrorComponentProps) {
 }
 
 export function DefaultErrorComponent(props: ErrorComponentProps) {
+    const { t } = useTranslation('error')
     return (
         <ErrorLayout
-            title="Something went wrong"
-            message="The page failed to load correctly. You can retry or go back to the vault home."
+            title={t('generic_title')}
+            message={t('generic_message')}
             details={formatErrorDetails(props)}
-            actionLabel="Go home"
+            actionLabel={t('generic_action')}
             actionTo="/"
             showReload
             onRetry={props.reset}

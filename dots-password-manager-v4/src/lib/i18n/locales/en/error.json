@@ -1,0 +1,9 @@
+{
+    "generic_title": "Something went wrong",
+    "generic_message": "The page failed to load correctly. You can retry or go back to the vault home.",
+    "generic_action": "Go home",
+    "not_found_title": "Page not found",
+    "not_found_message": "This route does not exist or may have been moved.",
+    "not_found_action": "Back to home",
+    "retry_button": "Try again"
+}

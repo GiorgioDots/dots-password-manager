@@ -1,0 +1,10 @@
+{
+    "import_export_title": "Import / Export",
+    "import_export_description": "Export your vault as JSON for backup, or import a compatible JSON file to restore or migrate passwords.",
+    "export_button": "Export passwords",
+    "import_button": "Import passwords",
+    "toast_exported": "Passwords exported.",
+    "toast_export_failed": "Unable to export passwords.",
+    "toast_imported": "Passwords imported.",
+    "toast_import_failed": "Unable to import passwords. Check file format."
+}

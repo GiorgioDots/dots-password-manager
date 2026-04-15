@@ -1,0 +1,9 @@
+{
+    "generic_title": "Qualcosa è andato storto",
+    "generic_message": "La pagina non ha caricato correttamente. Puoi riprovare o tornare alla home della cassaforte.",
+    "generic_action": "Vai alla home",
+    "not_found_title": "Pagina non trovata",
+    "not_found_message": "Questa route non esiste o potrebbe essere stata spostata.",
+    "not_found_action": "Torna alla home",
+    "retry_button": "Riprova"
+}

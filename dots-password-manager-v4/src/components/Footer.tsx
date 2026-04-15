@@ -1,9 +1,11 @@
 import { Github } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function Footer() {
     const footerRef = useRef<HTMLElement | null>(null)
+    const { t } = useTranslation('common')
     const year = new Date().getFullYear()
 
     useEffect(() => {
@@ -41,17 +43,17 @@ export default function Footer() {
                 <p className="m-0 inline-flex items-center gap-2">
                     <img
                         src="/dpm-logo.webp"
-                        alt="Dots Password Manager logo"
+                        alt={t('logo_alt')}
                         className="h-5 w-5 rounded-sm border border-border/70 object-cover"
                     />
-                    <span>&copy; {year} Dots Password Manager</span>
+                    <span>{t('copyright', { year })}</span>
                 </p>
                 <div className="flex items-center gap-1">
                     <a
                         href="https://github.com/GiorgioDots/dots-password-managerr"
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label="Open developer's GitHub repository"
+                        aria-label={t('github_aria')}
                     >
                         <HugeiconsIcon
                             icon={Github}

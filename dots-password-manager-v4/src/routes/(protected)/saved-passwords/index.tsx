@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { PlusIcon } from 'lucide-react'
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import z from 'zod'
 
@@ -30,6 +31,7 @@ export const Route = createFileRoute('/(protected)/saved-passwords/')({
 
 function SavedPasswordsPage() {
     const navigate = useNavigate()
+    const { t } = useTranslation('vault')
     const search = Route.useSearch()
 
     const [commandOpen, setCommandOpen] = useState(false)
@@ -67,7 +69,7 @@ function SavedPasswordsPage() {
             Password: item.Password,
             Url: item.Url?.trim() || '',
             Notes: item.Notes?.trim() || '',
-            Tags: (item.Tags ?? []).map((t) => t.trim()).filter(Boolean),
+            Tags: (item.Tags ?? []).map((tag) => tag.trim()).filter(Boolean),
             IsFavourite: item.IsFavourite ?? false,
         })
     }
@@ -136,7 +138,7 @@ function SavedPasswordsPage() {
         }
 
         if (!silentSelectionRef.current) {
-            toast.error('Unable to load selected password.')
+            toast.error(t('toast_load_selected_failed'))
         }
 
         silentSelectionRef.current = false
@@ -151,7 +153,7 @@ function SavedPasswordsPage() {
             return
         }
 
-        toast.error('Unable to load passwords.')
+        toast.error(t('toast_load_failed'))
     }, [passwordsQuery.isError])
 
     useEffect(() => {
@@ -191,7 +193,7 @@ function SavedPasswordsPage() {
                 const nextDraft = normalize(updated)
                 setDraft(nextDraft)
                 setInitialDraft(nextDraft)
-                toast.success('Password updated.')
+                toast.success(t('toast_updated'))
                 return
             }
 
@@ -202,9 +204,9 @@ function SavedPasswordsPage() {
             setDraft(nextDraft)
             setInitialDraft(nextDraft)
             syncSelectedIdToSearch(created.PasswordId ?? null)
-            toast.success('Password created.')
+            toast.success(t('toast_created'))
         } catch {
-            toast.error('Unable to save password.')
+            toast.error(t('toast_save_failed'))
         }
     }
 
@@ -220,7 +222,7 @@ function SavedPasswordsPage() {
                 syncSelectedIdToSearch(null)
             }
         } catch {
-            toast.error('Unable to delete password.')
+            toast.error(t('toast_delete_failed'))
         }
     }
 
@@ -235,7 +237,7 @@ function SavedPasswordsPage() {
                 )
             }
         } catch {
-            toast.error('Unable to toggle favourite.')
+            toast.error(t('toast_toggle_favourite_failed'))
         }
     }
 
@@ -311,9 +313,9 @@ function SavedPasswordsPage() {
                         onClick={() => setCommandOpen(true)}
                         className="w-full sm:w-auto"
                     >
-                        Open vault
+                        {t('open_vault_button')}
                         <span className="ml-2 text-xs text-foreground bg-card p-0.5 rounded-sm hidden sm:inline">
-                            Ctrl+K
+                            {t('open_vault_shortcut')}
                         </span>
                     </Button>
                     <Button
@@ -323,7 +325,7 @@ function SavedPasswordsPage() {
                         className="w-full sm:w-auto"
                     >
                         <PlusIcon className="size-4" />
-                        Add password
+                        {t('add_password_button')}
                     </Button>
                 </div>
             </div>
@@ -371,9 +373,9 @@ function SavedPasswordsPage() {
                         </div>
                     ) : !draft ? (
                         <div className="rounded-lg border border-dashed p-6 text-center sm:p-8">
-                            <h2 className="text-lg font-medium">Welcome</h2>
+                            <h2 className="text-lg font-medium">{t('empty_state_title')}</h2>
                             <p className="mt-2 text-sm text-muted-foreground">
-                                Add a new password or open the vault.
+                                {t('empty_state_message')}
                             </p>
                             <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
                                 <Button
@@ -381,7 +383,7 @@ function SavedPasswordsPage() {
                                     onClick={() => setCommandOpen(true)}
                                     className="w-full sm:w-auto"
                                 >
-                                    Open vault
+                                    {t('open_vault_button')}
                                 </Button>
                                 <Button
                                     type="button"
@@ -390,7 +392,7 @@ function SavedPasswordsPage() {
                                     className="w-full sm:w-auto"
                                 >
                                     <PlusIcon className="size-4" />
-                                    Add password
+                                    {t('add_password_button')}
                                 </Button>
                             </div>
                         </div>

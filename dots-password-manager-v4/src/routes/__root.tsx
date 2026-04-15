@@ -3,7 +3,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import React, { useEffect, useState } from 'react'
+import { I18nextProvider } from 'react-i18next'
 import { Toaster } from 'sonner'
+
+import i18n from '#/lib/i18n/config'
 
 import Footer from '../components/Footer'
 import Header from '../components/Header'
@@ -156,6 +159,17 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             })
     }, [])
 
+    useEffect(() => {
+        function syncLang() {
+            document.documentElement.lang = i18n.language.split('-')[0]
+        }
+        syncLang()
+        i18n.on('languageChanged', syncLang)
+        return () => {
+            i18n.off('languageChanged', syncLang)
+        }
+    }, [])
+
     return (
         <html lang="en" suppressHydrationWarning className="h-dvh overflow-hidden">
             <head>
@@ -166,42 +180,44 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 className="font-sans antialiased wrap-anywhere h-dvh overflow-auto flex flex-col"
                 style={{ '--header-height': '4.5rem' } as React.CSSProperties}
             >
-                <QueryClientProvider client={queryClient}>
-                    <ClientAuthProvider initialLoggedIn={initialLoggedIn}>
-                        <Header />
-                        <div className="fixed h-dvh w-full bg-background/60"></div>
-                        <div
-                            className="fixed h-dvh inset-0 -z-10 bg-cover hidden dark:block"
-                            style={{ backgroundImage: 'url(/wallpaper-dark.webp)' }}
-                        ></div>
-                        <div
-                            className="fixed h-dvh inset-0 -z-10 bg-cover block dark:hidden"
-                            style={{ backgroundImage: 'url(/wallpaper-light.webp)' }}
-                        ></div>
+                <I18nextProvider i18n={i18n}>
+                    <QueryClientProvider client={queryClient}>
+                        <ClientAuthProvider initialLoggedIn={initialLoggedIn}>
+                            <Header />
+                            <div className="fixed h-dvh w-full bg-background/60"></div>
+                            <div
+                                className="fixed h-dvh inset-0 -z-10 bg-cover hidden dark:block"
+                                style={{ backgroundImage: 'url(/wallpaper-dark.webp)' }}
+                            ></div>
+                            <div
+                                className="fixed h-dvh inset-0 -z-10 bg-cover block dark:hidden"
+                                style={{ backgroundImage: 'url(/wallpaper-light.webp)' }}
+                            ></div>
 
-                        <main
-                            role="main"
-                            className="relative grow flex flex-col *:bg-background/50 dark:*:bg-background/60 lg:*:border-x border-border"
-                        >
-                            <div className="max-w-6xl *:h-full w-full min-h-dvh mx-auto pt-(--header-height) pb-(--footer-height)">
-                                {children}
-                            </div>
-                        </main>
-                        <Footer />
-                        <Toaster richColors position="top-right" theme={toasterTheme} />
-                        <TanStackDevtools
-                            config={{
-                                position: 'bottom-right',
-                            }}
-                            plugins={[
-                                {
-                                    name: 'Tanstack Router',
-                                    render: <TanStackRouterDevtoolsPanel />,
-                                },
-                            ]}
-                        />
-                    </ClientAuthProvider>
-                </QueryClientProvider>
+                            <main
+                                role="main"
+                                className="relative grow flex flex-col *:bg-background/50 dark:*:bg-background/60 lg:*:border-x border-border"
+                            >
+                                <div className="max-w-6xl *:h-full w-full min-h-dvh mx-auto pt-(--header-height) pb-(--footer-height)">
+                                    {children}
+                                </div>
+                            </main>
+                            <Footer />
+                            <Toaster richColors position="top-right" theme={toasterTheme} />
+                            <TanStackDevtools
+                                config={{
+                                    position: 'bottom-right',
+                                }}
+                                plugins={[
+                                    {
+                                        name: 'Tanstack Router',
+                                        render: <TanStackRouterDevtoolsPanel />,
+                                    },
+                                ]}
+                            />
+                        </ClientAuthProvider>
+                    </QueryClientProvider>
+                </I18nextProvider>
                 <Scripts />
             </body>
         </html>

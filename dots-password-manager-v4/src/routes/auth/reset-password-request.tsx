@@ -1,5 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { AuthMainContainer } from '#/components/auth/MainContainer'
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/auth/reset-password-request')({
 })
 
 function ResetPasswordRequestPage() {
+    const { t } = useTranslation(['auth', 'validation', 'common'])
     const defaultValues: ResetPasswordRequestRequest = {
         Email: '',
     }
@@ -24,11 +26,11 @@ function ResetPasswordRequestPage() {
         const normalized = value.trim()
 
         if (!normalized) {
-            return 'Email is required.'
+            return t('validation:email_required')
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
-            return 'Enter a valid email address.'
+            return t('validation:email_invalid')
         }
 
         return undefined
@@ -59,7 +61,7 @@ function ResetPasswordRequestPage() {
 
                 toast.success(data.Message)
             } catch (error) {
-                toast.error(getErrorMessage(error, 'Unable to reach the server.'))
+                toast.error(getErrorMessage(error, t('common:server_unreachable')))
             }
         },
     })
@@ -68,8 +70,8 @@ function ResetPasswordRequestPage() {
         <AuthMainContainer>
             <Card>
                 <CardHeader>
-                    <CardTitle>Reset password</CardTitle>
-                    <CardDescription>We will send you a secure reset link.</CardDescription>
+                    <CardTitle>{t('auth:reset_request_title')}</CardTitle>
+                    <CardDescription>{t('auth:reset_request_description')}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
@@ -108,7 +110,7 @@ function ResetPasswordRequestPage() {
                                                         htmlFor="reset-request-email"
                                                         className="text-muted-foreground"
                                                     >
-                                                        Account email
+                                                        {t('auth:reset_request_email_label')}
                                                     </FieldLabel>
                                                     <Input
                                                         id="reset-request-email"
@@ -133,7 +135,9 @@ function ResetPasswordRequestPage() {
                                         disabled={isSubmitting}
                                         className="w-full"
                                     >
-                                        {isSubmitting ? 'Sending...' : 'Send reset email'}
+                                        {isSubmitting
+                                            ? t('auth:reset_request_submitting')
+                                            : t('auth:reset_request_submit')}
                                     </Button>
                                 </>
                             )}
@@ -142,7 +146,7 @@ function ResetPasswordRequestPage() {
 
                     <div className="mt-5 text-sm">
                         <Link to="/auth/login" className="text-primary hover:underline">
-                            Go back
+                            {t('common:go_back')}
                         </Link>
                     </div>
                 </CardContent>

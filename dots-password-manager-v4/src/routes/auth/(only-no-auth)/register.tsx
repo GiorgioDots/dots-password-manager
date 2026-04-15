@@ -1,5 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { AuthMainContainer } from '#/components/auth/MainContainer'
@@ -18,6 +19,7 @@ export const Route = createFileRoute('/auth/(only-no-auth)/register')({
 
 function RegisterPage() {
     const navigate = useNavigate()
+    const { t } = useTranslation(['auth', 'validation', 'common', 'vault'])
 
     const defaultValues: RegisterRequest = {
         Email: '',
@@ -29,11 +31,11 @@ function RegisterPage() {
         const normalized = value.trim()
 
         if (!normalized) {
-            return 'Email is required.'
+            return t('validation:email_required')
         }
 
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
-            return 'Enter a valid email address.'
+            return t('validation:email_invalid')
         }
 
         return undefined
@@ -43,11 +45,11 @@ function RegisterPage() {
         const normalized = value.trim()
 
         if (!normalized) {
-            return 'Username is required.'
+            return t('validation:username_required')
         }
 
         if (normalized.length < 3) {
-            return 'Use at least 3 characters.'
+            return t('validation:min_3_chars')
         }
 
         return undefined
@@ -55,11 +57,11 @@ function RegisterPage() {
 
     function validatePassword(value: string) {
         if (!value) {
-            return 'Password is required.'
+            return t('validation:password_required')
         }
 
         if (value.length < 8) {
-            return 'Use at least 8 characters.'
+            return t('validation:min_8_chars')
         }
 
         return undefined
@@ -93,14 +95,14 @@ function RegisterPage() {
                 })
 
                 if (!data.LoggedIn) {
-                    toast.error('Registration failed.')
+                    toast.error(t('auth:toast_registration_failed'))
                     return
                 }
 
                 notifyAuthStateChanged()
                 await navigate({ to: '/saved-passwords' })
             } catch (error) {
-                toast.error(getErrorMessage(error, 'Unable to reach the server.'))
+                toast.error(getErrorMessage(error, t('common:server_unreachable')))
             }
         },
     })
@@ -109,8 +111,8 @@ function RegisterPage() {
         <AuthMainContainer>
             <Card>
                 <CardHeader>
-                    <CardTitle>Create account</CardTitle>
-                    <CardDescription>Start protecting your credentials.</CardDescription>
+                    <CardTitle>{t('auth:register_title')}</CardTitle>
+                    <CardDescription>{t('auth:register_description')}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
@@ -149,7 +151,7 @@ function RegisterPage() {
                                                         htmlFor="register-email"
                                                         className="text-muted-foreground"
                                                     >
-                                                        Email
+                                                        {t('auth:register_email_label')}
                                                     </FieldLabel>
                                                     <Input
                                                         id="register-email"
@@ -187,7 +189,7 @@ function RegisterPage() {
                                                         htmlFor="register-username"
                                                         className="text-muted-foreground"
                                                     >
-                                                        Username
+                                                        {t('auth:register_username_label')}
                                                     </FieldLabel>
                                                     <Input
                                                         id="register-username"
@@ -224,7 +226,7 @@ function RegisterPage() {
                                                         htmlFor="register-password"
                                                         className="text-muted-foreground"
                                                     >
-                                                        Password
+                                                        {t('vault:field_password')}
                                                     </FieldLabel>
                                                     <Input
                                                         id="register-password"
@@ -249,7 +251,9 @@ function RegisterPage() {
                                         disabled={isSubmitting}
                                         className="w-full"
                                     >
-                                        {isSubmitting ? 'Creating account...' : 'Create account'}
+                                        {isSubmitting
+                                            ? t('auth:register_submitting')
+                                            : t('auth:register_submit')}
                                     </Button>
                                 </>
                             )}
@@ -258,7 +262,7 @@ function RegisterPage() {
 
                     <div className="mt-5 text-sm">
                         <Link to="/auth/login" className="text-primary hover:underline">
-                            Already have an account? Sign in
+                            {t('auth:register_login_link')}
                         </Link>
                     </div>
                 </CardContent>

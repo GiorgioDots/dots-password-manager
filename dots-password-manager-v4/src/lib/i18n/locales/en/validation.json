@@ -1,0 +1,12 @@
+{
+    "email_required": "Email is required.",
+    "email_invalid": "Enter a valid email address.",
+    "login_required": "Email or username is required.",
+    "min_3_chars": "Use at least 3 characters.",
+    "min_8_chars": "Use at least 8 characters.",
+    "password_required": "Password is required.",
+    "password_min_length": "Password must have at least 8 characters.",
+    "confirm_password_required": "Please confirm your password.",
+    "passwords_mismatch": "Passwords do not match.",
+    "username_required": "Username is required."
+}

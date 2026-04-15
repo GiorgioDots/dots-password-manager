@@ -24,5 +24,14 @@
             "source.organizeImports": "always",
             "source.fixAll.eslint": "always"
         }
-    }
+    },
+    "i18n-ally.localesPaths": ["src/lib/i18n/locales"],
+    "i18n-ally.pathMatcher": "{locale}/{namespace}.{ext}",
+    "i18n-ally.enabledFrameworks": ["react-i18next"],
+    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.displayLanguage": "en",
+    "i18n-ally.keystyle": "flat",
+    "i18n-ally.namespace": true,
+    "i18n-ally.defaultNamespace": "common",
+    "i18n-ally.namespaceDelimiter": ":"
 }

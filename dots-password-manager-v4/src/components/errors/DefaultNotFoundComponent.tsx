@@ -1,4 +1,5 @@
 import type { NotFoundRouteProps } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 import { ErrorLayout } from './ErrorLayout'
 
@@ -21,12 +22,13 @@ function formatNotFoundDetails({ routeId, data }: NotFoundRouteProps) {
 }
 
 export function DefaultNotFoundComponent(props: NotFoundRouteProps) {
+    const { t } = useTranslation('error')
     return (
         <ErrorLayout
-            title="Page not found"
-            message="This route does not exist or may have been moved."
+            title={t('not_found_title')}
+            message={t('not_found_message')}
             details={formatNotFoundDetails(props)}
-            actionLabel="Back to home"
+            actionLabel={t('not_found_action')}
             actionTo="/"
         />
     )

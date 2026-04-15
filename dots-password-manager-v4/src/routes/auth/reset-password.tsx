@@ -1,6 +1,7 @@
 import { useForm } from '@tanstack/react-form'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import z from 'zod'
 
@@ -25,6 +26,7 @@ export const Route = createFileRoute('/auth/reset-password')({
 
 function ResetPasswordPage() {
     const navigate = useNavigate()
+    const { t } = useTranslation(['auth', 'validation', 'common'])
     const search = Route.useSearch()
     const requestId = search.r ?? ''
     const [isRequestValid, setIsRequestValid] = useState(false)
@@ -39,11 +41,11 @@ function ResetPasswordPage() {
 
     function validatePassword(value: string) {
         if (!value) {
-            return 'Password is required.'
+            return t('validation:password_required')
         }
 
         if (value.length < 8) {
-            return 'Password must have at least 8 characters.'
+            return t('validation:password_min_length')
         }
 
         return undefined
@@ -51,11 +53,11 @@ function ResetPasswordPage() {
 
     function validateConfirmPassword(password: string, confirmPassword: string) {
         if (!confirmPassword) {
-            return 'Please confirm your password.'
+            return t('validation:confirm_password_required')
         }
 
         if (password !== confirmPassword) {
-            return 'Passwords do not match.'
+            return t('validation:passwords_mismatch')
         }
 
         return undefined
@@ -85,7 +87,7 @@ function ResetPasswordPage() {
         },
         onSubmit: async ({ value }) => {
             if (!requestId) {
-                toast.error('Invalid reset link.')
+                toast.error(t('auth:toast_reset_link_invalid'))
                 return
             }
 
@@ -101,7 +103,7 @@ function ResetPasswordPage() {
                 form.reset()
                 await navigate({ to: '/auth/login', replace: true })
             } catch (submitError) {
-                const backendMessage = getErrorMessage(submitError, 'Unable to reach the server.')
+                const backendMessage = getErrorMessage(submitError, t('common:server_unreachable'))
                 toast.error(backendMessage)
                 setError(backendMessage)
 
@@ -114,7 +116,7 @@ function ResetPasswordPage() {
 
     useEffect(() => {
         if (!requestId) {
-            setError('This reset link is invalid or expired.')
+            setError(t('auth:reset_link_invalid'))
             setIsRequestValid(false)
             setCheckingRequest(false)
             return
@@ -130,12 +132,7 @@ function ResetPasswordPage() {
                 setIsRequestValid(true)
             })
             .catch((validationError) => {
-                setError(
-                    getErrorMessage(
-                        validationError,
-                        'Unable to validate reset link. Please try again later.',
-                    ),
-                )
+                setError(getErrorMessage(validationError, t('auth:toast_reset_validate_failed')))
                 setIsRequestValid(false)
             })
             .finally(() => {
@@ -147,13 +144,15 @@ function ResetPasswordPage() {
         <AuthMainContainer>
             <Card>
                 <CardHeader>
-                    <CardTitle>Choose new password</CardTitle>
-                    <CardDescription>This link must still be valid to proceed.</CardDescription>
+                    <CardTitle>{t('auth:reset_title')}</CardTitle>
+                    <CardDescription>{t('auth:reset_description')}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
                     {checkingRequest ? (
-                        <p className="text-sm text-muted-foreground">Validating reset link...</p>
+                        <p className="text-sm text-muted-foreground">
+                            {t('auth:reset_validating')}
+                        </p>
                     ) : isRequestValid ? (
                         <form
                             className="space-y-4"
@@ -190,7 +189,7 @@ function ResetPasswordPage() {
                                                             htmlFor="reset-password-new"
                                                             className="text-muted-foreground"
                                                         >
-                                                            New password
+                                                            {t('auth:reset_new_password_label')}
                                                         </FieldLabel>
                                                         <Input
                                                             id="reset-password-new"
@@ -230,7 +229,7 @@ function ResetPasswordPage() {
                                                             htmlFor="reset-password-confirm"
                                                             className="text-muted-foreground"
                                                         >
-                                                            Confirm password
+                                                            {t('auth:reset_confirm_password_label')}
                                                         </FieldLabel>
                                                         <Input
                                                             id="reset-password-confirm"
@@ -257,7 +256,9 @@ function ResetPasswordPage() {
                                             disabled={isSubmitting}
                                             className="w-full"
                                         >
-                                            {isSubmitting ? 'Updating...' : 'Update password'}
+                                            {isSubmitting
+                                                ? t('auth:reset_submitting')
+                                                : t('auth:reset_submit')}
                                         </Button>
                                     </>
                                 )}
@@ -265,13 +266,13 @@ function ResetPasswordPage() {
                         </form>
                     ) : (
                         <p className="text-sm text-destructive">
-                            {error ?? 'This reset link is invalid or expired.'}
+                            {error ?? t('auth:reset_link_invalid')}
                         </p>
                     )}
 
                     <div className="mt-5 text-sm">
                         <Link to="/auth/login" className="text-primary hover:underline">
-                            Go back
+                            {t('common:go_back')}
                         </Link>
                     </div>
                 </CardContent>

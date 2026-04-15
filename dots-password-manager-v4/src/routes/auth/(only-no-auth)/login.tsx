@@ -1,5 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { AuthMainContainer } from '#/components/auth/MainContainer'
@@ -18,6 +19,7 @@ export const Route = createFileRoute('/auth/(only-no-auth)/login')({
 
 function LoginPage() {
     const navigate = useNavigate()
+    const { t } = useTranslation(['auth', 'validation', 'common'])
 
     const defaultValues: LoginRequest = {
         Login: '',
@@ -28,11 +30,11 @@ function LoginPage() {
         const normalized = value.trim()
 
         if (!normalized) {
-            return 'Email or username is required.'
+            return t('validation:login_required')
         }
 
         if (normalized.length < 3) {
-            return 'Use at least 3 characters.'
+            return t('validation:min_3_chars')
         }
 
         return undefined
@@ -40,11 +42,11 @@ function LoginPage() {
 
     function validatePassword(value: string) {
         if (!value) {
-            return 'Password is required.'
+            return t('validation:password_required')
         }
 
         if (value.length < 8) {
-            return 'Use at least 8 characters.'
+            return t('validation:min_8_chars')
         }
 
         return undefined
@@ -76,14 +78,14 @@ function LoginPage() {
                 })
 
                 if (!data.LoggedIn) {
-                    toast.error('Invalid credentials.')
+                    toast.error(t('auth:toast_invalid_credentials'))
                     return
                 }
 
                 notifyAuthStateChanged()
                 await navigate({ to: '/saved-passwords' })
             } catch (error) {
-                toast.error(getErrorMessage(error, 'Unable to reach the server.'))
+                toast.error(getErrorMessage(error, t('common:server_unreachable')))
             }
         },
     })
@@ -92,8 +94,8 @@ function LoginPage() {
         <AuthMainContainer>
             <Card>
                 <CardHeader>
-                    <CardTitle>Sign in</CardTitle>
-                    <CardDescription>Access your encrypted vault.</CardDescription>
+                    <CardTitle>{t('auth:login_title')}</CardTitle>
+                    <CardDescription>{t('auth:login_description')}</CardDescription>
                 </CardHeader>
 
                 <CardContent>
@@ -132,7 +134,7 @@ function LoginPage() {
                                                         htmlFor="login-input"
                                                         className="text-muted-foreground"
                                                     >
-                                                        Email or username
+                                                        {t('auth:login_login_label')}
                                                     </FieldLabel>
                                                     <Input
                                                         id="login-input"
@@ -169,7 +171,7 @@ function LoginPage() {
                                                         htmlFor="password-input"
                                                         className="text-muted-foreground"
                                                     >
-                                                        Password
+                                                        {t('vault:field_password')}
                                                     </FieldLabel>
                                                     <Input
                                                         id="password-input"
@@ -194,7 +196,9 @@ function LoginPage() {
                                         disabled={isSubmitting}
                                         className="w-full"
                                     >
-                                        {isSubmitting ? 'Signing in...' : 'Sign in'}
+                                        {isSubmitting
+                                            ? t('auth:login_submitting')
+                                            : t('auth:login_submit')}
                                     </Button>
                                 </>
                             )}
@@ -203,13 +207,13 @@ function LoginPage() {
 
                     <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-sm">
                         <Link to="/auth/register" className="text-primary hover:underline">
-                            Create account
+                            {t('auth:login_register_link')}
                         </Link>
                         <Link
                             to="/auth/reset-password-request"
                             className="text-primary hover:underline"
                         >
-                            Forgot password?
+                            {t('auth:login_forgot_password_link')}
                         </Link>
                     </div>
                 </CardContent>

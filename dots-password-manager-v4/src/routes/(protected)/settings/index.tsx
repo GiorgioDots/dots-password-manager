@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { DownloadIcon, UploadIcon } from 'lucide-react'
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 
 import { Button } from '#/components/ui/button'
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/(protected)/settings/')({
 function SettingsPage() {
     const importInputRef = useRef<HTMLInputElement | null>(null)
     const queryClient = useQueryClient()
+    const { t } = useTranslation('settings')
 
     async function onExport() {
         try {
@@ -33,9 +35,9 @@ function SettingsPage() {
             link.remove()
             URL.revokeObjectURL(url)
 
-            toast.success('Passwords exported.')
+            toast.success(t('toast_exported'))
         } catch {
-            toast.error('Unable to export passwords.')
+            toast.error(t('toast_export_failed'))
         }
     }
 
@@ -50,9 +52,9 @@ function SettingsPage() {
             const payload = JSON.parse(text) as ImportExportDto
             await importPasswords(payload)
             await queryClient.invalidateQueries()
-            toast.success('Passwords imported.')
+            toast.success(t('toast_imported'))
         } catch {
-            toast.error('Unable to import passwords. Check file format.')
+            toast.error(t('toast_import_failed'))
         } finally {
             if (importInputRef.current) {
                 importInputRef.current.value = ''
@@ -64,12 +66,11 @@ function SettingsPage() {
         <main className="mx-auto w-full max-w-5xl px-4 pb-10 pt-6 sm:pt-10">
             <Card>
                 <CardHeader>
-                    <CardTitle>Import / Export</CardTitle>
+                    <CardTitle>{t('import_export_title')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-sm text-muted-foreground">
-                        Export your vault as JSON for backup, or import a compatible JSON file to
-                        restore or migrate passwords.
+                        {t('import_export_description')}
                     </p>
 
                     <input
@@ -91,7 +92,7 @@ function SettingsPage() {
                             }}
                         >
                             <DownloadIcon className="size-4" />
-                            Export passwords
+                            {t('export_button')}
                         </Button>
                         <Button
                             type="button"
@@ -99,7 +100,7 @@ function SettingsPage() {
                             onClick={() => importInputRef.current?.click()}
                         >
                             <UploadIcon className="size-4" />
-                            Import passwords
+                            {t('import_button')}
                         </Button>
                     </div>
                 </CardContent>

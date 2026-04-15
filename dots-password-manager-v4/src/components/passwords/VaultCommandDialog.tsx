@@ -1,4 +1,5 @@
 import { StarIcon, XIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import { Button } from '#/components/ui/button'
 import {
@@ -33,18 +34,19 @@ export default function VaultCommandDialog({
     onSelectPassword,
     onToggleFavourite,
 }: VaultCommandDialogProps) {
+    const { t } = useTranslation('vault')
     return (
         <CommandDialog
             open={open}
             onOpenChange={onOpenChange}
-            title="Select a password"
-            description="Search your vault and open a password entry."
+            title={t('dialog_title')}
+            description={t('dialog_description')}
             className="w-[calc(100vw-2rem)] max-w-xl top-4 xl:top-1/2 xl:-translate-y-1/2"
         >
             <Command>
                 <div className="flex items-center">
                     <CommandInput
-                        placeholder="Search by name, login or url..."
+                        placeholder={t('dialog_search_placeholder')}
                         wrapperClassName="grow"
                     />
                     <Button
@@ -57,11 +59,9 @@ export default function VaultCommandDialog({
                     </Button>
                 </div>
                 <CommandList className="max-h-[calc(100dvh-5rem)] md:max-h-[min(50vh,420px)]">
-                    <CommandEmpty>
-                        {loading ? 'Loading passwords...' : 'No passwords found.'}
-                    </CommandEmpty>
+                    <CommandEmpty>{loading ? t('dialog_loading') : t('dialog_empty')}</CommandEmpty>
                     {hasFavourites ? (
-                        <CommandGroup heading="Favourites">
+                        <CommandGroup heading={t('group_favourites')}>
                             {favouritePasswords.map((item) => (
                                 <CommandItem
                                     key={item.PasswordId}
@@ -81,12 +81,12 @@ export default function VaultCommandDialog({
                                                 {item.Name}
                                             </span>
                                             <span className="truncate text-xs text-muted-foreground">
-                                                {item.Url || 'No url'}
+                                                {item.Url || t('no_url_fallback')}
                                             </span>
                                         </div>
                                         <button
                                             type="button"
-                                            aria-label="Toggle favourite"
+                                            aria-label={t('toggle_favourite_aria')}
                                             onMouseDown={(event) => {
                                                 event.preventDefault()
                                                 event.stopPropagation()
@@ -112,7 +112,9 @@ export default function VaultCommandDialog({
 
                     <CommandGroup
                         heading={
-                            hasFavourites && otherPasswords.length > 0 ? 'All passwords' : 'Vault'
+                            hasFavourites && otherPasswords.length > 0
+                                ? t('group_all')
+                                : t('group_vault')
                         }
                     >
                         {otherPasswords.map((item) => (
@@ -134,12 +136,12 @@ export default function VaultCommandDialog({
                                             {item.Name}
                                         </span>
                                         <span className="truncate text-xs text-muted-foreground">
-                                            {item.Url || 'No url'}
+                                            {item.Url || t('no_url_fallback')}
                                         </span>
                                     </div>
                                     <button
                                         type="button"
-                                        aria-label="Toggle favourite"
+                                        aria-label={t('toggle_favourite_aria')}
                                         onMouseDown={(event) => {
                                             event.preventDefault()
                                             event.stopPropagation()

@@ -1,0 +1,18 @@
+{
+    "app_name": "Dots Password Manager",
+    "logo_alt": "Logo Dots Password Manager",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "reset": "Reimposta",
+    "go_back": "Torna indietro",
+    "server_unreachable": "Impossibile raggiungere il server.",
+    "nav_vault": "Cassaforte",
+    "nav_settings": "Impostazioni",
+    "nav_login": "Accedi",
+    "nav_register": "Registrati",
+    "app_subtitle": "Cassaforte sicura",
+    "logout_button": "Esci",
+    "copyright": "© {{year}} Dots Password Manager",
+    "github_aria": "Apri il repository GitHub dello sviluppatore"
+}
