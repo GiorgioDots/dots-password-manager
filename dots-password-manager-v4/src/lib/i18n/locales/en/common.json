@@ -12,6 +12,7 @@
     "nav_login": "Login",
     "nav_register": "Register",
     "app_subtitle": "Secure vault",
+    "auth_loading": "Checking session...",
     "logout_button": "Logout",
     "copyright": "© {{year}} Dots Password Manager",
     "github_aria": "Open developer's GitHub repository"

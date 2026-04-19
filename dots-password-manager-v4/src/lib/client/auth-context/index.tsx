@@ -1,10 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { ClientAuthContext } from './context'
 import type { ClientAuthContextValue } from './context'
+import { ClientAuthContext } from './context'
 
 import {
     AUTH_FORCE_LOGOUT_EVENT,
@@ -26,7 +26,7 @@ export function ClientAuthProvider({
 
     useEffect(() => {
         async function syncLoginState() {
-            setLoggedIn(await isLoggedIn())
+            setLoggedIn(await isLoggedIn({ force: true }))
         }
 
         async function applyForcedLogout() {
@@ -74,7 +74,7 @@ export function ClientAuthProvider({
                 await navigate({ to: '/auth/login' })
             },
             refresh: async () => {
-                setLoggedIn(await isLoggedIn())
+                setLoggedIn(await isLoggedIn({ force: true }))
             },
         }),
         [loggedIn, navigate, queryClient],
@@ -83,5 +83,5 @@ export function ClientAuthProvider({
     return <ClientAuthContext.Provider value={value}>{children}</ClientAuthContext.Provider>
 }
 
-export * from './useClientAuth'
 export * from './context'
+export * from './useClientAuth'

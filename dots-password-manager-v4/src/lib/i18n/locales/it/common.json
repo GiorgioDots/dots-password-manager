@@ -12,6 +12,7 @@
     "nav_login": "Accedi",
     "nav_register": "Registrati",
     "app_subtitle": "Cassaforte sicura",
+    "auth_loading": "Verifica sessione...",
     "logout_button": "Esci",
     "copyright": "© {{year}} Dots Password Manager",
     "github_aria": "Apri il repository GitHub dello sviluppatore"
