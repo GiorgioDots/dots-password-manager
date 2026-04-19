@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 import { isLoggedIn } from '#/lib/client/auth'
+import { useClientAuth } from '#/lib/client/auth-context'
 
 export const Route = createFileRoute('/(protected)')({
     component: RouteComponent,
@@ -12,5 +13,9 @@ export const Route = createFileRoute('/(protected)')({
 })
 
 function RouteComponent() {
+    const { loggedIn } = useClientAuth()
+    if (!loggedIn) {
+        return
+    }
     return <Outlet />
 }

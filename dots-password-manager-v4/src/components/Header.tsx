@@ -24,7 +24,7 @@ import {
 } from '#/components/ui/dropdown-menu'
 import { useClientAuth } from '#/lib/client/auth-context/index'
 import type { SupportedLanguage } from '#/lib/i18n/config'
-import { supportedLanguages } from '#/lib/i18n/config'
+import { persistLanguage, supportedLanguages } from '#/lib/i18n/config'
 
 const navLinkClass =
     'relative rounded-lg px-2 py-1 text-sm text-muted-foreground transition-all duration-200 hover:-translate-y-px hover:bg-muted/60 hover:text-foreground sm:px-2.5 after:absolute after:-bottom-1 after:left-1/2 after:h-0.5 after:w-0 after:-translate-x-1/2 after:rounded-full after:bg-primary/70 after:opacity-0 after:transition-all after:duration-300 after:ease-out after:content-[""]'
@@ -222,7 +222,10 @@ function MobileActionsMenu({ onLogout }: { onLogout: () => Promise<void> }) {
                     return (
                         <DropdownMenuItem
                             key={lang}
-                            onClick={() => i18n.changeLanguage(lang).catch(() => {})}
+                            onClick={() => {
+                                persistLanguage(lang)
+                                i18n.changeLanguage(lang).catch(() => {})
+                            }}
                             data-active={currentLang === lang}
                             className="gap-2 data-[active=true]:font-semibold"
                         >

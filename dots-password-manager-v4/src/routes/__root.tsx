@@ -6,7 +6,8 @@ import React, { useEffect, useState } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { Toaster } from 'sonner'
 
-import i18n from '#/lib/i18n/config'
+import type { SupportedLanguage } from '#/lib/i18n/config'
+import i18n, { getPreferredLanguage, persistLanguage } from '#/lib/i18n/config'
 
 import Footer from '../components/Footer'
 import Header from '../components/Header'
@@ -14,14 +15,20 @@ import appCss from '../styles.css?url'
 
 import { ClientAuthProvider } from '#/lib/client/auth-context/index'
 import { getAuthSessionServerFn } from '#/lib/shared/server-functions/auth'
+import { getPreferredLanguageServerFn } from '#/lib/shared/server-functions/i18n'
 
 const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;}catch(e){}})();`
 
 export const Route = createRootRoute({
     loader: async () => {
-        const session = await getAuthSessionServerFn()
+        const [session, initialLanguage] = await Promise.all([
+            getAuthSessionServerFn(),
+            getPreferredLanguageServerFn(),
+        ])
+
         return {
             initialLoggedIn: session.LoggedIn,
+            initialLanguage,
         }
     },
     head: () => ({
@@ -82,11 +89,21 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
     let initialLoggedIn = false
+    let initialLanguage: SupportedLanguage = 'en'
 
     try {
-        initialLoggedIn = Route.useLoaderData().initialLoggedIn
+        const loaderData = Route.useLoaderData()
+        initialLoggedIn = loaderData.initialLoggedIn
+        initialLanguage = loaderData.initialLanguage
     } catch {
         initialLoggedIn = false
+        initialLanguage = 'en'
+    }
+
+    if (i18n.resolvedLanguage !== initialLanguage) {
+        i18n.changeLanguage(initialLanguage).catch(() => {
+            // Resources are local; keep boot resilient if i18n rejects.
+        })
     }
     const [toasterTheme, setToasterTheme] = useState<'light' | 'dark'>('light')
     const [queryClient] = useState(
@@ -163,15 +180,24 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         function syncLang() {
             document.documentElement.lang = i18n.language.split('-')[0]
         }
+
+        const preferredLanguage = getPreferredLanguage()
+        if (preferredLanguage !== initialLanguage) {
+            persistLanguage(preferredLanguage)
+            i18n.changeLanguage(preferredLanguage).catch(() => {
+                // Keep client boot resilient if language sync fails.
+            })
+        }
+
         syncLang()
         i18n.on('languageChanged', syncLang)
         return () => {
             i18n.off('languageChanged', syncLang)
         }
-    }, [])
+    }, [initialLanguage])
 
     return (
-        <html lang="en" suppressHydrationWarning className="h-dvh overflow-hidden">
+        <html lang={initialLanguage} suppressHydrationWarning className="h-dvh overflow-hidden">
             <head>
                 <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
                 <HeadContent />

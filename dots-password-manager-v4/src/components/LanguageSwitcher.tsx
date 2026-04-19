@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu'
 import type { SupportedLanguage } from '#/lib/i18n/config'
-import { supportedLanguages } from '#/lib/i18n/config'
+import { persistLanguage, supportedLanguages } from '#/lib/i18n/config'
 
 const languageMeta: Record<SupportedLanguage, { flag: string; label: string }> = {
     en: { flag: '🇬🇧', label: 'English' },
@@ -20,6 +20,7 @@ export function LanguageSwitcher() {
     const currentLang = (i18n.language.split('-')[0] ?? 'en') as SupportedLanguage
 
     function switchTo(lang: SupportedLanguage) {
+        persistLanguage(lang)
         i18n.changeLanguage(lang).catch(() => {})
     }
 
