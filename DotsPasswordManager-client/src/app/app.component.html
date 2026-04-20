@@ -1,4 +1,28 @@
-<div class="app-container">
+<div class="deprecation-overlay">
+  <div class="deprecation-card">
+    <div class="deprecation-icon">⚠️</div>
+    <h1>This app has been discontinued</h1>
+    <p>
+      A new and improved version of Dots Password Manager is available.<br />
+      Please visit the new app and install it to keep your passwords safe.
+    </p>
+    <a
+      href="https://pm.giodots.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="deprecation-link">
+      Go to pm.giodots.com
+    </a>
+    <p class="deprecation-note">
+      This version will be fully shut down in July 2026.
+    </p>
+  </div>
+</div>
+
+<div
+  class="app-container"
+  aria-hidden="true"
+  style="visibility: hidden; pointer-events: none">
   <div class="content-container">
     <app-messages-wrapper>
       <router-outlet></router-outlet>

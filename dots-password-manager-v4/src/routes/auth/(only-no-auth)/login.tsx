@@ -9,9 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/com
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
 import { notifyAuthStateChanged } from '#/lib/client/auth'
-import type { LoginRequest } from '#/lib/shared/auth/contracts'
+import { authClient } from '#/lib/client/auth-client'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
-import { getErrorMessage, loginServerFn } from '#/lib/shared/server-functions/auth'
+import { getErrorMessage } from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/(only-no-auth)/login')({
     component: LoginPage,
@@ -21,7 +21,7 @@ function LoginPage() {
     const navigate = useNavigate()
     const { t } = useTranslation(['auth', 'validation', 'common', 'vault'])
 
-    const defaultValues: LoginRequest = {
+    const defaultValues = {
         Login: '',
         Password: '',
     }
@@ -72,21 +72,26 @@ function LoginPage() {
             },
         },
         onSubmit: async ({ value }) => {
-            try {
-                const data = await loginServerFn({
-                    data: value,
-                })
+            const login = value.Login.trim()
+            // Attempt username sign-in first; BA's username plugin handles email fallback
+            const isEmail = login.includes('@')
+            const { error } = isEmail
+                ? await authClient.signIn.email({
+                      email: login,
+                      password: value.Password,
+                  })
+                : await authClient.signIn.username({
+                      username: login,
+                      password: value.Password,
+                  })
 
-                if (!data.LoggedIn) {
-                    toast.error(t('auth:toast_invalid_credentials'))
-                    return
-                }
-
-                notifyAuthStateChanged()
-                await navigate({ to: '/saved-passwords' })
-            } catch (error) {
-                toast.error(getErrorMessage(error, t('common:server_unreachable')))
+            if (error) {
+                toast.error(getErrorMessage(error, t('auth:toast_invalid_credentials')))
+                return
             }
+
+            notifyAuthStateChanged()
+            await navigate({ to: '/saved-passwords' })
         },
     })
 

@@ -1,6 +1,6 @@
 import { useForm } from '@tanstack/react-form'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import z from 'zod'
@@ -10,16 +10,13 @@ import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
+import { authClient } from '#/lib/client/auth-client'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
-import {
-    getErrorMessage,
-    resetPasswordServerFn,
-    validatePasswordResetRequestServerFn,
-} from '#/lib/shared/server-functions/auth'
+import { getErrorMessage } from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/reset-password')({
     validateSearch: z.object({
-        r: z.uuid().optional(),
+        token: z.string().optional(),
     }),
     component: ResetPasswordPage,
 })
@@ -28,11 +25,8 @@ function ResetPasswordPage() {
     const navigate = useNavigate()
     const { t } = useTranslation(['auth', 'validation', 'common'])
     const search = Route.useSearch()
-    const requestId = search.r ?? ''
-    const [isRequestValid, setIsRequestValid] = useState(false)
-    const [checkingRequest, setCheckingRequest] = useState(true)
-
-    const [error, setError] = useState<string | null>(null)
+    const token = search.token ?? ''
+    const [error, setError] = useState<string | null>(token ? null : t('auth:reset_link_invalid'))
 
     const defaultValues = {
         Password: '',
@@ -86,59 +80,28 @@ function ResetPasswordPage() {
             },
         },
         onSubmit: async ({ value }) => {
-            if (!requestId) {
+            if (!token) {
                 toast.error(t('auth:toast_reset_link_invalid'))
                 return
             }
 
-            try {
-                const data = await resetPasswordServerFn({
-                    data: {
-                        RequestId: requestId,
-                        NewPassword: value.Password,
-                    },
-                })
+            const { error: resetError } = await authClient.resetPassword({
+                token,
+                newPassword: value.Password,
+            })
 
-                toast.success(data.Message)
-                form.reset()
-                await navigate({ to: '/auth/login', replace: true })
-            } catch (submitError) {
-                const backendMessage = getErrorMessage(submitError, t('common:server_unreachable'))
-                toast.error(backendMessage)
-                setError(backendMessage)
-
-                if (backendMessage.includes('expired or not valid')) {
-                    setIsRequestValid(false)
-                }
+            if (resetError) {
+                const msg = getErrorMessage(resetError, t('common:server_unreachable'))
+                toast.error(msg)
+                setError(msg)
+                return
             }
+
+            toast.success(t('auth:reset_success_message'))
+            form.reset()
+            await navigate({ to: '/auth/login', replace: true })
         },
     })
-
-    useEffect(() => {
-        if (!requestId) {
-            setError(t('auth:reset_link_invalid'))
-            setIsRequestValid(false)
-            setCheckingRequest(false)
-            return
-        }
-
-        setCheckingRequest(true)
-
-        validatePasswordResetRequestServerFn({
-            data: { RequestId: requestId },
-        })
-            .then(() => {
-                setError(null)
-                setIsRequestValid(true)
-            })
-            .catch((validationError) => {
-                setError(getErrorMessage(validationError, t('auth:toast_reset_validate_failed')))
-                setIsRequestValid(false)
-            })
-            .finally(() => {
-                setCheckingRequest(false)
-            })
-    }, [requestId])
 
     return (
         <AuthMainContainer>
@@ -149,11 +112,7 @@ function ResetPasswordPage() {
                 </CardHeader>
 
                 <CardContent>
-                    {checkingRequest ? (
-                        <p className="text-sm text-muted-foreground">
-                            {t('auth:reset_validating')}
-                        </p>
-                    ) : isRequestValid ? (
+                    {token && !error ? (
                         <form
                             className="space-y-4"
                             noValidate

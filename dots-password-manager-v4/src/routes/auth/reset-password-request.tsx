@@ -8,9 +8,9 @@ import { Button } from '#/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/components/ui/card'
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
-import type { ResetPasswordRequestRequest } from '#/lib/shared/auth/contracts'
+import { authClient } from '#/lib/client/auth-client'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
-import { getErrorMessage, requestPasswordResetServerFn } from '#/lib/shared/server-functions/auth'
+import { getErrorMessage } from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/reset-password-request')({
     component: ResetPasswordRequestPage,
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/auth/reset-password-request')({
 
 function ResetPasswordRequestPage() {
     const { t } = useTranslation(['auth', 'validation', 'common'])
-    const defaultValues: ResetPasswordRequestRequest = {
+    const defaultValues = {
         Email: '',
     }
 
@@ -54,15 +54,17 @@ function ResetPasswordRequestPage() {
             },
         },
         onSubmit: async ({ value }) => {
-            try {
-                const data = await requestPasswordResetServerFn({
-                    data: value,
-                })
+            const { error } = await authClient.requestPasswordReset({
+                email: value.Email.trim(),
+                redirectTo: '/auth/reset-password',
+            })
 
-                toast.success(data.Message)
-            } catch (error) {
+            if (error) {
                 toast.error(getErrorMessage(error, t('common:server_unreachable')))
+                return
             }
+
+            toast.success(t('auth:reset_request_sent_message'))
         },
     })
 

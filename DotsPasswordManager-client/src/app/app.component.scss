@@ -1,5 +1,90 @@
 @use '/breakpoints' as bps;
 
+.deprecation-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--base, #1e1e2e);
+  padding: 1.5rem;
+}
+
+.deprecation-card {
+  max-width: 480px;
+  width: 100%;
+  background-color: var(--surface-0, #313244);
+  border: 1px solid var(--surface-1, #45475a);
+  border-radius: 1rem;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text, #cdd6f4);
+    margin: 0;
+  }
+
+  p {
+    color: var(--subtext-0, #a6adc8);
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.deprecation-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.deprecation-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  background-color: var(--primary, #89b4fa);
+  color: var(--base, #1e1e2e);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.deprecation-note {
+  font-size: 0.8rem;
+  color: var(--subtext-1, #7f849c) !important;
+}
+
+.app-container {
+  height: 100%;
+  background-image: url('/1544x1544_circle (1).webp');
+  background-size: 400px;
+  background-position-y: 50%;
+  background-repeat: repeat-x;
+}
+
+.content-container {
+  height: 100%;
+  max-width: bps.$lgBreakpoint;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--base);
+
+  @include bps.xl-breakpoint {
+    border-left: 1px solid var(--surface-0);
+    border-right: 1px solid var(--surface-0);
+  }
+}
+
 .app-container {
   height: 100%;
   background-image: url('/1544x1544_circle (1).webp');

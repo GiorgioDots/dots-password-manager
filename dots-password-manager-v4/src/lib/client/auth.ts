@@ -1,4 +1,5 @@
-import { getAuthSessionServerFn, logoutServerFn } from '#/lib/shared/server-functions/auth'
+import { authClient } from '#/lib/client/auth-client'
+import { getAuthSessionServerFn } from '#/lib/shared/server-functions/auth'
 
 export const AUTH_STATE_CHANGED_EVENT = 'dpm:auth-state-changed'
 export const AUTH_FORCE_LOGOUT_EVENT = 'dpm:auth-force-logout'
@@ -64,7 +65,7 @@ export async function isLoggedIn(options?: { force?: boolean }): Promise<boolean
 
 export async function logout(): Promise<void> {
     try {
-        await logoutServerFn({ data: undefined })
+        await authClient.signOut()
     } catch {
         // Keep client flow resilient even if server logout fails.
     }

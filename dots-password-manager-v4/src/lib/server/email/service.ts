@@ -1,7 +1,4 @@
-import { existsSync } from 'node:fs'
-import path from 'node:path'
-
-import nodemailer from 'nodemailer'
+import sgMail from '@sendgrid/mail'
 
 import passwordResetRequestTemplateRaw from './templates/password-reset-request.html?raw'
 import passwordResettedTemplateRaw from './templates/password-resetted.html?raw'
@@ -12,15 +9,6 @@ type MailUser = {
     originalUsername: string
 }
 
-type SmtpConfig = {
-    host: string
-    port: number
-    username: string
-    password: string
-    fromAddress: string
-    webappHost: string
-}
-
 function readRequired(name: string): string {
     const value = process.env[name]
     if (!value) {
@@ -29,63 +17,37 @@ function readRequired(name: string): string {
     return value
 }
 
-function getSmtpConfig(): SmtpConfig {
-    return {
-        host: readRequired('SMTP_HOST'),
-        port: Number.parseInt(readRequired('SMTP_PORT'), 10),
-        username: readRequired('SMTP_USERNAME'),
-        password: readRequired('SMTP_PASSWORD'),
-        fromAddress: readRequired('FROM_ADDRESS'),
-        webappHost: process.env.WEBAPP_HOST ?? 'http://localhost:3000',
-    }
-}
-
 async function sendMail(options: {
     to: string
     toName: string
     subject: string
     html: string
 }): Promise<void> {
-    const cfg = getSmtpConfig()
+    const apiKey = readRequired('SENDGRID_API_KEY')
+    const fromAddress = readRequired('FROM_ADDRESS')
 
-    const transport = nodemailer.createTransport({
-        host: cfg.host,
-        port: cfg.port,
-        secure: true,
-        auth: {
-            user: cfg.username,
-            pass: cfg.password,
-        },
-    })
+    sgMail.setApiKey(apiKey)
 
-    const logoPath = path.join(process.cwd(), 'public', 'dpm-logo.png')
-
-    await transport.sendMail({
-        from: `Dots Password Manager <${cfg.fromAddress}>`,
-        to: `${options.toName} <${options.to}>`,
+    await sgMail.send({
+        from: { email: fromAddress, name: 'Dots Password Manager' },
+        to: { email: options.to, name: options.toName },
         subject: options.subject,
         html: options.html,
-        attachments: existsSync(logoPath)
-            ? [
-                  {
-                      filename: 'dpm-logo.png',
-                      path: logoPath,
-                      cid: 'logo',
-                  },
-              ]
-            : undefined,
     })
 }
 
 function welcomeTemplate(user: MailUser, webappHost: string): string {
-    return welcomeTemplateRaw.replaceAll('[USER-EMAIL]', user.email).replaceAll('[URL]', webappHost)
+    return welcomeTemplateRaw
+        .replaceAll('[USER-EMAIL]', user.email)
+        .replaceAll('[URL]', webappHost)
+        .replaceAll('[WEBAPP_HOST]', webappHost)
 }
 
-function resetRequestTemplate(user: MailUser, requestId: string, webappHost: string): string {
-    const requestUrl = `${webappHost}/auth/reset-password?r=${requestId}`
+function resetRequestTemplate(user: MailUser, resetUrl: string, webappHost: string): string {
     return passwordResetRequestTemplateRaw
         .replaceAll('[USER-EMAIL]', user.email)
-        .replaceAll('[REQUEST_URL]', requestUrl)
+        .replaceAll('[REQUEST_URL]', resetUrl)
+        .replaceAll('[WEBAPP_HOST]', webappHost)
 }
 
 function passwordResettedTemplate(user: MailUser, webappHost: string): string {
@@ -98,19 +60,20 @@ function passwordResettedTemplate(user: MailUser, webappHost: string): string {
     return passwordResettedTemplateRaw
         .replaceAll('[USER-EMAIL]', user.email)
         .replaceAll('[URL]', webappHost)
+        .replaceAll('[WEBAPP_HOST]', webappHost)
         .replaceAll('[Date]', date)
         .replaceAll('[Time]', time)
 }
 
 export async function sendWelcomeEmail(user: MailUser): Promise<void> {
     try {
-        const cfg = getSmtpConfig()
+        const webappHost = readRequired('WEBAPP_HOST')
 
         await sendMail({
             to: user.email,
             toName: user.originalUsername,
             subject: 'Welcome to Better Dots Password Manger!',
-            html: welcomeTemplate(user, cfg.webappHost),
+            html: welcomeTemplate(user, webappHost),
         })
     } catch {
         // Keep legacy behavior: welcome email failures do not block registration.
@@ -119,27 +82,27 @@ export async function sendWelcomeEmail(user: MailUser): Promise<void> {
 
 export async function sendPasswordResetRequestEmail(
     user: MailUser,
-    requestId: string,
+    resetUrl: string,
 ): Promise<void> {
-    const cfg = getSmtpConfig()
+    const webappHost = readRequired('WEBAPP_HOST')
 
     await sendMail({
         to: user.email,
         toName: user.originalUsername,
         subject: 'Dots Password Manger - Password Reset',
-        html: resetRequestTemplate(user, requestId, cfg.webappHost),
+        html: resetRequestTemplate(user, resetUrl, webappHost),
     })
 }
 
 export async function sendPasswordResettedEmail(user: MailUser): Promise<void> {
     try {
-        const cfg = getSmtpConfig()
+        const webappHost = readRequired('WEBAPP_HOST')
 
         await sendMail({
             to: user.email,
             toName: user.originalUsername,
             subject: 'Better Dots Password Manger - Password resetted',
-            html: passwordResettedTemplate(user, cfg.webappHost),
+            html: passwordResettedTemplate(user, webappHost),
         })
     } catch {
         // Keep legacy behavior: confirmation email failures do not block response.

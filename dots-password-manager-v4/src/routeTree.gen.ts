@@ -18,6 +18,7 @@ import { Route as protectedSettingsIndexRouteImport } from './routes/(protected)
 import { Route as protectedSavedPasswordsIndexRouteImport } from './routes/(protected)/saved-passwords/index'
 import { Route as AuthonlyNoAuthRegisterRouteImport } from './routes/auth/(only-no-auth)/register'
 import { Route as AuthonlyNoAuthLoginRouteImport } from './routes/auth/(only-no-auth)/login'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const protectedRouteRoute = protectedRouteRouteImport.update({
   id: '/(protected)',
@@ -65,12 +66,18 @@ const AuthonlyNoAuthLoginRoute = AuthonlyNoAuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthonlyNoAuthRouteRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/auth/login': typeof AuthonlyNoAuthLoginRoute
   '/auth/register': typeof AuthonlyNoAuthRegisterRoute
   '/saved-passwords/': typeof protectedSavedPasswordsIndexRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/auth/login': typeof AuthonlyNoAuthLoginRoute
   '/auth/register': typeof AuthonlyNoAuthRegisterRoute
   '/saved-passwords': typeof protectedSavedPasswordsIndexRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/auth/(only-no-auth)': typeof AuthonlyNoAuthRouteRouteWithChildren
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/auth/reset-password-request': typeof AuthResetPasswordRequestRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/auth/(only-no-auth)/login': typeof AuthonlyNoAuthLoginRoute
   '/auth/(only-no-auth)/register': typeof AuthonlyNoAuthRegisterRoute
   '/(protected)/saved-passwords/': typeof protectedSavedPasswordsIndexRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
+    | '/api/auth/$'
     | '/auth/login'
     | '/auth/register'
     | '/saved-passwords/'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
+    | '/api/auth/$'
     | '/auth/login'
     | '/auth/register'
     | '/saved-passwords'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/auth/(only-no-auth)'
     | '/auth/reset-password'
     | '/auth/reset-password-request'
+    | '/api/auth/$'
     | '/auth/(only-no-auth)/login'
     | '/auth/(only-no-auth)/register'
     | '/(protected)/saved-passwords/'
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   AuthonlyNoAuthRouteRoute: typeof AuthonlyNoAuthRouteRouteWithChildren
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   AuthResetPasswordRequestRoute: typeof AuthResetPasswordRequestRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -205,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthonlyNoAuthLoginRouteImport
       parentRoute: typeof AuthonlyNoAuthRouteRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthonlyNoAuthRouteRoute: AuthonlyNoAuthRouteRouteWithChildren,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   AuthResetPasswordRequestRoute: AuthResetPasswordRequestRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

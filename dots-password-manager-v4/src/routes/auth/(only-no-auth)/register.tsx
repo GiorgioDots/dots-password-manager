@@ -9,9 +9,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '#/com
 import { Field, FieldError, FieldLabel } from '#/components/ui/field'
 import { Input } from '#/components/ui/input'
 import { notifyAuthStateChanged } from '#/lib/client/auth'
-import type { RegisterRequest } from '#/lib/shared/auth/contracts'
+import { authClient } from '#/lib/client/auth-client'
 import { mapFieldErrors } from '#/lib/shared/form/mapFieldErrors'
-import { getErrorMessage, registerServerFn } from '#/lib/shared/server-functions/auth'
+import { getErrorMessage } from '#/lib/shared/server-functions/auth'
 
 export const Route = createFileRoute('/auth/(only-no-auth)/register')({
     component: RegisterPage,
@@ -21,7 +21,7 @@ function RegisterPage() {
     const navigate = useNavigate()
     const { t } = useTranslation(['auth', 'validation', 'common', 'vault'])
 
-    const defaultValues: RegisterRequest = {
+    const defaultValues = {
         Email: '',
         Username: '',
         Password: '',
@@ -89,21 +89,22 @@ function RegisterPage() {
             },
         },
         onSubmit: async ({ value }) => {
-            try {
-                const data = await registerServerFn({
-                    data: value,
-                })
+            const { error } = await authClient.signUp.email({
+                email: value.Email.trim(),
+                // BA `name` stores the display username
+                name: value.Username.trim(),
+                password: value.Password,
+                // username plugin: normalizes to lowercase, sets displayUsername automatically
+                username: value.Username.trim(),
+            })
 
-                if (!data.LoggedIn) {
-                    toast.error(t('auth:toast_registration_failed'))
-                    return
-                }
-
-                notifyAuthStateChanged()
-                await navigate({ to: '/saved-passwords' })
-            } catch (error) {
+            if (error) {
                 toast.error(getErrorMessage(error, t('common:server_unreachable')))
+                return
             }
+
+            notifyAuthStateChanged()
+            await navigate({ to: '/saved-passwords' })
         },
     })
 
