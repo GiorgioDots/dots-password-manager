@@ -213,20 +213,3 @@ docker logs -f ghcr.io/giorgiodots/dots-password-manager:prodv4
 ```sh
 docker push ghcr.io/giorgiodots/dots-password-manager:prodv4
 ```
-
-old rules:
-
-```
-Record name
-pm.giorgio-dots.com
-Record type
-A
-Value
-164.92.141.19
-Alias
-No
-TTL (seconds)
-300
-Routing policy
-Simple
-```
