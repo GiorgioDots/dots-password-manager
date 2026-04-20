@@ -6,10 +6,8 @@ import { useClientAuth } from '#/lib/client/auth-context/index'
 
 export const Route = createFileRoute('/(protected)')({
     component: RouteComponent,
-    pendingComponent: AuthLoadingScreen,
-    pendingMs: 0,
     beforeLoad: async () => {
-        if (!(await isLoggedIn({ force: true }))) {
+        if (!(await isLoggedIn())) {
             throw redirect({ to: '/auth/login' })
         }
     },

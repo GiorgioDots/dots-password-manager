@@ -26,7 +26,7 @@ export function ClientAuthProvider({
 
     useEffect(() => {
         async function syncLoginState() {
-            setLoggedIn(await isLoggedIn({ force: true }))
+            setLoggedIn(await isLoggedIn())
         }
 
         async function applyForcedLogout() {
@@ -74,7 +74,7 @@ export function ClientAuthProvider({
                 await navigate({ to: '/auth/login' })
             },
             refresh: async () => {
-                setLoggedIn(await isLoggedIn({ force: true }))
+                setLoggedIn(await isLoggedIn())
             },
         }),
         [loggedIn, navigate, queryClient],

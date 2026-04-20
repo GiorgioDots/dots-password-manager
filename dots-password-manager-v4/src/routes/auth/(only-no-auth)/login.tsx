@@ -19,7 +19,7 @@ export const Route = createFileRoute('/auth/(only-no-auth)/login')({
 
 function LoginPage() {
     const navigate = useNavigate()
-    const { t } = useTranslation(['auth', 'validation', 'common'])
+    const { t } = useTranslation(['auth', 'validation', 'common', 'vault'])
 
     const defaultValues: LoginRequest = {
         Login: '',

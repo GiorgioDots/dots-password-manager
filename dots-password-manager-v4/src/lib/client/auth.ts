@@ -26,29 +26,40 @@ export function notifyAuthStateChanged(): void {
 
 export async function isLoggedIn(options?: { force?: boolean }): Promise<boolean> {
     const force = options?.force === true
+    const isBrowser = typeof window !== 'undefined'
 
-    if (!force && authStateCache && authStateCache.expiresAt > Date.now()) {
+    if (isBrowser && !force && authStateCache && authStateCache.expiresAt > Date.now()) {
         return authStateCache.loggedIn
     }
 
-    if (!force && authStateInFlight) {
+    if (isBrowser && !force && authStateInFlight) {
         return authStateInFlight
     }
 
-    authStateInFlight = getAuthSessionServerFn()
+    const request = getAuthSessionServerFn()
         .then((session) => {
-            setAuthStateCache(session.LoggedIn)
+            if (isBrowser) {
+                setAuthStateCache(session.LoggedIn)
+            }
             return session.LoggedIn
         })
         .catch(() => {
-            setAuthStateCache(false)
+            if (isBrowser) {
+                setAuthStateCache(false)
+            }
             return false
         })
         .finally(() => {
-            authStateInFlight = null
+            if (isBrowser) {
+                authStateInFlight = null
+            }
         })
 
-    return authStateInFlight
+    if (isBrowser) {
+        authStateInFlight = request
+    }
+
+    return request
 }
 
 export async function logout(): Promise<void> {

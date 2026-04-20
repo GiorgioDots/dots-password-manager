@@ -6,10 +6,8 @@ import { useClientAuth } from '#/lib/client/auth-context/index'
 
 export const Route = createFileRoute('/auth/(only-no-auth)')({
     component: RouteComponent,
-    pendingComponent: AuthLoadingScreen,
-    pendingMs: 0,
     beforeLoad: async () => {
-        if (await isLoggedIn({ force: true })) {
+        if (await isLoggedIn()) {
             throw redirect({ to: '/saved-passwords' })
         }
     },
