@@ -34,9 +34,8 @@ export function SavedPasswordsEditorCard({
     onReset,
     onSave,
     onDelete,
-    t,
 }: SavedPasswordsEditorCardProps) {
-    const { t: tc } = useTranslation('common')
+    const { t } = useTranslation('common')
     return (
         <Card>
             <CardHeader>
@@ -55,7 +54,7 @@ export function SavedPasswordsEditorCard({
                             className="-ml-2 w-fit gap-1"
                         >
                             <ChevronLeftIcon className="size-4" />
-                            {tc('go_back')}
+                            {t('go_back')}
                         </Button>
                         <LockIcon className="size-5 text-muted-foreground" />
                     </div>
