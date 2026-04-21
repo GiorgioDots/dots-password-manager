@@ -1,4 +1,6 @@
 import type { TFunction } from 'i18next'
+import { ChevronLeftIcon, LockIcon } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 import PasswordEditForm from './PasswordEditForm'
 
@@ -13,8 +15,7 @@ type SavedPasswordsEditorCardProps = {
     selectedId: string | null
     canSave: boolean
     canReset: boolean
-    onOpenVault: () => void
-    onAddNew: () => void
+    onBack: () => void
     onChange: (patch: Partial<SavedPasswordDto>) => void
     onReset: () => void
     onSave: () => Promise<void>
@@ -28,14 +29,14 @@ export function SavedPasswordsEditorCard({
     selectedId,
     canSave,
     canReset,
-    onOpenVault,
-    onAddNew,
+    onBack,
     onChange,
     onReset,
     onSave,
     onDelete,
     t,
 }: SavedPasswordsEditorCardProps) {
+    const { t: tc } = useTranslation('common')
     return (
         <Card>
             <CardHeader>
@@ -44,7 +45,21 @@ export function SavedPasswordsEditorCard({
                         <Skeleton className="h-4 w-36" />
                         <Skeleton className="h-3 w-56" />
                     </div>
-                ) : null}
+                ) : (
+                    <div className="flex items-center justify-between">
+                        <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={onBack}
+                            className="-ml-2 w-fit gap-1"
+                        >
+                            <ChevronLeftIcon className="size-4" />
+                            {tc('go_back')}
+                        </Button>
+                        <LockIcon className="size-5 text-muted-foreground" />
+                    </div>
+                )}
             </CardHeader>
             <CardContent className="space-y-4">
                 {loadingSelected ? (
@@ -78,31 +93,7 @@ export function SavedPasswordsEditorCard({
                             <Skeleton className="h-10 w-full sm:w-24" />
                         </div>
                     </div>
-                ) : !draft ? (
-                    <div className="rounded-lg border border-dashed p-6 text-center sm:p-8">
-                        <h2 className="text-lg font-medium">{t('empty_state_title')}</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                            {t('empty_state_message')}
-                        </p>
-                        <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
-                            <Button
-                                type="button"
-                                onClick={onOpenVault}
-                                className="w-full sm:w-auto"
-                            >
-                                {t('open_vault_button')}
-                            </Button>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={onAddNew}
-                                className="w-full sm:w-auto"
-                            >
-                                {t('add_password_button')}
-                            </Button>
-                        </div>
-                    </div>
-                ) : (
+                ) : draft ? (
                     <PasswordEditForm
                         draft={draft}
                         selectedId={selectedId}
@@ -113,7 +104,7 @@ export function SavedPasswordsEditorCard({
                         onSave={onSave}
                         onDelete={onDelete}
                     />
-                )}
+                ) : null}
             </CardContent>
         </Card>
     )

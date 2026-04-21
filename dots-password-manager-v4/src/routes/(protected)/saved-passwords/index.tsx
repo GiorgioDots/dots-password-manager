@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import z from 'zod'
 
 import { SavedPasswordsEditorCard } from '#/components/passwords/SavedPasswordsEditorCard'
-import { SavedPasswordsPageHeader } from '#/components/passwords/SavedPasswordsPageHeader'
+import { SavedPasswordsEmptyState } from '#/components/passwords/SavedPasswordsEmptyState'
 import {
     useCreatePasswordMutation,
     useDeletePasswordMutation,
@@ -254,6 +254,13 @@ function SavedPasswordsPage() {
         setDraft(normalizeSavedPassword(initialDraft))
     }, [initialDraft])
 
+    const onBack = useCallback(() => {
+        setSelectedId(null)
+        setDraft(null)
+        setInitialDraft(null)
+        syncSelectedIdToSearch(null)
+    }, [syncSelectedIdToSearch])
+
     const { hasFavourites, favouritePasswords, otherPasswords } = useMemo(
         () => splitPasswordsByFavourite(passwords),
         [passwords],
@@ -264,27 +271,28 @@ function SavedPasswordsPage() {
     }, [])
 
     return (
-        <main className="mx-auto w-full max-w-5xl px-4 pt-4 pb-8 sm:pb-10">
-            <SavedPasswordsPageHeader
-                title={selectedId ? (draft?.Name ?? '') : null}
-                onOpenVault={openCommandDialog}
-                onAddNew={onAddNew}
-            />
-
-            <SavedPasswordsEditorCard
-                loadingSelected={loadingSelected}
-                draft={draft}
-                selectedId={selectedId}
-                canSave={canSave}
-                canReset={canReset}
-                onOpenVault={openCommandDialog}
-                onAddNew={onAddNew}
-                onChange={updateDraft}
-                onReset={onResetDraft}
-                onSave={onSave}
-                onDelete={onDelete}
-                t={t}
-            />
+        <main className="flex flex-col mx-auto w-full max-w-5xl px-4 pt-4 pb-8 sm:pb-10">
+            {!loadingSelected && !draft ? (
+                <SavedPasswordsEmptyState
+                    onOpenVault={openCommandDialog}
+                    onAddNew={onAddNew}
+                    t={t}
+                />
+            ) : (
+                <SavedPasswordsEditorCard
+                    loadingSelected={loadingSelected}
+                    draft={draft}
+                    selectedId={selectedId}
+                    canSave={canSave}
+                    canReset={canReset}
+                    onBack={onBack}
+                    onChange={updateDraft}
+                    onReset={onResetDraft}
+                    onSave={onSave}
+                    onDelete={onDelete}
+                    t={t}
+                />
+            )}
 
             <Suspense fallback={null}>
                 <VaultCommandDialog

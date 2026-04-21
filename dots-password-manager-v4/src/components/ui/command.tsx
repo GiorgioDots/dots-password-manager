@@ -1,5 +1,5 @@
 import { Command as CommandPrimitive } from 'cmdk'
-import { SearchIcon, CheckIcon } from 'lucide-react'
+import { CheckIcon, SearchIcon, XIcon } from 'lucide-react'
 import * as React from 'react'
 
 import {
@@ -58,8 +58,13 @@ function CommandDialog({
 function CommandInput({
     className,
     wrapperClassName,
+    onClear,
     ...props
-}: React.ComponentProps<typeof CommandPrimitive.Input> & { wrapperClassName?: string }) {
+}: React.ComponentProps<typeof CommandPrimitive.Input> & {
+    wrapperClassName?: string
+    onClear?: () => void
+}) {
+    const hasValue = !!props.value
     return (
         <div data-slot="command-input-wrapper" className={cn('p-1 pb-0', wrapperClassName)}>
             <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
@@ -72,7 +77,17 @@ function CommandInput({
                     {...props}
                 />
                 <InputGroupAddon>
-                    <SearchIcon className="size-4 shrink-0 opacity-50" />
+                    {onClear && hasValue ? (
+                        <button
+                            type="button"
+                            onClick={onClear}
+                            className="inline-flex items-center justify-center rounded-sm opacity-50 hover:opacity-100"
+                        >
+                            <XIcon className="size-4 shrink-0" />
+                        </button>
+                    ) : (
+                        <SearchIcon className="size-4 shrink-0 opacity-50" />
+                    )}
                 </InputGroupAddon>
             </InputGroup>
         </div>
@@ -170,11 +185,11 @@ function CommandShortcut({ className, ...props }: React.ComponentProps<'span'>) 
 export {
     Command,
     CommandDialog,
-    CommandInput,
-    CommandList,
     CommandEmpty,
     CommandGroup,
+    CommandInput,
     CommandItem,
-    CommandShortcut,
+    CommandList,
     CommandSeparator,
+    CommandShortcut,
 }

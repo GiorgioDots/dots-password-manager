@@ -123,6 +123,7 @@ export default function VaultCommandDialog({
                     <CommandInput
                         value={search}
                         onValueChange={setSearch}
+                        onClear={() => setSearch('')}
                         placeholder={t('dialog_search_placeholder')}
                         wrapperClassName="grow"
                     />
