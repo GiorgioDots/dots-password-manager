@@ -40,6 +40,7 @@ function SavedPasswordsPage() {
     const [selectedId, setSelectedId] = useState<string | null>(search.id ?? null)
     const [draft, setDraft] = useState<SavedPasswordDto | null>(null)
     const [initialDraft, setInitialDraft] = useState<SavedPasswordDto | null>(null)
+    const [draftKey, setDraftKey] = useState(0)
     const silentSelectionRef = useRef(false)
 
     const syncSelectedIdToSearch = useCallback(
@@ -192,12 +193,7 @@ function SavedPasswordsPage() {
 
             try {
                 await deletePasswordMutation.mutateAsync(id)
-                if (selectedId === id) {
-                    setSelectedId(null)
-                    setDraft(null)
-                    setInitialDraft(null)
-                    syncSelectedIdToSearch(null)
-                }
+                onBack()
             } catch {
                 toast.error(t('toast_delete_failed'))
             }
@@ -252,6 +248,7 @@ function SavedPasswordsPage() {
         }
 
         setDraft(normalizeSavedPassword(initialDraft))
+        setDraftKey((k) => k + 1)
     }, [initialDraft])
 
     const onBack = useCallback(() => {
@@ -283,6 +280,7 @@ function SavedPasswordsPage() {
                     loadingSelected={loadingSelected}
                     draft={draft}
                     selectedId={selectedId}
+                    draftKey={draftKey}
                     canSave={canSave}
                     canReset={canReset}
                     onBack={onBack}

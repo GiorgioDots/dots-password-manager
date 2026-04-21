@@ -13,6 +13,7 @@ type SavedPasswordsEditorCardProps = {
     loadingSelected: boolean
     draft: SavedPasswordDto | null
     selectedId: string | null
+    draftKey: number
     canSave: boolean
     canReset: boolean
     onBack: () => void
@@ -27,6 +28,7 @@ export function SavedPasswordsEditorCard({
     loadingSelected,
     draft,
     selectedId,
+    draftKey,
     canSave,
     canReset,
     onBack,
@@ -40,9 +42,9 @@ export function SavedPasswordsEditorCard({
         <Card>
             <CardHeader>
                 {loadingSelected ? (
-                    <div className="space-y-2">
-                        <Skeleton className="h-4 w-36" />
-                        <Skeleton className="h-3 w-56" />
+                    <div className="flex items-center justify-between">
+                        <Skeleton className="h-8 w-22" />
+                        <Skeleton className="size-6" />
                     </div>
                 ) : (
                     <div className="flex items-center justify-between">
@@ -94,6 +96,7 @@ export function SavedPasswordsEditorCard({
                     </div>
                 ) : draft ? (
                     <PasswordEditForm
+                        key={`${selectedId ?? '__new__'}-${draftKey}`}
                         draft={draft}
                         selectedId={selectedId}
                         canSave={canSave}

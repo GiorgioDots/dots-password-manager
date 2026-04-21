@@ -2,6 +2,7 @@
     "email_required": "L'email è obbligatoria.",
     "email_invalid": "Inserisci un indirizzo email valido.",
     "login_required": "Email o nome utente obbligatorio.",
+    "name_required": "Il nome è obbligatorio.",
     "min_3_chars": "Usa almeno 3 caratteri.",
     "min_8_chars": "Usa almeno 8 caratteri.",
     "password_required": "La password è obbligatoria.",

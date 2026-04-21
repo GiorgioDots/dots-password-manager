@@ -67,11 +67,8 @@ export function useDeletePasswordMutation() {
 
     return useMutation({
         mutationFn: deletePassword,
-        onSuccess: async (_, deletedId) => {
+        onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: passwordQueryKeys.all })
-            await queryClient.invalidateQueries({
-                queryKey: passwordQueryKeys.detail(deletedId),
-            })
         },
     })
 }
