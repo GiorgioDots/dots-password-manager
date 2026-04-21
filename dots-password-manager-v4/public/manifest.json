@@ -2,8 +2,8 @@
     "name": "Better Dots Password Manager",
     "short_name": "Dots PM",
     "description": "Manage your password easily and securely",
-    "theme_color": "#96A4FB",
-    "background_color": "#232638",
+    "theme_color": "#ef4444",
+    "background_color": "#ef4444",
     "display": "standalone",
     "scope": "./",
     "start_url": "./",
@@ -466,41 +466,81 @@
     "screenshots": [
         {
             "src": "screenshots/screen_wide_1.png",
-            "sizes": "1920x909",
+            "sizes": "3502x1874",
             "type": "image/png",
             "form_factor": "wide",
-            "label": "App Dark Mode"
+            "label": "App Dark Mode Home"
         },
         {
             "src": "screenshots/screen_wide_2.png",
-            "sizes": "1920x909",
+            "sizes": "3502x1874",
             "type": "image/png",
             "form_factor": "wide",
-            "label": "App White Mode"
+            "label": "App Dark Mode Vault"
+        },
+        {
+            "src": "screenshots/screen_wide_3.png",
+            "sizes": "3502x1874",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "App Dark Mode Form"
+        },
+        {
+            "src": "screenshots/screen_wide_4.png",
+            "sizes": "3502x1874",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "App White Mode Home"
+        },
+        {
+            "src": "screenshots/screen_wide_5.png",
+            "sizes": "3502x1874",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "App White Mode Vault"
+        },
+        {
+            "src": "screenshots/screen_wide_6.png",
+            "sizes": "3502x1874",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "App White Mode Form"
         },
         {
             "src": "screenshots/screen_mobile_1.jpeg",
-            "sizes": "945x2048",
+            "sizes": "1290x2796",
             "type": "image/jpeg",
-            "label": "App White Mode Mobile Passwords List"
+            "label": "App Dark Mode Mobile Passwords Home"
         },
         {
             "src": "screenshots/screen_mobile_2.jpeg",
-            "sizes": "945x2048",
+            "sizes": "1290x2796",
             "type": "image/jpeg",
-            "label": "App White Mode Mobile"
+            "label": "App Dark Mode Mobile Passwords Vault"
         },
         {
             "src": "screenshots/screen_mobile_3.jpeg",
-            "sizes": "945x2048",
+            "sizes": "1290x2796",
             "type": "image/jpeg",
-            "label": "App Dark Mode Mobile Passwords List"
+            "label": "App Dark Mode Mobile Passwords Form"
         },
         {
             "src": "screenshots/screen_mobile_4.jpeg",
-            "sizes": "945x2048",
+            "sizes": "1290x2796",
             "type": "image/jpeg",
-            "label": "App Dark Mode Mobile"
+            "label": "App White Mode Mobile Passwords Home"
+        },
+        {
+            "src": "screenshots/screen_mobile_5.jpeg",
+            "sizes": "1290x2796",
+            "type": "image/jpeg",
+            "label": "App White Mode Mobile Passwords Vault"
+        },
+        {
+            "src": "screenshots/screen_mobile_6.jpeg",
+            "sizes": "1290x2796",
+            "type": "image/jpeg",
+            "label": "App White Mode Mobile Passwords Form"
         }
     ]
 }
