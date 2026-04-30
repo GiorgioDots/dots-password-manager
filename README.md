@@ -1,215 +1,134 @@
-Welcome to your new TanStack Start app!
+# Dots Password Manager v4
+
+A modern, full-featured password manager web app built with TanStack Start, React 19, Drizzle ORM, and PostgreSQL. This project is a complete migration and rewrite of the legacy Dots Password Manager (previously .NET 8 Web API + Angular), designed for strict data and security compatibility with the existing production database and encrypted vault data.
+
+---
+
+## Project Background
+
+- **Migration:** This codebase was created by porting all core features, data models, and security logic from the legacy app. The goal was to preserve all user data, authentication, and encryption compatibility, while modernizing the stack and UX.
+- **Compatibility:** Custom validators, crypto routines, and auth flows were adapted to ensure seamless operation with existing user accounts, password hashes, and encrypted vault entries.
+- **UI/UX:** The interface uses shadcn/ui, Tailwind CSS, and [AstroVista](https://tweakcn.com/themes/cmlk6zefr000004lbe9jygsqc) theming for a modern, accessible experience.
+
+---
+
+## Features
+
+- Secure session-based authentication (cookie sessions, powered by Better Auth)
+    - Fully compatible with legacy password hashes and user data
+- Vault: add, edit, favorite, and organize passwords
+- Import/export vault data (compatible with legacy format)
+- Responsive, accessible UI with shadcn primitives
+- Command palette for fast navigation and actions
+- Settings page for user/account management
+- Email notifications (reset, welcome, etc.)
+- Full SSR/SPA support with TanStack Start
+- Docker and Compose ready for deployment
+
+---
+
+## Requirements
+
+- **Bun**: v1.3.11 or newer ([Install Bun](https://bun.sh/docs/installation))
+- **Node.js**: v20+ (for production w/o docker)
+- **PostgreSQL**: v13+ (existing or new database)
+- **.env.local**: See `.env.example` for required variables
+
+---
+
+## Getting Started (Development)
+
+1. **Install dependencies:**
+    ```sh
+    bun install
+    ```
+2. **Configure environment:**
+    - Copy `.env.example` to `.env.local` and fill in all required values.
+    - Make sure your DB is running and accessible.
+3. **Run the app:**
+    ```sh
+    bun run dev
+    ```
+    The app will be available at http://localhost:3000
+
+---
+
+## Useful Commands
+
+- **Run tests:**
+    ```sh
+    bun run test
+    ```
+- **Lint code:**
+    ```sh
+    bun run lint
+    ```
+- **Format code:**
+    ```sh
+    bun run format
+    ```
+- **Build for production:**
+    ```sh
+    bun run build
+    ```
+
+---
+
+## Deployment
+
+### 1. Docker (Recommended)
+
+- **Build the image:**
+    ```sh
+    docker build -t ghcr.io/giorgiodots/dots-password-manager:prodv4 .
+    ```
+- **Run the container:**
+    ```sh
+    docker run --name dots-password-manager-v4 --env-file .env.local -p 3000:3000 ghcr.io/giorgiodots/dots-password-manager:prodv4
+    ```
+- **Push to registry:**
+    ```sh
+    docker push ghcr.io/giorgiodots/dots-password-manager:prodv4
+    ```
+
+### 2. Docker Compose
+
+- See `docker-compose.yml` for a sample multi-service setup (app + Postgres).
+- Example:
+    ```sh
+    docker compose up --build
+    ```
+
+### 3. Plain Node Server (Advanced)
 
-# Getting Started
+- **Build:**
+    ```sh
+    bun run build
+    ```
+- **Start:**
+    ```sh
+    node .output/server/index.mjs
+    ```
+    (Make sure all required env vars are set)
 
-To run this application:
+---
 
-```bash
-bun install
-bun --bun run dev
-```
+## Security & Compatibility Notes
 
-# Building For Production
+- **Data continuity:** All crypto and auth logic is compatible with legacy data. You can migrate user data and vault entries without re-encryption or password resets.
+- **Secrets:** Never commit real secrets. Use `.env.local` for local/dev and platform env config for production.
+- **Validation:** Always run `bun run lint`, `bun run test`, and `bun run build` before deploying.
+- **DB config:** Supports both `DATABASE_URL` and split DB env vars. Handles Docker `.env` quoting issues automatically.
 
-To build this application for production:
+---
 
-```bash
-bun --bun run build
-```
+## Contributing
 
-## Testing
+- See [AGENTS.md](AGENTS.md) for repo-specific coding standards and agent workflow expectations.
+- PRs and issues welcome!
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+---
 
-```bash
-bun --bun run test
-```
+## License
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `bun install @tailwindcss/vite tailwindcss -D`
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from '@tanstack/react-router'
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-    head: () => ({
-        meta: [
-            { charSet: 'utf-8' },
-            { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-            { title: 'My App' },
-        ],
-    }),
-    shellComponent: ({ children }) => (
-        <html lang="en">
-            <head>
-                <HeadContent />
-            </head>
-            <body>
-                <header>
-                    <nav>
-                        <Link to="/">Home</Link>
-                        <Link to="/about">About</Link>
-                    </nav>
-                </header>
-                {children}
-                <Scripts />
-            </body>
-        </html>
-    ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-    method: 'GET',
-}).handler(async () => {
-    return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-    const [time, setTime] = useState('')
-
-    useEffect(() => {
-        getServerTime().then(setTime)
-    }, [])
-
-    return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-    server: {
-        handlers: {
-            GET: () => json({ message: 'Hello, World!' }),
-        },
-    },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-    loader: async () => {
-        const response = await fetch('https://swapi.dev/api/people')
-        return response.json()
-    },
-    component: PeopleComponent,
-})
-
-function PeopleComponent() {
-    const data = Route.useLoaderData()
-    return (
-        <ul>
-            {data.results.map((person) => (
-                <li key={person.name}>{person.name}</li>
-            ))}
-        </ul>
-    )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
-
-# Docker Build
-
-```sh
-docker build -t ghcr.io/giorgiodots/dots-password-manager:prodv4 .
-```
-
-# Run docker container
-
-```sh
-docker run --name dots-password-manager-v4 --env-file .env.local -p 3000:3000 ghcr.io/giorgiodots/dots-password-manager:prodv4
-```
-
-# Check docker logs
-
-```sh
-docker logs -f ghcr.io/giorgiodots/dots-password-manager:prodv4
-```
-
-# Push to github
-
-```sh
-docker push ghcr.io/giorgiodots/dots-password-manager:prodv4
-```
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
