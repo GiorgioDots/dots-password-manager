@@ -1,5 +1,6 @@
 {
-    "name": "dots-password-manager-v4",
+    "name": "dots-password-manager",
+    "version": "4.0",
     "private": true,
     "type": "module",
     "imports": {

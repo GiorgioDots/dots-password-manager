@@ -1,38 +1,16 @@
 services:
-  dotspasswordmanager.web.api:
-    image: ghcr.io/giorgiodots/dots-password-manager:prod
-    container_name: dotspasswordmanagerwebapi
-    build:
-      context: .
-      dockerfile: DotsPasswordManager.Web.Api/Dockerfile
-    ports:
-      - "8080:8080"
-      - "8081:8081"
+  db:
+    image: postgres:15-alpine
+    container_name: postgres_db
+    restart: always
     environment:
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - JWT_ISSUER=${JWT_ISSUER}
-      - JWT_AUDIENCE=${JWT_AUDIENCE}
-      - JWT_EXP_MINUTES=${JWT_EXP_MINUTES}
-      - JWT_REFRESH_TOKEN_EXP_DAYS=${JWT_REFRESH_TOKEN_EXP_DAYS}
-      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
-      - SMTP_USERNAME=${SMTP_USERNAME}
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
-      - SMTP_HOST=${SMTP_HOST}
-      - SMTP_PORT=${SMTP_PORT}
-      - FROM_ADDRESS=${FROM_ADDRESS}
-      - WEBAPP_HOST=http://localhost:4200 #used to send the links inside the emails
-      - DB_CONNECTION_STRING_FILE=/run/secrets/db_connection_string
-      - JWT_SECRET_FILE=/run/secrets/jwt_secret
-      - CRYPTO_BASE_64_KEY_FILE=/run/secrets/crypto_key
-    secrets:
-      - db_connection_string
-      - jwt_secret
-      - crypto_key
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: somepassword
+      POSTGRES_DB: dotspwd
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-secrets:
-  db_connection_string:
-    file: ./secrets/db_connection_string.secret
-  jwt_secret:
-    file: ./secrets/jwt_secret.secret
-  crypto_key:
-    file: ./secrets/crypto_key.secret
+volumes:
+  postgres_data:
